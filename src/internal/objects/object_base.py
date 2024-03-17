@@ -1,7 +1,9 @@
 from typing import Any, List
 from dataclasses import dataclass
+import uuid
 
 from internal.fields.serializable_field_base import SerializableFieldBase
+from internal.fields import UuidField
 
 
 @dataclass(frozen=True)
@@ -14,8 +16,12 @@ class FieldUpdateInfo:
 class ObjectBase:
     _fields: dict[str, SerializableFieldBase]
 
-    def __init__(self):
+    # TODO: forbid id update
+    id: uuid.UUID
+
+    def __init__(self, id: uuid.UUID):
         self.__dict__['_fields'] = {}
+        self._add_field('id', UuidField(id))
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         if __name in self._fields:

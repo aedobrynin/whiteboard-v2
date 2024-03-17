@@ -1,3 +1,5 @@
+import uuid
+
 from . import ObjectBase, FieldUpdateInfo
 from internal.fields import IntField, StrField
 
@@ -6,7 +8,7 @@ class ObjectWithOneField(ObjectBase):
     counter: int
 
     def __init__(self, counter_value):
-        super().__init__()
+        super().__init__(uuid.uuid4())
         super()._add_field('counter', IntField(counter_value))
 
 
@@ -29,12 +31,17 @@ def test_field_update():
     assert o.get_changed_fields() == []
 
 
+def test_object_id():
+    o = ObjectWithOneField(0)
+    assert isinstance(o.id, uuid.UUID)
+
+
 class ObjectWithManyFields(ObjectBase):
     counter: int
     label: str
 
     def __init__(self, counter_value, label_value):
-        super().__init__()
+        super().__init__(uuid.uuid4())
         super()._add_field('counter', IntField(counter_value))
         super()._add_field('label', StrField(label_value))
 
