@@ -3,9 +3,8 @@ import uuid
 
 from . import interfaces
 import internal.models
+from .common import field_names
 
-_ID_FIELD = 'id'   # TODO: move to common declarations
-_POSITION_FIELD = 'position'   # TODO: move to common declarations
 _TEXT_FIELD = 'text'
 
 
@@ -37,15 +36,15 @@ class BoardObjectCard(interfaces.IBoardObjectCard):
 
     def serialize(self) -> dict:
         return {
-            _ID_FIELD: str(self.id),
-            _POSITION_FIELD: self.position.serialize(),
+            field_names.ID_FIELD: str(self.id),
+            field_names.POSITION_FIELD: self.position.serialize(),
             _TEXT_FIELD: self.text,
         }
 
     @staticmethod
     def from_serialized(data: dict) -> BoardObjectCard:
         return BoardObjectCard(
-            uuid.UUID(data[_ID_FIELD]),
-            internal.models.Position.from_serialized(data[_POSITION_FIELD]),
+            uuid.UUID(data[field_names.ID_FIELD]),
+            internal.models.Position.from_serialized(data[field_names.POSITION_FIELD]),
             data[_TEXT_FIELD],
         )
