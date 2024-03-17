@@ -1,4 +1,5 @@
-from . import BoardObjectCard, Position
+from . import BoardObjectCard
+from internal.models import Position
 
 import uuid
 
@@ -11,11 +12,7 @@ def test_board_object_card_serialization():
     card = BoardObjectCard(id, position, text)
     assert card.serialize() == {
         'id': str(id),
-        'position': {
-            'x': position.x,
-            'y': position.y,
-            'z': position.z,
-        },
+        'position': position.serialize(),
         'text': text,
     }
 
@@ -27,11 +24,7 @@ def test_board_object_card_deserialization():
 
     serialized = {
         'id': str(id),
-        'position': {
-            'x': position.x,
-            'y': position.y,
-            'z': position.z,
-        },
+        'position': position.serialize(),
         'text': text,
     }
 

@@ -1,12 +1,16 @@
 from __future__ import annotations
 import uuid
 
-from .interfaces import IBoardObjectCard, Position
+from . import interfaces
+import internal.models
+
+_ID_FIELD = 'id'   # TODO: move to common declarations
+_POSITION_FIELD = 'position'   # TODO: move to common declarations
+_TEXT_FIELD = 'text'
 
 
-class BoardObjectCard(IBoardObjectCard):
-    def __init__(self, id: uuid.UUID, position: Position, text: str):
-        # TODO: try to move such usual fields into separate helper class
+class BoardObjectCard(interfaces.IBoardObjectCard):
+    def __init__(self, id: uuid.UUID, position: internal.models.Position, text: str):
         self._id = id
         self._position = position
         self._text = text
@@ -16,12 +20,12 @@ class BoardObjectCard(IBoardObjectCard):
         return self._id
 
     @property
-    def position(self) -> Position:
+    def position(self) -> internal.models.Position:
         return self._position
 
     @position.setter
-    def position(self, pos: Position) -> None:
-        self._position = pos
+    def position(self, position: internal.models.Position) -> None:
+        self._position = position
 
     @property
     def text(self) -> str:
@@ -33,19 +37,15 @@ class BoardObjectCard(IBoardObjectCard):
 
     def serialize(self) -> dict:
         return {
-            'id': str(self.id),
-            'position': {
-                'x': self.position.x,
-                'y': self.position.y,
-                'z': self.position.z,
-            },
-            'text': self.text,
+            _ID_FIELD: str(self.id),
+            _POSITION_FIELD: self.position.serialize(),
+            _TEXT_FIELD: self.text,
         }
 
     @staticmethod
     def from_serialized(data: dict) -> BoardObjectCard:
         return BoardObjectCard(
-            uuid.UUID(data['id']),
-            Position(data['position']['x'], data['position']['y'], data['position']['z']),
-            data['text'],
+            uuid.UUID(data[_ID_FIELD]),
+            internal.models.Position.from_serialized(data[_POSITION_FIELD]),
+            data[_TEXT_FIELD],
         )

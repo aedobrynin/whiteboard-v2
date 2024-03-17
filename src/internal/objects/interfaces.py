@@ -1,7 +1,7 @@
-from typing import Type, TypeVar
 import abc
-import dataclasses
 import uuid
+
+import internal.models
 
 
 class IBoardObject(abc.ABC):
@@ -21,23 +21,15 @@ class IBoardObject(abc.ABC):
         pass
 
 
-# TODO: move to models
-@dataclasses.dataclass
-class Position:
-    x: int
-    y: int
-    z: int
-
-
 class IBoardObjectWithPosition(IBoardObject):
     @property
     @abc.abstractmethod
-    def position(self) -> Position:
+    def position(self) -> internal.models.Position:
         pass
 
     @position.setter
     @abc.abstractmethod
-    def position(self, pos: Position) -> None:
+    def position(self, pos: internal.models.Position) -> None:
         pass
 
 
