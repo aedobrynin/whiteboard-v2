@@ -1,3 +1,4 @@
+from __future__ import annotations
 import abc
 import uuid
 
@@ -20,10 +21,9 @@ class IBoardObject(abc.ABC):
     def serialize(self) -> dict:
         pass
 
-    # TODO: return type annotation
     @staticmethod
     @abc.abstractmethod
-    def from_serialized(data: dict):
+    def from_serialized(data: dict) -> IBoardObject:
         pass
 
 

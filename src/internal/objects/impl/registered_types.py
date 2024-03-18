@@ -1,6 +1,8 @@
 from typing import Type
 
-registered_types: dict[str, Type] = dict()
+from ..interfaces import IBoardObject
+
+registered_types: dict[str, Type[IBoardObject]] = dict()
 
 
 def board_object_type(name: str):

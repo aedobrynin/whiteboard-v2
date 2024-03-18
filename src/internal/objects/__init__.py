@@ -1,2 +1,3 @@
 from . import interfaces
-from .impl.card import BoardObjectCard as BoardObjectCard
+from .impl.card import BoardObjectCard as _
+from .builder import build_from_serialized
