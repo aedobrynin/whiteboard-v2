@@ -1,1 +1,1 @@
-from .card import BoardObjectCard
+from .card import BoardObjectCard as BoardObjectCard
