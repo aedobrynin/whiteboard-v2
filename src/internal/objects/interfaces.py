@@ -10,6 +10,12 @@ class IBoardObject(abc.ABC):
     def id(self) -> uuid.UUID:
         pass
 
+    # TODO: myb hide type from here
+    @property
+    @abc.abstractmethod
+    def type(self) -> str:
+        pass
+
     @abc.abstractmethod
     def serialize(self) -> dict:
         pass

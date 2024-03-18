@@ -4,6 +4,7 @@ import uuid
 from internal.objects import interfaces
 from .registered_types import board_object_type
 import internal.models
+from .object_with_position import BoardObjectWithPosition
 from .common import field_names
 
 _TEXT_FIELD = 'text'
@@ -11,23 +12,10 @@ _TYPE_NAME = 'card'
 
 
 @board_object_type(_TYPE_NAME)
-class BoardObjectCard(interfaces.IBoardObjectCard):
+class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithPosition):
     def __init__(self, id: uuid.UUID, position: internal.models.Position, text: str):
-        self._id = id
-        self._position = position
-        self._text = text
-
-    @property
-    def id(self) -> uuid.UUID:
-        return self._id
-
-    @property
-    def position(self) -> internal.models.Position:
-        return self._position
-
-    @position.setter
-    def position(self, position: internal.models.Position) -> None:
-        self._position = position
+        super().__init__(id, _TYPE_NAME, position)
+        self.text = text
 
     @property
     def text(self) -> str:
@@ -38,15 +26,13 @@ class BoardObjectCard(interfaces.IBoardObjectCard):
         self._text = text
 
     def serialize(self) -> dict:
-        return {
-            field_names.ID_FIELD: str(self.id),
-            field_names.POSITION_FIELD: self.position.serialize(),
-            _TEXT_FIELD: self.text,
-            field_names.TYPE_FIELD: _TYPE_NAME,  # TODO: hide this
-        }
+        serialized = super().serialize()
+        serialized[_TEXT_FIELD] = self.text
+        return serialized
 
     @staticmethod
     def from_serialized(data: dict) -> BoardObjectCard:
+        # TODO: child class should not know how to build parent from serialized data
         return BoardObjectCard(
             uuid.UUID(data[field_names.ID_FIELD]),
             internal.models.Position.from_serialized(data[field_names.POSITION_FIELD]),
