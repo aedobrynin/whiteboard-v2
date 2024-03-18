@@ -1,13 +1,16 @@
 from __future__ import annotations
 import uuid
 
-from . import interfaces
+from internal.objects import interfaces
+from .registered_types import board_object_type
 import internal.models
 from .common import field_names
 
 _TEXT_FIELD = 'text'
+_TYPE_NAME = 'card'
 
 
+@board_object_type(_TYPE_NAME)
 class BoardObjectCard(interfaces.IBoardObjectCard):
     def __init__(self, id: uuid.UUID, position: internal.models.Position, text: str):
         self._id = id
@@ -39,6 +42,7 @@ class BoardObjectCard(interfaces.IBoardObjectCard):
             field_names.ID_FIELD: str(self.id),
             field_names.POSITION_FIELD: self.position.serialize(),
             _TEXT_FIELD: self.text,
+            field_names.TYPE_FIELD: _TYPE_NAME,  # TODO: hide this
         }
 
     @staticmethod
