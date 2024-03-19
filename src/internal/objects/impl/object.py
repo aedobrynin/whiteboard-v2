@@ -1,17 +1,16 @@
 from __future__ import annotations
-import uuid
 
 from internal.objects import interfaces
 from .common import field_names
 
 
 class BoardObject(interfaces.IBoardObject):
-    def __init__(self, id: uuid.UUID, type: str):
+    def __init__(self, id: interfaces.ObjectId, type: str):
         self._id = id
         self._type = type
 
     @property
-    def id(self) -> uuid.UUID:
+    def id(self) -> interfaces.ObjectId:
         return self._id
 
     @property
@@ -23,4 +22,6 @@ class BoardObject(interfaces.IBoardObject):
 
     @staticmethod
     def from_serialized(data: dict) -> BoardObject:
-        return BoardObject(uuid.UUID(data[field_names.ID_FIELD]), data[field_names.TYPE_FIELD])
+        return BoardObject(
+            interfaces.ObjectId(data[field_names.ID_FIELD]), data[field_names.TYPE_FIELD]
+        )
