@@ -4,6 +4,8 @@ import uuid
 
 import internal.models
 
+# TODO: typedef ObjectId = uuid.UUID
+
 
 class IBoardObject(abc.ABC):
     @property
