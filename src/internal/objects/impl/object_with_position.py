@@ -1,5 +1,4 @@
 from __future__ import annotations
-import uuid
 
 from internal.objects import interfaces
 from internal.models import Position
@@ -8,7 +7,7 @@ from .object import BoardObject
 
 
 class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
-    def __init__(self, id: uuid.UUID, type: str, position: Position):
+    def __init__(self, id: interfaces.ObjectId, type: str, position: Position):
         BoardObject.__init__(self, id, type)
         self.position = position
 
@@ -29,7 +28,7 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
     def from_serialized(data: dict) -> BoardObjectWithPosition:
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectWithPosition(
-            uuid.UUID(data[field_names.ID_FIELD]),
+            interfaces.ObjectId(data[field_names.ID_FIELD]),
             data[field_names.TYPE_FIELD],
             Position.from_serialized(data[field_names.POSITION_FIELD]),
         )

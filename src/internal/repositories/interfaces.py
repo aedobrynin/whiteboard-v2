@@ -1,6 +1,5 @@
 from __future__ import annotations
 import abc
-import uuid
 from typing import Optional
 
 import internal.objects
@@ -8,7 +7,9 @@ import internal.objects
 
 class IRepository(abc.ABC):
     @abc.abstractmethod
-    def get(self, object_id: uuid.UUID) -> Optional[internal.objects.interfaces.IBoardObject]:
+    def get(
+        self, object_id: internal.objects.interfaces.ObjectId
+    ) -> Optional[internal.objects.interfaces.IBoardObject]:
         pass
 
     # raises ObjectAlreadyExistsException if object with the same id already in the repository
@@ -19,7 +20,7 @@ class IRepository(abc.ABC):
     # raises ObjectNotFoundException if object with such id was not found
     # TODO: myb somehow invalidate objects that were deleted (e.g. raise on read/write access to their fields)
     @abc.abstractmethod
-    def delete(self, object_id: uuid.UUID) -> None:
+    def delete(self, object_id: internal.objects.interfaces.ObjectId) -> None:
         pass
 
     # Returns serialized objects which were updated, created or deleted since last `get_updated()` call
@@ -27,7 +28,7 @@ class IRepository(abc.ABC):
     # TODO: myb return only updated fields
     # TODO: myb better API for deleted objects
     @abc.abstractmethod
-    def get_updated(self) -> dict[uuid.UUID, Optional[dict]]:
+    def get_updated(self) -> dict[internal.objects.interfaces.ObjectId, Optional[dict]]:
         pass
 
 
@@ -39,7 +40,7 @@ class IObjectsWithPositionRepository(abc.ABC):
 
     @abc.abstractmethod
     def get(
-        self, object_id: uuid.UUID
+        self, object_id: internal.objects.interfaces.ObjectId
     ) -> Optional[internal.objects.interfaces.IBoardObjectWithPosition]:
         pass
 
@@ -51,5 +52,7 @@ class ICardRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get(self, object_id: uuid.UUID) -> Optional[internal.objects.interfaces.IBoardObjectCard]:
+    def get(
+        self, object_id: internal.objects.interfaces.ObjectId
+    ) -> Optional[internal.objects.interfaces.IBoardObjectCard]:
         pass

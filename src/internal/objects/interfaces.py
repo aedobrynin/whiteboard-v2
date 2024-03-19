@@ -4,13 +4,14 @@ import uuid
 
 import internal.models
 
-# TODO: typedef ObjectId = uuid.UUID
+# TODO: myb hide ObjectId creation
+ObjectId = uuid.UUID
 
 
 class IBoardObject(abc.ABC):
     @property
     @abc.abstractmethod
-    def id(self) -> uuid.UUID:
+    def id(self) -> ObjectId:
         pass
 
     # TODO: myb hide type from here
