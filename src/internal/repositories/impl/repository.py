@@ -1,12 +1,13 @@
 from __future__ import annotations
 from typing import Optional
 
-import internal.repositories.interfaces
 import internal.objects.interfaces
+from .. import interfaces
+from .. import exceptions
 import internal.repositories.exceptions
 
 
-class Repository(internal.repositories.interfaces.IRepository):
+class Repository(interfaces.IRepository):
     def __init__(self, objects: list[internal.objects.interfaces.IBoardObject]):
         self._objects: dict[
             internal.objects.interfaces.ObjectId, internal.objects.interfaces.IBoardObject
@@ -27,12 +28,12 @@ class Repository(internal.repositories.interfaces.IRepository):
 
     def add(self, object: internal.objects.interfaces.IBoardObject) -> None:
         if object.id in self._objects:
-            raise internal.repositories.exceptions.ObjectAlreadyExistsException()
+            raise exceptions.ObjectAlreadyExistsException()
         self._objects[object.id] = object
 
     def delete(self, object_id: internal.objects.interfaces.ObjectId) -> None:
         if object_id not in self._objects:
-            raise internal.repositories.exceptions.ObjectNotFound()
+            raise exceptions.ObjectNotFound()
         del self._objects[object_id]
         self._cached_serialized_representations[object_id] = None
 
