@@ -33,7 +33,7 @@ class IRepository(abc.ABC):
 
 
 # TODO: implement when needed
-class IObjectsWithPositionRepository(abc.ABC):
+class IObjectsWithPositionRepository(IRepository):
     @abc.abstractmethod
     def __init__(self, repo: IRepository):
         pass
@@ -46,7 +46,7 @@ class IObjectsWithPositionRepository(abc.ABC):
 
 
 # TODO: implement when needed
-class ICardRepository(abc.ABC):
+class ICardRepository(IObjectsWithPositionRepository):
     @abc.abstractmethod
     def __init__(self, repo: IRepository):
         pass
