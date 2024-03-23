@@ -10,7 +10,9 @@ _TEXT_FIELD = 'text'
 
 
 class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithPosition):
-    def __init__(self, id: interfaces.ObjectId, position: internal.models.Position, text: str):
+    def __init__(
+        self, id: interfaces.ObjectId, position: internal.models.Position, text: str = 'text'
+    ):
         super().__init__(id, types.BoardObjectType.card, position)
         self.text = text
 
