@@ -4,6 +4,8 @@ import uuid
 
 import internal.models
 
+from . import types
+
 # TODO: class ObjectId with methods for serialization and creation
 ObjectId = uuid.UUID
 
@@ -17,7 +19,7 @@ class IBoardObject(abc.ABC):
     # TODO: myb hide type from here
     @property
     @abc.abstractmethod
-    def type(self) -> str:
+    def type(self) -> types.BoardObjectType:
         pass
 
     # TODO typedef SerializedObject = dict

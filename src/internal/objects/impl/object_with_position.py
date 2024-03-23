@@ -4,10 +4,11 @@ from internal.objects import interfaces
 from internal.models import Position
 from .common import field_names
 from .object import BoardObject
+from .. import types
 
 
 class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
-    def __init__(self, id: interfaces.ObjectId, type: str, position: Position):
+    def __init__(self, id: interfaces.ObjectId, type: types.BoardObjectType, position: Position):
         BoardObject.__init__(self, id, type)
         self.position = position
 
@@ -29,6 +30,6 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectWithPosition(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
-            data[field_names.TYPE_FIELD],
+            types.BoardObjectType(data[field_names.TYPE_FIELD]),
             Position.from_serialized(data[field_names.POSITION_FIELD]),
         )
