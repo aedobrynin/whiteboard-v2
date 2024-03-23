@@ -1,19 +1,17 @@
 from __future__ import annotations
 
 from internal.objects import interfaces
-from .registered_types import board_object_type
 import internal.models
 from .object_with_position import BoardObjectWithPosition
 from .common import field_names
+from .. import types
 
 _TEXT_FIELD = 'text'
-_TYPE_NAME = 'card'
 
 
-@board_object_type(_TYPE_NAME)
 class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithPosition):
     def __init__(self, id: interfaces.ObjectId, position: internal.models.Position, text: str):
-        super().__init__(id, _TYPE_NAME, position)
+        super().__init__(id, types.BoardObjectType.card, position)
         self.text = text
 
     @property

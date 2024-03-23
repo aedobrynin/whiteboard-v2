@@ -1,11 +1,6 @@
-from . import BoardObjectCard
+from .card import BoardObjectCard
 from internal.models import Position
-from .registered_types import registered_types
 import uuid
-
-
-def test_board_object_card_in_registered_types():
-    assert registered_types['card'] == BoardObjectCard
 
 
 def test_board_object_card_serialization():
