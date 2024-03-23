@@ -9,6 +9,6 @@ class IController(abc.ABC):
     # TODO: feature abstaction
     @abc.abstractmethod
     def create_object(
-        self, position: internal.models.Position, type: internal.objects.BoardObjectType
+        self, type: internal.objects.BoardObjectType, position: internal.models.Position
     ):
         pass

@@ -3,11 +3,12 @@ import pathlib
 import abc
 from typing import Optional
 
-StorageKey = str
-StorageValue = dict
-
 
 class IStorage(abc.ABC):
+    StorageKey = str
+    StorageValue = dict
+    UpdatesType = dict[StorageKey, Optional[StorageValue]]
+
     # Returns all objects from storage
     @abc.abstractmethod
     def get_serialized_objects(self) -> dict[StorageKey, StorageValue]:
@@ -15,7 +16,7 @@ class IStorage(abc.ABC):
 
     # TODO: better api for updates
     @abc.abstractmethod
-    def update(self, updates: dict[StorageKey, Optional[StorageValue]]):
+    def update(self, updates: UpdatesType):
         pass
 
 

@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 
 import y_py
 
@@ -13,11 +12,13 @@ class YDocStorage(interfaces.IStorage):
         self._y_doc = y_py.YDoc()
         self._objects = self._y_doc.get_map(_Y_DOC_OBJECTS_FIELD_NAME)
 
-    def get_serialized_objects(self) -> dict[interfaces.StorageKey, interfaces.StorageValue]:
+    def get_serialized_objects(
+        self,
+    ) -> dict[interfaces.IStorage.StorageKey, interfaces.IStorage.StorageValue]:
         return dict(self._objects)
 
     # TODO: better api for updates
-    def update(self, updates: dict[interfaces.StorageKey, Optional[interfaces.StorageValue]]):
+    def update(self, updates: interfaces.IStorage.UpdatesType):
         with self._y_doc.begin_transaction() as tx:
             for obj_id, new_repr in updates.items():
                 if new_repr is None:
