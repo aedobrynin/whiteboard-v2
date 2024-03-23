@@ -4,10 +4,10 @@ from typing import Optional
 import internal.objects.interfaces
 from .. import interfaces
 from .. import exceptions
-import internal.repositories.exceptions
 
 
 class Repository(interfaces.IRepository):
+    # TODO: allow repo to be built from serialized objects
     def __init__(self, objects: list[internal.objects.interfaces.IBoardObject]):
         self._objects: dict[
             internal.objects.interfaces.ObjectId, internal.objects.interfaces.IBoardObject
