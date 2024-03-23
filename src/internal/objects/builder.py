@@ -19,6 +19,6 @@ def _generate_id() -> interfaces.ObjectId:
 # TODO: better API for building
 def build_by_type(
     type: BoardObjectType, position: internal.models.Position
-) -> internal.objects.interfaces.IBoardObjectWithPosition:
+) -> interfaces.IBoardObjectWithPosition:
     id = _generate_id()
     return TYPE_IMPLS[type](id, position)
