@@ -14,6 +14,7 @@ PubSubId = str
 SubscriberId = PubSubId
 PublisherId = PubSubId
 
+# TODO: probably should also give access to repo here
 Callback = Callable[[PublisherId, Event], None]
 
 
