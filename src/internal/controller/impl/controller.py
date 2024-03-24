@@ -18,6 +18,7 @@ class Controller(interfaces.IController):
         # 1) Process pub-sub (future work)
         # 2) Extract updates from repo
         # 3) Push updates to storage
+        # 4) Push updates to UndoRedoManager (future work)
         # Fetch updates from storage and update repo sometimes (future work)
 
         # TODO: Process pub-sub here (1)
@@ -31,7 +32,6 @@ class Controller(interfaces.IController):
     def create_object(
         self, type: internal.objects.BoardObjectType, position: internal.models.Position
     ):
-
         obj = internal.objects.build_by_type(type, position)
         self._repo.add(obj)
         self._on_feature_finish()
