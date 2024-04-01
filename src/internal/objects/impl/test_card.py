@@ -1,6 +1,7 @@
 from .card import BoardObjectCard
 from internal.models import Position
 import uuid
+import internal.pub_sub.mocks
 
 
 def test_board_object_card_serialization():
@@ -8,7 +9,9 @@ def test_board_object_card_serialization():
     position = Position(1, 2, 3)
     text = 'text'
 
-    card = BoardObjectCard(id, position, text)
+    broker = internal.pub_sub.mocks.MockPubSubBroker()
+
+    card = BoardObjectCard(id, position, broker, text)
     assert card.serialize() == {
         'id': str(id),
         'position': position.serialize(),
@@ -29,7 +32,9 @@ def test_board_object_card_deserialization():
         'type': 'card',
     }
 
-    board = BoardObjectCard.from_serialized(serialized)
+    broker = internal.pub_sub.mocks.MockPubSubBroker()
+
+    board = BoardObjectCard.from_serialized(serialized, broker)
     assert board.id == id
     assert board.position == position
     assert board.text == text

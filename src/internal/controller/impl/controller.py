@@ -9,9 +9,11 @@ class Controller(interfaces.IController):
         self,
         repo: internal.repositories.interfaces.IRepository,
         storage: internal.storages.interfaces.IStorage,
+        pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ):
         self._repo = repo
         self._storage = storage
+        self._pub_sub_broker = pub_sub_broker
 
     # TODO: feature abstaction
     def _on_feature_finish(self):
@@ -32,6 +34,6 @@ class Controller(interfaces.IController):
     def create_object(
         self, type: internal.objects.BoardObjectType, position: internal.models.Position
     ):
-        obj = internal.objects.build_by_type(type, position)
+        obj = internal.objects.build_by_type(type, position, self._pub_sub_broker)
         self._repo.add(obj)
         self._on_feature_finish()
