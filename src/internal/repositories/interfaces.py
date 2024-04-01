@@ -27,6 +27,7 @@ class IRepository(abc.ABC):
     # If object was deleted, this function returns None for it's representation
     # TODO: myb return only updated fields
     # TODO: myb better API for deleted objects
+    # TODO: move it to another interface (because now it is accessible from any object)
     @abc.abstractmethod
     def get_updated(self) -> dict[internal.objects.interfaces.ObjectId, Optional[dict]]:
         pass

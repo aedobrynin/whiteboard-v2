@@ -3,6 +3,8 @@ import abc
 import dataclasses
 from typing import Callable
 
+import internal.repositories.interfaces
+
 
 @dataclasses.dataclass
 class Event:
@@ -14,8 +16,7 @@ PubSubId = str
 SubscriberId = PubSubId
 PublisherId = PubSubId
 
-# TODO: probably should also give access to repo here
-Callback = Callable[[PublisherId, Event], None]
+Callback = Callable[[PublisherId, Event, internal.repositories.interfaces.IRepository], None]
 
 
 class IPubSubBroker(abc.ABC):
@@ -32,7 +33,7 @@ class IPubSubBroker(abc.ABC):
     # TODO: this probably should be in another class
     # (because now it is accessible from any object)
     @abc.abstractmethod
-    def process_published(self):
+    def process_published(self, repo: internal.repositories.interfaces.IRepository):
         pass
 
     # TODO: unsubsribe_from_all method?
