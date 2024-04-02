@@ -22,6 +22,9 @@ def _generate_id() -> interfaces.ObjectId:
 
 
 # TODO: better API for building
+# TODO: it might be a little inconsistent when we add another pub_sub_broker,
+#       because it will be possible that repository and object will have different brokers.
+#       myb we want to restrict that
 def build_by_type(
     type: BoardObjectType,
     position: internal.models.Position,

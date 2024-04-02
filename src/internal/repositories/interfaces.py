@@ -4,6 +4,8 @@ from typing import Optional
 
 import internal.objects
 
+REPOSITORY_PUB_SUB_ID = 'repository'
+
 
 class IRepository(abc.ABC):
     @abc.abstractmethod
@@ -13,12 +15,14 @@ class IRepository(abc.ABC):
         pass
 
     # raises ObjectAlreadyExistsException if object with the same id already in the repository
+    # TODO: published event description
     @abc.abstractmethod
     def add(self, object: internal.objects.interfaces.IBoardObject) -> None:
         pass
 
     # raises ObjectNotFoundException if object with such id was not found
     # TODO: myb somehow invalidate objects that were deleted (e.g. raise on read/write access to their fields)
+    # TODO: published event description
     @abc.abstractmethod
     def delete(self, object_id: internal.objects.interfaces.ObjectId) -> None:
         pass

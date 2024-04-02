@@ -7,14 +7,16 @@ import internal.repositories.interfaces
 
 @dataclasses.dataclass(frozen=True)
 class _EventWithPublisher:
-    publisher: str
+    publisher: interfaces.PublisherId
     event: interfaces.Event
 
 
 class PubSubBroker(interfaces.IPubSubBroker):
     def __init__(self):
         # usage: self.subscription[publisher][event_type] -> all callbacks
-        self._subscriptions: dict[str, dict[str, list[interfaces.Callback]]] = dict()
+        self._subscriptions: dict[
+            interfaces.PublisherId, dict[str, list[interfaces.Callback]]
+        ] = dict()
         self._unprocessed_events: list[_EventWithPublisher] = []
 
     def publish(self, publisher: interfaces.PublisherId, event: interfaces.Event):

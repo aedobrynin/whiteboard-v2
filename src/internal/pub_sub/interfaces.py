@@ -36,5 +36,7 @@ class IPubSubBroker(abc.ABC):
     def process_published(self, repo: internal.repositories.interfaces.IRepository):
         pass
 
+    # TODO: unsubscribe method (will be useful in View)
+
     # TODO: unsubsribe_from_all method?
     # TODO: myb allow to subscribe on events of particular type published by anyone?
