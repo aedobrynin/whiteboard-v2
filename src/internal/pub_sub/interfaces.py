@@ -2,13 +2,14 @@ from __future__ import annotations
 import abc
 from typing import Callable
 
+import internal.repositories.interfaces
 from .event import Event
 
 PubSubId = str
 SubscriberId = PubSubId
 PublisherId = PubSubId
 
-Callback = Callable[[PublisherId, Event, 'internal.repositories.interfaces.IRepository'], None]
+Callback = Callable[[PublisherId, Event, internal.repositories.interfaces.IRepository], None]
 
 
 class IPubSubBroker(abc.ABC):
@@ -25,7 +26,7 @@ class IPubSubBroker(abc.ABC):
     # TODO: this probably should be in another class
     # (because now it is accessible from any object)
     @abc.abstractmethod
-    def process_published(self, repo: 'internal.repositories.interfaces.IRepository'):
+    def process_published(self, repo: internal.repositories.interfaces.IRepository):
         pass
 
     # TODO: unsubscribe method (will be useful in View)

@@ -5,7 +5,6 @@ import logging
 import internal.objects.interfaces
 from .. import interfaces
 from .. import exceptions
-from .. import events
 
 
 class Repository(interfaces.IRepository):

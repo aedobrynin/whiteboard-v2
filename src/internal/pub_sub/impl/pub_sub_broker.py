@@ -2,6 +2,7 @@ import dataclasses
 import logging
 
 from .. import interfaces
+import internal.repositories.interfaces
 
 
 @dataclasses.dataclass(frozen=True)
@@ -41,7 +42,7 @@ class PubSubBroker(interfaces.IPubSubBroker):
             self._subscriptions[publisher][type] = list()
         self._subscriptions[publisher][type].append(callback)
 
-    def process_published(self, repo: 'internal.repositories.interfaces.IRepository'):
+    def process_published(self, repo: internal.repositories.interfaces.IRepository):
         logging.debug('processing published events')
         processed_cnt = 0
         while self._unprocessed_events:
