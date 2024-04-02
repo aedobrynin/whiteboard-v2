@@ -1,7 +1,8 @@
 from typing import Optional
 
-from .. import interfaces
 import internal.objects.interfaces
+
+from .. import interfaces
 
 
 class MockRepository(interfaces.IRepository):
@@ -24,4 +25,4 @@ class MockRepository(interfaces.IRepository):
 
     def get_updated(self) -> dict[internal.objects.interfaces.ObjectId, Optional[dict]]:
         # TODO: implement when needed
-        return dict()
+        return {}

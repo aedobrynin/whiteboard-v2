@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import internal.pub_sub.interfaces
+
 from .. import interfaces
 from .common import field_names
-import internal.pub_sub.interfaces
 from .. import types
 
 

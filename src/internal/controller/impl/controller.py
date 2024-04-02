@@ -1,9 +1,12 @@
 import logging
 
-from internal.controller import interfaces
 import internal.models
-import internal.repositories
+import internal.objects
+import internal.pub_sub.interfaces
+import internal.repositories.interfaces
 import internal.storages
+
+from .. import interfaces
 
 
 class Controller(interfaces.IController):
@@ -32,7 +35,7 @@ class Controller(interfaces.IController):
         logging.debug('saving updates to the storage')
         # TODO: myb better API for updates?
         updates = self._repo.get_updated()
-        raw_updates: internal.storages.interfaces.IStorage.UpdatesType = dict()
+        raw_updates: internal.storages.interfaces.IStorage.UpdatesType = {}
         for (obj_id, update) in updates.items():
             raw_updates[str(obj_id)] = update
         self._storage.update(raw_updates)

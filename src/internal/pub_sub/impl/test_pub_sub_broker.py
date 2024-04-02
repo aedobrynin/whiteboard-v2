@@ -1,9 +1,10 @@
 import pytest
 
-from .pub_sub_broker import PubSubBroker
-from ..interfaces import Event, PublisherId
 import internal.repositories.interfaces
 import internal.repositories.mocks
+
+from .pub_sub_broker import PubSubBroker
+from ..interfaces import Event, PublisherId
 
 
 @pytest.fixture(name='callback_mock')

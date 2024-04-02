@@ -18,7 +18,7 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithPosition):
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         text: str = 'text',
     ):
-        super().__init__(id, types.BoardObjectType.card, position, pub_sub_broker)
+        super().__init__(id, types.BoardObjectType.CARD, position, pub_sub_broker)
         self.text = text
 
     @property

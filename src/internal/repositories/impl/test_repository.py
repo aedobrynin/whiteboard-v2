@@ -1,10 +1,12 @@
-import pytest
 import uuid
+
+import pytest
+
+import internal.objects.interfaces
+import internal.pub_sub.mocks
 
 from . import repository
 from .. import exceptions
-import internal.objects
-import internal.pub_sub.mocks
 from .. import events
 from .. import interfaces
 

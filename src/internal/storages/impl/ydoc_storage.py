@@ -25,5 +25,6 @@ class YDocStorage(interfaces.IStorage):
                     self._objects.pop(tx, str(obj_id))
                 else:
                     # TODO: new repr should be YMap
-                    # Right now we trigger change event on the whole object, not on the particular properties
+                    # Right now we trigger change event on the whole object,
+                    # not on the particular properties
                     self._objects.set(tx, str(obj_id), new_repr)

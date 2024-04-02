@@ -1,7 +1,9 @@
-from .card import BoardObjectCard
-from internal.models import Position
 import uuid
+
 import internal.pub_sub.mocks
+from internal.models import Position
+
+from .card import BoardObjectCard
 
 
 def test_board_object_card_serialization():

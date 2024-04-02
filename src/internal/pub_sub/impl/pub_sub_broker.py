@@ -1,8 +1,9 @@
 import dataclasses
 import logging
 
-from .. import interfaces
 import internal.repositories.interfaces
+
+from .. import interfaces
 
 
 @dataclasses.dataclass(frozen=True)
@@ -14,9 +15,7 @@ class _EventWithPublisher:
 class PubSubBroker(interfaces.IPubSubBroker):
     def __init__(self):
         # usage: self.subscription[publisher][event_type] -> all callbacks
-        self._subscriptions: dict[
-            interfaces.PublisherId, dict[str, list[interfaces.Callback]]
-        ] = dict()
+        self._subscriptions: dict[interfaces.PublisherId, dict[str, list[interfaces.Callback]]] = {}
         self._unprocessed_events: list[_EventWithPublisher] = []
 
     def publish(self, publisher: interfaces.PublisherId, event: interfaces.Event):
@@ -37,9 +36,9 @@ class PubSubBroker(interfaces.IPubSubBroker):
             publisher,
         )
         if publisher not in self._subscriptions:
-            self._subscriptions[publisher] = dict()
+            self._subscriptions[publisher] = {}
         if type not in self._subscriptions[publisher]:
-            self._subscriptions[publisher][type] = list()
+            self._subscriptions[publisher][type] = []
         self._subscriptions[publisher][type].append(callback)
 
     def process_published(self, repo: internal.repositories.interfaces.IRepository):

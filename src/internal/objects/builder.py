@@ -1,11 +1,12 @@
 import uuid
 
+import internal.models
+import internal.pub_sub.interfaces
+
 from .impl.type_impls import TYPE_IMPLS
 from .impl.common import field_names
 from . import interfaces
 from .types import BoardObjectType
-import internal.models
-import internal.pub_sub.interfaces
 
 
 def build_from_serialized(

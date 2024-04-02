@@ -1,7 +1,8 @@
 import dataclasses
 
-from .. import interfaces
 import internal.repositories.interfaces
+
+from .. import interfaces
 
 
 @dataclasses.dataclass(frozen=True)

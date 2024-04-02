@@ -1,8 +1,9 @@
 import uuid
 
 import internal.objects
-from .impl.card import BoardObjectCard
 import internal.pub_sub.mocks
+
+from .impl.card import BoardObjectCard
 
 
 def test_card_building():

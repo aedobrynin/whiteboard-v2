@@ -1,7 +1,16 @@
 import pytest
 import dataclasses
 
-import internal
+import internal.pub_sub.interfaces
+import internal.pub_sub.impl
+import internal.repositories.interfaces
+import internal.repositories.impl
+import internal.objects
+import internal.objects.interfaces
+import internal.models
+import internal.repositories.events
+import internal.storages.impl
+import internal.controller.impl
 
 
 # TODO: better (and move it somewhere)
@@ -36,7 +45,7 @@ def _get_mock_pub_sub_callback():
 
 
 def test_create_object(tmp_path, get_mock_pub_sub_callback):
-    type_ = internal.objects.BoardObjectType.card
+    type_ = internal.objects.BoardObjectType.CARD
     position = internal.models.Position(1, 2, 3)
 
     # TODO: is this bad that we access 'impl' directly?

@@ -3,6 +3,9 @@ from typing import Optional
 import logging
 
 import internal.objects.interfaces
+import internal.pub_sub.interfaces
+
+from .. import events
 from .. import interfaces
 from .. import exceptions
 
@@ -19,10 +22,10 @@ class Repository(interfaces.IRepository):
         # TODO: should we publish AddObject events on repo creation?
         self._objects: dict[
             internal.objects.interfaces.ObjectId, internal.objects.interfaces.IBoardObject
-        ] = dict()
+        ] = {}
         self._cached_serialized_representations: dict[
             internal.objects.interfaces.ObjectId, Optional[dict]
-        ] = dict()
+        ] = {}
         self._deleted_object_ids: list[internal.objects.interfaces.ObjectId] = []
 
         for object in objects:
@@ -43,10 +46,10 @@ class Repository(interfaces.IRepository):
         if object.id in self._objects:
             raise exceptions.ObjectAlreadyExistsException()
         self._objects[object.id] = object
-        self._publish(internal.repositories.events.EventObjectAdded(object.id))
+        self._publish(events.EventObjectAdded(object.id))
 
     def delete(self, object_id: internal.objects.interfaces.ObjectId) -> None:
-        logging.debug('trying to delete object with id=', str(object_id))
+        logging.debug('trying to delete object with id=%s', str(object_id))
         if object_id not in self._objects:
             raise exceptions.ObjectNotFound()
         del self._objects[object_id]
@@ -54,12 +57,12 @@ class Repository(interfaces.IRepository):
 
         self._deleted_object_ids.append(object_id)
 
-        self._publish(internal.repositories.events.EventObjectDeleted(object_id))
+        self._publish(events.EventObjectDeleted(object_id))
 
     # TODO: optimize this
     def get_updated(self) -> dict[internal.objects.interfaces.ObjectId, Optional[dict]]:
         logging.debug('building updated objects')
-        updated_representations: dict[internal.objects.interfaces.ObjectId, Optional[dict]] = dict()
+        updated_representations: dict[internal.objects.interfaces.ObjectId, Optional[dict]] = {}
         for object in self._objects.values():
             serialized = object.serialize()
             if serialized != self._cached_serialized_representations.get(object.id, None):
@@ -74,4 +77,4 @@ class Repository(interfaces.IRepository):
         return updated_representations
 
     def _publish(self, event: internal.pub_sub.Event):
-        self._pub_sub_broker.publish(internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID, event)
+        self._pub_sub_broker.publish(interfaces.REPOSITORY_PUB_SUB_ID, event)
