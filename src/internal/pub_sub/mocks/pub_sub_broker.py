@@ -1,15 +1,25 @@
-from .. import interfaces
+import dataclasses
 
+from .. import interfaces
 import internal.repositories.interfaces
+
+
+@dataclasses.dataclass(frozen=True)
+class PublishedEvent:
+    publisher: interfaces.PublisherId
+    event: interfaces.Event
 
 
 class MockPubSubBroker(interfaces.IPubSubBroker):
     def __init__(self):
-        pass
+        self._published = []
+
+    @property
+    def published(self) -> list[PublishedEvent]:
+        return self._published
 
     def publish(self, publisher: interfaces.PublisherId, event: interfaces.Event):
-        # TODO: implement when needed
-        pass
+        self._published.append(PublishedEvent(publisher, event))
 
     def subscribe(
         self,

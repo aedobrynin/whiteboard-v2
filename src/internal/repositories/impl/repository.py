@@ -17,6 +17,7 @@ class Repository(interfaces.IRepository):
     ):
         logging.debug('initializing repository with %d objects', len(objects))
 
+        # TODO: should we publish AddObject events on repo creation?
         self._objects: dict[
             internal.objects.interfaces.ObjectId, internal.objects.interfaces.IBoardObject
         ] = dict()
