@@ -128,3 +128,6 @@ def test_repository_no_updates_after_init(get_serialized_card):
     obj = internal.objects.build_from_serialized(get_serialized_card(), broker)
     repo = repository.Repository([obj])
     assert len(repo.get_updated()) == 0
+
+
+# TODO: test pub_sub events
