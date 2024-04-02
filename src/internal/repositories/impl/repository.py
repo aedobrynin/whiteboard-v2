@@ -5,11 +5,16 @@ import logging
 import internal.objects.interfaces
 from .. import interfaces
 from .. import exceptions
+from .. import events
 
 
 class Repository(interfaces.IRepository):
     # TODO: allow repo to be built from serialized objects
-    def __init__(self, objects: list[internal.objects.interfaces.IBoardObject]):
+    def __init__(
+        self,
+        objects: list[internal.objects.interfaces.IBoardObject],
+        pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
+    ):
         logging.debug('initializing repository with %d objects', len(objects))
 
         self._objects: dict[
@@ -24,6 +29,8 @@ class Repository(interfaces.IRepository):
             self._objects[object.id] = object
             self._cached_serialized_representations[object.id] = object.serialize()
 
+        self._pub_sub_broker = pub_sub_broker
+
     def get(
         self, object_id: internal.objects.interfaces.ObjectId
     ) -> Optional[internal.objects.interfaces.IBoardObject]:
@@ -36,6 +43,7 @@ class Repository(interfaces.IRepository):
         if object.id in self._objects:
             raise exceptions.ObjectAlreadyExistsException()
         self._objects[object.id] = object
+        self._publish(internal.repositories.events.EventObjectAdded(object.id))
 
     def delete(self, object_id: internal.objects.interfaces.ObjectId) -> None:
         logging.debug('trying to delete object with id=', str(object_id))
@@ -45,6 +53,8 @@ class Repository(interfaces.IRepository):
         self._cached_serialized_representations[object_id] = None
 
         self._deleted_object_ids.append(object_id)
+
+        self._publish(internal.repositories.events.EventObjectDeleted(object_id))
 
     # TODO: optimize this
     def get_updated(self) -> dict[internal.objects.interfaces.ObjectId, Optional[dict]]:
@@ -62,3 +72,6 @@ class Repository(interfaces.IRepository):
 
         logging.debug('there are %d updated objects', len(updated_representations))
         return updated_representations
+
+    def _publish(self, event: internal.pub_sub.Event):
+        self._pub_sub_broker.publish(internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID, event)

@@ -7,8 +7,8 @@ def test_create_object(tmp_path):
 
     # TODO: is this bad that we access 'impl' directly?
     storage = internal.storages.impl.LocalYDocStorage(tmp_path / 'storage')
-    repo = internal.repositories.impl.Repository([])
     broker = internal.pub_sub.impl.PubSubBroker()
+    repo = internal.repositories.impl.Repository([], broker)
 
     controller = internal.controller.impl.Controller(repo, storage, broker)
     controller.create_object(
