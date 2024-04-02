@@ -4,7 +4,7 @@ from ..types import BoardObjectType
 from .card import BoardObjectCard
 
 TYPE_IMPLS: dict[BoardObjectType, typing.Type] = {
-    BoardObjectType.card: BoardObjectCard,
+    BoardObjectType.CARD: BoardObjectCard,
 }
 
 

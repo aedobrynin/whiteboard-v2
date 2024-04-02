@@ -1,6 +1,8 @@
 import uuid
 
 import internal.objects
+import internal.pub_sub.mocks
+
 from .impl.card import BoardObjectCard
 
 
@@ -12,6 +14,8 @@ def test_card_building():
         'text': 'text',
     }
 
-    card = internal.objects.build_from_serialized(serialized_card)
+    broker = internal.pub_sub.mocks.MockPubSubBroker()
+
+    card = internal.objects.build_from_serialized(serialized_card, broker)
     assert isinstance(card, BoardObjectCard)
     assert card.serialize() == serialized_card

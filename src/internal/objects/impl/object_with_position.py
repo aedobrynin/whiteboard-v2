@@ -2,14 +2,21 @@ from __future__ import annotations
 
 from internal.objects import interfaces
 from internal.models import Position
+import internal.pub_sub.interfaces
 from .common import field_names
 from .object import BoardObject
 from .. import types
 
 
 class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
-    def __init__(self, id: interfaces.ObjectId, type: types.BoardObjectType, position: Position):
-        BoardObject.__init__(self, id, type)
+    def __init__(
+        self,
+        id: interfaces.ObjectId,
+        type: types.BoardObjectType,
+        position: Position,
+        pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
+    ):
+        BoardObject.__init__(self, id, type, pub_sub_broker)
         self.position = position
 
     @property
@@ -26,10 +33,13 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
         return serialized
 
     @staticmethod
-    def from_serialized(data: dict) -> BoardObjectWithPosition:
+    def from_serialized(
+        data: dict, pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker
+    ) -> BoardObjectWithPosition:
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectWithPosition(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
             types.BoardObjectType(data[field_names.TYPE_FIELD]),
             Position.from_serialized(data[field_names.POSITION_FIELD]),
+            pub_sub_broker,
         )

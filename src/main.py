@@ -2,7 +2,11 @@ import argparse
 import logging
 import pathlib
 
-import internal
+import internal.storages.impl
+import internal.repositories.impl
+import internal.controller.impl
+import internal.pub_sub.impl
+import internal.objects
 
 _logging_choice_to_loglevel = {
     'DEBUG': logging.DEBUG,
@@ -36,6 +40,9 @@ def main():
         format='%(asctime)s - %(levelname)s - %(message)s',
     )
 
+    logging.debug('initializing pubsub broker')
+    broker = internal.pub_sub.impl.PubSubBroker()
+
     logging.debug('initializing storage')
     storage = internal.storages.impl.LocalYDocStorage(args['board-path'])
 
@@ -43,14 +50,14 @@ def main():
     logging.debug('there are %d objects in storage', len(serialized_objects))
     objects = []
     for serialized_obj in serialized_objects.values():
-        objects.append(internal.objects.build_from_serialized(serialized_obj))
+        objects.append(internal.objects.build_from_serialized(serialized_obj, broker))
     logging.info('successfully parsed all objects from storage')
 
     logging.debug('initializing repo')
-    repo = internal.repositories.impl.Repository(objects)
+    repo = internal.repositories.impl.Repository(objects, broker)
 
     logging.debug('initializing controller')
-    controller = internal.controller.impl.Controller(repo, storage)   # noqa
+    controller = internal.controller.impl.Controller(repo, storage, broker)   # noqa
 
     input('press enter to stop')
 

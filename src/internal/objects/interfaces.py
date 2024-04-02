@@ -3,7 +3,7 @@ import abc
 import uuid
 
 import internal.models
-
+import internal.pub_sub.interfaces
 from . import types
 
 # TODO: class ObjectId with methods for serialization and creation
@@ -29,7 +29,9 @@ class IBoardObject(abc.ABC):
 
     @staticmethod
     @abc.abstractmethod
-    def from_serialized(data: dict) -> IBoardObject:
+    def from_serialized(
+        data: dict, pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker
+    ) -> IBoardObject:
         pass
 
 
