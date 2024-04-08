@@ -1,6 +1,6 @@
 from __future__ import annotations
 import abc
-from typing import Optional
+from typing import Optional, List
 
 import internal.objects.interfaces
 
@@ -13,6 +13,12 @@ class IRepository(abc.ABC):
     def get(
         self, object_id: internal.objects.interfaces.ObjectId
     ) -> Optional[internal.objects.interfaces.IBoardObject]:
+        pass
+
+    @abc.abstractmethod
+    def get_all(
+        self
+    ) -> List[internal.objects.interfaces.IBoardObject]:
         pass
 
     # raises ObjectAlreadyExistsException if object with the same id already in the repository

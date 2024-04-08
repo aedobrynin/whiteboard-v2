@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, List
 import logging
 
 import internal.objects.interfaces
@@ -40,6 +40,12 @@ class Repository(interfaces.IRepository):
         obj = self._objects.get(object_id, None)
         logging.debug('getting object with id=%s, is_present=%d', str(object_id), obj is not None)
         return obj
+
+    def get_all(
+        self
+    ) -> List[internal.objects.interfaces.IBoardObject]:
+        logging.debug('getting all objects')
+        return [obj for obj in self._objects.values()]
 
     def add(self, object: internal.objects.interfaces.IBoardObject) -> None:
         logging.debug('trying to add object with id=%s', str(object.id))
