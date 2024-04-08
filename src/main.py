@@ -7,6 +7,7 @@ import internal.repositories.impl
 import internal.controller.impl
 import internal.pub_sub.impl
 import internal.objects
+import internal.view
 
 _logging_choice_to_loglevel = {
     'DEBUG': logging.DEBUG,
@@ -51,16 +52,18 @@ def main():
     objects = []
     for serialized_obj in serialized_objects.values():
         objects.append(internal.objects.build_from_serialized(serialized_obj, broker))
+
     logging.info('successfully parsed all objects from storage')
 
     logging.debug('initializing repo')
     repo = internal.repositories.impl.Repository(objects, broker)
 
     logging.debug('initializing controller')
-    controller = internal.controller.impl.Controller(repo, storage, broker)   # noqa
-
-    input('press enter to stop')
-
+    controller = internal.controller.impl.Controller(repo, storage, broker)  # noqa
+    logging.debug('initializing tkinter')
+    card_controller = internal.controller.impl.CardController(repo, storage, broker)
+    root = internal.view.main_window.TkinterTk(card_controller, repo, broker)
+    root.mainloop()
     logging.info('shutting down...')
     storage.save()
 
