@@ -29,20 +29,25 @@ class TkinterTk(tkinter.Tk):
 
         drag_bind_on_events(self.context)
         canvas.bind('<Shift-ButtonPress-1>', self._create_text_canvas)
+        self._init_repo_objects()
+
+    def _init_repo_objects(self):
+        for obj in self.context.repo.get_all():
+            self._create_obj(obj)
 
     def _subscribe(self):
         self.broker.subscribe(
             'view',
             REPOSITORY_PUB_SUB_ID,
             EVENT_TYPE_OBJECT_ADDED,
-            self._create_obj
+            self._create_obj_event
         )
 
         self.broker.subscribe(
             'view',
             REPOSITORY_PUB_SUB_ID,
             EVENT_TYPE_OBJECT_DELETED,
-            self._delete_obj
+            self._delete_obj_event
         )
 
     def _create_text_canvas(self, event: tkinter.Event):
@@ -51,12 +56,15 @@ class TkinterTk(tkinter.Tk):
             Position(x=event.x, y=event.y, z=1)
         )
 
-    def _create_obj(self, _: str, event: EventObjectAdded, repo: IRepository):
+    def _create_obj_event(self, _: str, event: EventObjectAdded, repo: IRepository):
         obj: IBoardObject = repo.get(event.object_id)
+        self._create_obj(obj)
+
+    def _create_obj(self, obj: IBoardObject):
         if obj.type == BoardObjectType.CARD:
-            CanvasTextObject(self.context, event.object_id)
+            CanvasTextObject(self.context, obj.id)
         else:
             pass
 
-    def _delete_obj(self, _: str, event: EventObjectAdded, repo: IRepository):
+    def _delete_obj_event(self, _: str, event: EventObjectAdded, repo: IRepository):
         pass

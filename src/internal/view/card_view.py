@@ -3,7 +3,6 @@ import tkinter
 from . import context
 from ..objects.interfaces import IBoardObjectCard, ObjectId
 from ..controller.interfaces import ICardController
-from ..controller.impl import CardController
 
 
 class CanvasTextObject:
