@@ -28,7 +28,7 @@ class BoardObject(interfaces.IBoardObject):
         return self._type
 
     def serialize(self) -> dict:
-        return {field_names.ID_FIELD: str(self.id), field_names.TYPE_FIELD: self.type.value}
+        return {field_names.ID_FIELD: self.id, field_names.TYPE_FIELD: self.type.value}
 
     @staticmethod
     def from_serialized(
@@ -42,4 +42,4 @@ class BoardObject(interfaces.IBoardObject):
         )
 
     def _publish(self, event: internal.pub_sub.interfaces.Event):
-        self._pub_sub_broker.publish(str(self.id), event)
+        self._pub_sub_broker.publish(self.id, event)

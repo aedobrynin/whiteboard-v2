@@ -14,7 +14,7 @@ def test_board_object_card_serialization():
 
     card = BoardObjectCard(id, position, broker, text)
     assert card.serialize() == {
-        'id': str(id),
+        'id': id,
         'position': position.serialize(),
         'text': text,
         'type': 'card',
@@ -27,7 +27,7 @@ def test_board_object_card_deserialization():
     text = 'text'
 
     serialized = {
-        'id': str(id),
+        'id': id,
         'position': position.serialize(),
         'text': text,
         'type': 'card',

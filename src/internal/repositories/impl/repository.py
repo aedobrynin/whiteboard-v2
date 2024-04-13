@@ -38,18 +38,18 @@ class Repository(interfaces.IRepository):
         self, object_id: internal.objects.interfaces.ObjectId
     ) -> Optional[internal.objects.interfaces.IBoardObject]:
         obj = self._objects.get(object_id, None)
-        logging.debug('getting object with id=%s, is_present=%d', str(object_id), obj is not None)
+        logging.debug('getting object with id=%s, is_present=%d', object_id, obj is not None)
         return obj
 
     def add(self, object: internal.objects.interfaces.IBoardObject) -> None:
-        logging.debug('trying to add object with id=%s', str(object.id))
+        logging.debug('trying to add object with id=%s', object.id)
         if object.id in self._objects:
             raise exceptions.ObjectAlreadyExistsException()
         self._objects[object.id] = object
         self._publish(events.EventObjectAdded(object.id))
 
     def delete(self, object_id: internal.objects.interfaces.ObjectId) -> None:
-        logging.debug('trying to delete object with id=%s', str(object_id))
+        logging.debug('trying to delete object with id=%s', object_id)
         if object_id not in self._objects:
             raise exceptions.ObjectNotFound()
         del self._objects[object_id]
