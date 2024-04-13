@@ -1,35 +1,34 @@
-import uuid
-
 import internal.pub_sub.mocks
 
 from .object import BoardObject
 from ..types import BoardObjectType
+from .object_id import generate_object_id
 
 
 def test_board_object_serialization():
-    _id = uuid.uuid4()
-    _type = BoardObjectType.CARD
+    id = generate_object_id()
+    type = BoardObjectType.CARD
 
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
-    obj = BoardObject(_id, _type, broker)
+    obj = BoardObject(id, type, broker)
     assert obj.serialize() == {
-        'id': str(_id),
-        'type': _type.value,
+        'id': id,
+        'type': type.value,
     }
 
 
 def test_board_object_deserialization():
-    _id = uuid.uuid4()
-    _type = BoardObjectType.CARD.value
+    id = generate_object_id()
+    type = BoardObjectType.CARD.value
 
     serialized = {
-        'id': str(_id),
-        'type': _type,
+        'id': id,
+        'type': type,
     }
 
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
     obj = BoardObject.from_serialized(serialized, broker)
-    assert obj.id == _id
+    assert obj.id == id
     assert obj.type == BoardObjectType.CARD

@@ -1,5 +1,3 @@
-import uuid
-
 import pytest
 
 import internal.objects.interfaces
@@ -126,7 +124,7 @@ def test_repository_delete_raises_on_unknown_id():
     broker = internal.pub_sub.mocks.MockPubSubBroker()
     repo = repository.Repository([], broker)
     with pytest.raises(exceptions.ObjectNotFound):
-        repo.delete(uuid.uuid4())
+        repo.delete('123')
     assert len(broker.published) == 0
 
 

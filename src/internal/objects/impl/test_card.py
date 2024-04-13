@@ -1,13 +1,12 @@
-import uuid
-
 import internal.pub_sub.mocks
 from internal.models import Position
 
 from .card import BoardObjectCard
+from .object_id import generate_object_id
 
 
 def test_board_object_card_serialization():
-    id = uuid.uuid4()
+    id = generate_object_id()
     position = Position(1, 2, 3)
     text = 'text'
 
@@ -23,7 +22,7 @@ def test_board_object_card_serialization():
 
 
 def test_board_object_card_deserialization():
-    id = uuid.uuid4()
+    id = generate_object_id()
     position = Position(1, 2, 3)
     text = 'text'
 

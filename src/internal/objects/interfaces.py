@@ -1,13 +1,12 @@
 from __future__ import annotations
 import abc
-import uuid
 
 import internal.models
 import internal.pub_sub.interfaces
 from . import types
 
 # TODO: class ObjectId with methods for serialization and creation
-ObjectId = uuid.UUID
+ObjectId = str
 
 
 class IBoardObject(abc.ABC):
