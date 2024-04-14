@@ -37,7 +37,7 @@ class Controller(interfaces.IController):
         updates = self._repo.get_updated()
         raw_updates: internal.storages.interfaces.IStorage.UpdatesType = {}
         for (obj_id, update) in updates.items():
-            raw_updates[str(obj_id)] = update
+            raw_updates[obj_id] = update
         self._storage.update(raw_updates)
         logging.debug('finished exectuing feature finish pipeline')
 
