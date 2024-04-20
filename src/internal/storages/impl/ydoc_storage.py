@@ -22,9 +22,9 @@ class YDocStorage(interfaces.IStorage):
         with self._y_doc.begin_transaction() as tx:
             for obj_id, new_repr in updates.items():
                 if new_repr is None:
-                    self._objects.pop(tx, str(obj_id))
+                    self._objects.pop(tx, obj_id)
                 else:
                     # TODO: new repr should be YMap
                     # Right now we trigger change event on the whole object,
                     # not on the particular properties
-                    self._objects.set(tx, str(obj_id), new_repr)
+                    self._objects.set(tx, obj_id, new_repr)

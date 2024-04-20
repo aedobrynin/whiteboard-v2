@@ -1,15 +1,14 @@
-import uuid
-
 import internal.objects
 import internal.pub_sub.mocks
 
 from .impl.card import BoardObjectCard
+from .impl.object_id import generate_object_id
 
 
 def test_card_building():
     serialized_card = {
         'type': 'card',
-        'id': str(uuid.uuid4()),
+        'id': generate_object_id(),
         'position': {'x': 1, 'y': 2, 'z': 3},
         'text': 'text',
     }
