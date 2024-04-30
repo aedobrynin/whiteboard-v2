@@ -1,4 +1,6 @@
 from __future__ import annotations
+import abc
+from typing import List
 
 from internal.objects import interfaces
 from internal.models import Position
@@ -8,16 +10,17 @@ from .object import BoardObject
 from .. import types
 
 
-class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
+class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject, abc.ABC):
     def __init__(
         self,
         id: interfaces.ObjectId,
-        type: types.BoardObjectType,
+        type: types.BoardObjectType,  # noqa
         position: Position,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ):
         BoardObject.__init__(self, id, type, pub_sub_broker)
         self.position = position
+        self.focus = False
 
     @property
     def position(self) -> Position:
@@ -26,6 +29,18 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
     @position.setter
     def position(self, position: Position) -> None:
         self._position = position
+
+    @property
+    def focus(self) -> bool:
+        return self._focus
+
+    @focus.setter
+    def focus(self, focus: bool) -> None:
+        self._focus = focus
+
+    @property
+    def props(self) -> List[str]:
+        return []
 
     def serialize(self) -> dict:
         serialized = super().serialize()

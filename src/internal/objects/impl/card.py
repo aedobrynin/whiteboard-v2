@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import List
+
 from internal.objects import interfaces
 import internal.models
 import internal.pub_sub.interfaces
@@ -11,6 +13,7 @@ _TEXT_FIELD = 'text'
 
 
 class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithPosition):
+
     def __init__(
         self,
         id: interfaces.ObjectId,
@@ -28,6 +31,10 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithPosition):
     @text.setter
     def text(self, text: str) -> None:
         self._text = text
+
+    @property
+    def props(self) -> List[str]:
+        return []
 
     def serialize(self) -> dict:
         serialized = super().serialize()
