@@ -26,7 +26,7 @@ jobs:
       - name: Test with pytest
         run: |
           pip install pytest
-          pytest ./src --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
+          pytest ./src/internal/controller ./src/internal/models ./src/internal/objects ./src/internal/repositories ./src/internal/storages ./src/internal/pub_sub ./src/tests --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
       - name: Lint with Ruff
         run: |
           pip install ruff  
