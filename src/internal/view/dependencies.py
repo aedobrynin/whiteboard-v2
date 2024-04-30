@@ -1,32 +1,24 @@
-import tkinter
-
-from ..controller import interfaces as controller_interfaces
-from ..repositories import interfaces as repo_interfaces
-
-
-class Depen:
-    controller: controller_interfaces.IController
-    repo: repo_interfaces.IRepository
-    canvas: tkinter.Canvas
-
 import logging
 import tkinter
-from tkinter import ttk
+import tkinter.ttk
 
-from menu import Menu
-from objects_storage import ObjectsStorage
-from state_machine import StateMachine
-from pub_sub import Broker
+import internal.controller.interfaces
+import internal.repositories.interfaces
+import internal.pub_sub.interfaces
+import internal.view.menu.impl.menu
+import internal.view.state_machine.impl.state_machine
 
 
-class Context:
+class Dependencies:
+    """
+    There we collect all needed dependencies for view
+    """
     root: tkinter.Tk
-    events_history: events.events_history.EventsHistory
-    event_handlers: events.event_handlers.EventHandlers
-    objects_storage: ObjectsStorage
-    logger: logging.Logger
     canvas: tkinter.Canvas
-    state_machine: StateMachine
-    property_bar: ttk.Frame
-    menu: Menu
-    pub_sub_broker: Broker
+    property_bar: tkinter.ttk.Frame
+    menu: internal.view.menu.impl.menu.Menu
+    logger: logging.Logger
+    state_machine: internal.view.state_machine.impl.state_machine.StateMachine
+    controller: internal.controller.interfaces.IController
+    repo: internal.repositories.interfaces.IRepository
+    pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker
