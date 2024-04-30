@@ -13,12 +13,32 @@ class IController(abc.ABC):
     ):
         pass
 
+    @abc.abstractmethod
+    def delete_object(
+        self, obj_id: internal.objects.interfaces.ObjectId
+    ):
+        pass
 
-class ICardController(abc.ABC):
     @abc.abstractmethod
     def edit_text(
-        self,
-        obj_id: internal.objects.interfaces.ObjectId,
-        text: str
+        self, obj_id: internal.objects.interfaces.ObjectId, text: str
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_font_color(
+        self, obj_id: internal.objects.interfaces.ObjectId, color: str
+    ):
+        pass
+
+    @abc.abstractmethod
+    def move_object(
+        self, obj_id: internal.objects.interfaces.ObjectId, position: internal.models.Position
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_focus(
+        self, obj_id: internal.objects.interfaces.ObjectId, focus: bool
     ):
         pass

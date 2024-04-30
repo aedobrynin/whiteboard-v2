@@ -26,6 +26,23 @@ def _get_serialized_card():
     return _impl
 
 
+@pytest.fixture(name='get_serialized_another_card')
+def get_serialized_another_card():
+    def _impl():
+        return {
+            'id': '4680838b-4217-4992-9932-3d3ebb22c9ec',
+            'position': {
+                'x': 1,
+                'y': 2,
+                'z': 3,
+            },
+            'text': 'text',
+            'type': 'card',
+        }
+
+    return _impl
+
+
 def test_repository_add_object(get_serialized_card):
     broker = internal.pub_sub.mocks.MockPubSubBroker()
     repo = repository.Repository([], broker)
@@ -50,6 +67,17 @@ def test_repository_get_object(get_serialized_card):
     obj = internal.objects.build_from_serialized(get_serialized_card(), broker)
     repo.add(obj)
     assert repo.get(obj.id) == obj
+
+
+def test_repository_get_all_object(get_serialized_card, get_serialized_another_card):
+    broker = internal.pub_sub.mocks.MockPubSubBroker()
+    repo = repository.Repository([], broker)
+
+    obj1 = internal.objects.build_from_serialized(get_serialized_card(), broker)
+    repo.add(obj1)
+    obj2 = internal.objects.build_from_serialized(get_serialized_another_card(), broker)
+    repo.add(obj2)
+    assert {repo.get_all() == [obj1, obj2]}
 
 
 def test_repository_get_object_from_init(get_serialized_card):
@@ -145,4 +173,4 @@ def test_repository_no_updates_after_init(get_serialized_card):
     obj = internal.objects.build_from_serialized(get_serialized_card(), broker)
     repo = repository.Repository([obj], broker)
     assert len(repo.get_updated()) == 0
-    assert len(broker.published) == 0   # TODO: myb it will be changed in future
+    assert len(broker.published) == 0  # TODO: myb it will be changed in future
