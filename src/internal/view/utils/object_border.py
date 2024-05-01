@@ -1,3 +1,5 @@
+import logging
+
 import internal.objects.interfaces
 import internal.view.dependencies
 from .geometry import Rectangle
@@ -21,7 +23,6 @@ def _is_border_drawn(
     dependencies: internal.view.dependencies.Dependencies,
     obj_id: internal.objects.interfaces.ObjectId
 ):
-    obj_id = f'rectangle{obj_id}'
     return bool(dependencies.canvas.gettags(obj_id))
 
 

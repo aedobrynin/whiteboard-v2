@@ -1,18 +1,21 @@
 import tkinter
 from tkinter import ttk, Menu
-from typing import List, Dict, Callable
+from typing import List
 
 import internal.objects.interfaces
+import internal.objects.events
+import internal.pub_sub.interfaces
+import internal.repositories.interfaces
 import internal.view.dependencies
 import internal.view.utils
-from .widgets import font_color_widget
+import internal.view.modules.text.property_bar
+import internal.view.modules.card.property_bar
 
 
 class Submenu:
     obj_id: internal.objects.interfaces.ObjectId
     _property_widgets: List[ttk.Widget]
     _option_menu: Menu
-    _props: List[str]
 
     def __init__(
         self,
@@ -23,13 +26,26 @@ class Submenu:
         self._property_widgets: List[ttk.Widget] = []
         self._option_menu: Menu = None
         obj: internal.objects.interfaces.IBoardObjectWithPosition = dependencies.repo.get(obj_id)
-        self._props = obj.props
-        for prop in self._props:
-            if prop in self._prop_to_func:
-                label, combobox = self._prop_to_func[prop](dependencies, obj_id)
-                self._property_widgets.append(label)
-                self._property_widgets.append(combobox)
+        if obj.type == internal.objects.types.BoardObjectType.TEXT:
+            self._property_widgets = internal.view.modules.text.property_bar.widgets(dependencies,
+                                                                                     obj_id)
+        elif obj.type == internal.objects.types.BoardObjectType.CARD:
+            self._property_widgets = internal.view.modules.card.property_bar.widgets(dependencies,
+                                                                                     obj_id)
+        else:
+            self._property_widgets = []
         self._init_option_menu(dependencies)
+        self._subscribe(dependencies)
+
+    def _subscribe(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
+        dependencies.pub_sub_broker.subscribe(
+            'submenu' + self.obj_id,
+            self.obj_id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
+            lambda *_: internal.view.utils.draw_border(dependencies, obj_id=self.obj_id)
+        )
 
     def _init_option_menu(
         self, dependencies: internal.view.dependencies.Dependencies
@@ -43,12 +59,6 @@ class Submenu:
         self._option_menu.add_command(
             label='Delete', command=lambda: self._delete(dependencies)
         )
-
-    @property
-    def _prop_to_func(self) -> Dict[str, Callable]:
-        return {
-            'font-color': font_color_widget
-        }
 
     def _bring_to_front(
         self, dependencies: internal.view.dependencies.Dependencies

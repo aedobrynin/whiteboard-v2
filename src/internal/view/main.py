@@ -13,6 +13,8 @@ import internal.view.modules.modules
 import internal.view.modules.drag_board
 import internal.view.modules.move_object
 import internal.view.modules.text
+import internal.view.modules.card
+
 import internal.view.modules.submenu
 import internal.view.state_machine.impl.state_machine
 from internal.view.menu.impl.menu import Menu
@@ -76,7 +78,7 @@ def _subscribe(
 
 
 def _create_obj_event(
-    _: str,
+    publisher: internal.pub_sub.interfaces.PublisherId,
     event: internal.repositories.events.EVENT_TYPE_OBJECT_ADDED,
     repo: internal.repositories.interfaces.IRepository
 ):
@@ -88,7 +90,7 @@ def _create_obj_event(
 
 
 def _delete_obj_event(
-    _: str,
+    publisher: internal.pub_sub.interfaces.PublisherId,
     event: internal.repositories.events.EVENT_TYPE_OBJECT_DELETED,
     repo: internal.repositories.interfaces.IRepository
 ):
@@ -105,6 +107,8 @@ def _create_obj(obj: internal.objects.interfaces.IBoardObject):
     """
     if obj.type == internal.objects.BoardObjectType.TEXT:
         internal.view.modules.text.create_text_object(dependencies, obj)
+    if obj.type == internal.objects.BoardObjectType.CARD:
+        internal.view.modules.card.create_card_object(dependencies, obj)
 
 
 def main(

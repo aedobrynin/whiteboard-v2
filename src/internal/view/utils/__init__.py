@@ -4,14 +4,14 @@ from .canvas_repo_obj import (
     get_current_opt
 )
 from .props_values import (
-    get_font_slant,
-    get_font_weight,
-    get_font_size,
+    get_font_slants,
+    get_font_weights,
+    get_font_sizes,
     get_font_colors,
-    get_font_family,
-    get_text_alignment,
-    get_text_line_width,
-    get_line_type
+    get_font_families,
+    get_text_alignments,
+    get_text_line_widths,
+    get_line_types
 )
 
 from . import geometry as geometry
@@ -25,14 +25,14 @@ __all__ = [
     'get_current',
     'get_current_opt_type',
     'get_current_opt',
-    'get_font_slant',
-    'get_font_weight',
-    'get_font_size',
+    'get_font_slants',
+    'get_font_weights',
+    'get_font_sizes',
     'get_font_colors',
-    'get_font_family',
-    'get_text_alignment',
-    'get_text_line_width',
-    'get_line_type',
+    'get_font_families',
+    'get_text_alignments',
+    'get_text_line_widths',
+    'get_line_types',
     'geometry',
     'draw_border',
     'remove_border'
