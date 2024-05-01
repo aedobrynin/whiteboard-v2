@@ -1,7 +1,6 @@
 from __future__ import annotations
 import abc
 from abc import ABC
-from typing import List
 
 import internal.models
 import internal.pub_sub.interfaces

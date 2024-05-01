@@ -1,5 +1,3 @@
-import logging
-
 import internal.objects.interfaces
 import internal.view.dependencies
 from .geometry import Rectangle
