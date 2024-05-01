@@ -26,7 +26,13 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def edit_font_color(
+    def edit_font(
+        self, obj_id: internal.objects.interfaces.ObjectId, **kwargs
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_card_color(
         self, obj_id: internal.objects.interfaces.ObjectId, color: str
     ):
         pass

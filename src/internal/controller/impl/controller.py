@@ -91,22 +91,34 @@ class Controller(interfaces.IController):
             return
         logging.debug('no object id=%s found to edit with text=%s', obj_id, text)
 
-    def edit_font_color(
+    def edit_card_color(
         self, obj_id: internal.objects.interfaces.ObjectId, color: str
     ):
-        obj: typing.Union[
-            internal.objects.interfaces.IBoardObjectCard,
-            internal.objects.interfaces.IBoardObjectText,
-            None
+        obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectCard
         ] = self._repo.get(object_id=obj_id)
         # TODO: think about incorrect obj type
         if obj:
-            logging.debug('editing font color of object old color=%s, new color=%s ',
-                          obj.font_color, color)
-            obj.font_color = color
+            logging.debug('editing text of object old text=%s, new text=%s ', obj.text, color)
+            obj.card_color = color
             self._on_feature_finish()
             return
-        logging.debug('no object id=%s found to edit with text=%s', obj_id, color)
+        logging.debug('no object id=%s found to edit with color=%s', obj_id, color)
+
+    def edit_font(
+        self, obj_id: internal.objects.interfaces.ObjectId, **kwargs
+    ):
+        obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectWithFont
+        ] = self._repo.get(object_id=obj_id)
+        # TODO: think about incorrect obj type
+        if obj:
+            logging.debug('editing font of object from=%s, to=%s ',
+                          obj.font, kwargs)
+            obj.update_font(**kwargs)
+            self._on_feature_finish()
+            return
+        logging.debug('no object id=%s found to edit font with=%s', obj_id, kwargs)
 
     def move_object(
         self, obj_id: internal.objects.interfaces.ObjectId, position: internal.models.Position
