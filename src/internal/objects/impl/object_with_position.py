@@ -1,5 +1,4 @@
 from __future__ import annotations
-import abc
 from typing import List
 
 from internal.objects import interfaces
@@ -8,9 +7,10 @@ import internal.pub_sub.interfaces
 from .common import field_names
 from .object import BoardObject
 from .. import types
+from .. import events
 
 
-class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject, abc.ABC):
+class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
     def __init__(
         self,
         id: interfaces.ObjectId,
@@ -19,8 +19,8 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject, 
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ):
         BoardObject.__init__(self, id, type, pub_sub_broker)
-        self.position = position
-        self.focus = False
+        self._position = position  # to escape calling setter pub-sub event
+        self._focus = False
 
     @property
     def position(self) -> Position:
@@ -29,6 +29,7 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject, 
     @position.setter
     def position(self, position: Position) -> None:
         self._position = position
+        self._publish(events.EventObjectMoved(self.id))
 
     @property
     def focus(self) -> bool:
@@ -37,10 +38,6 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject, 
     @focus.setter
     def focus(self, focus: bool) -> None:
         self._focus = focus
-
-    @property
-    def props(self) -> List[str]:
-        return []
 
     def serialize(self) -> dict:
         serialized = super().serialize()

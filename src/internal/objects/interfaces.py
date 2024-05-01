@@ -1,5 +1,6 @@
 from __future__ import annotations
 import abc
+from abc import ABC
 from typing import List
 
 import internal.models
@@ -56,13 +57,8 @@ class IBoardObjectWithPosition(IBoardObject):
     def focus(self, focus: bool) -> None:
         pass
 
-    @property
-    @abc.abstractmethod
-    def props(self) -> List[str]:
-        pass
 
-
-class IBoardObjectText(IBoardObjectWithPosition):
+class IBoardObjectWithFont(IBoardObjectWithPosition):
     @property
     @abc.abstractmethod
     def text(self) -> str:
@@ -75,62 +71,30 @@ class IBoardObjectText(IBoardObjectWithPosition):
 
     @property
     @abc.abstractmethod
-    def font_slant(self) -> str:
+    def font(self) -> internal.models.Font:
         pass
 
-    @font_slant.setter
+    @font.setter
     @abc.abstractmethod
-    def font_slant(self, font_slant: str) -> None:
+    def font(self, font: internal.models.Font) -> None:
         pass
 
+    @abc.abstractmethod
+    def update_font(self, **kwargs):
+        pass
+
+
+class IBoardObjectText(IBoardObjectWithFont, ABC):
+    pass
+
+
+class IBoardObjectCard(IBoardObjectWithFont):
     @property
     @abc.abstractmethod
-    def font_weight(self) -> str:
+    def card_color(self) -> str:
         pass
 
-    @font_weight.setter
+    @card_color.setter
     @abc.abstractmethod
-    def font_weight(self, font_weight: str) -> None:
-        pass
-
-    @property
-    @abc.abstractmethod
-    def font_color(self) -> str:
-        pass
-
-    @font_color.setter
-    @abc.abstractmethod
-    def font_color(self, font_color: str) -> None:
-        pass
-
-    @property
-    @abc.abstractmethod
-    def font_family(self) -> str:
-        pass
-
-    @font_family.setter
-    @abc.abstractmethod
-    def font_family(self, font_family: str) -> None:
-        pass
-
-    @property
-    @abc.abstractmethod
-    def font_size(self) -> float:
-        pass
-
-    @font_size.setter
-    @abc.abstractmethod
-    def font_size(self, font_size: float) -> None:
-        pass
-
-
-class IBoardObjectCard(IBoardObjectWithPosition):
-    @property
-    @abc.abstractmethod
-    def text(self) -> str:
-        pass
-
-    @text.setter
-    @abc.abstractmethod
-    def text(self, text: str) -> None:
+    def card_color(self, color: str) -> None:
         pass
