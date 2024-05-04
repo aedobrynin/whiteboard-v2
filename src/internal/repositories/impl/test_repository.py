@@ -28,7 +28,7 @@ def _get_serialized_card():
                 'family': 'Arial',
                 'size': 14
             },
-            'card_color': 'light yellow'
+            'color': 'light yellow'
         }
 
     return _impl
@@ -53,7 +53,7 @@ def get_serialized_another_card():
                 'family': 'Arial',
                 'size': 14
             },
-            'card_color': 'light yellow'
+            'color': 'light yellow'
         }
 
     return _impl
