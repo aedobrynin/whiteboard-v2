@@ -13,10 +13,10 @@ from .. import interfaces
 
 class Controller(interfaces.IController):
     def __init__(
-        self,
-        repo: internal.repositories.interfaces.IRepository,
-        storage: internal.storages.interfaces.IStorage,
-        pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
+            self,
+            repo: internal.repositories.interfaces.IRepository,
+            storage: internal.storages.interfaces.IStorage,
+            pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ):
         self._repo = repo
         self._storage = storage
@@ -44,7 +44,7 @@ class Controller(interfaces.IController):
         logging.debug('finished executing feature finish pipeline')
 
     def create_object(
-        self, type: internal.objects.BoardObjectType, position: internal.models.Position  # noqa
+            self, type: internal.objects.BoardObjectType, position: internal.models.Position  # noqa
     ):
         logging.debug('creating object with type=%s, position=%s', type, position)
         obj = internal.objects.build_by_type(type, position, self._pub_sub_broker)
@@ -52,14 +52,14 @@ class Controller(interfaces.IController):
         self._on_feature_finish()
 
     def delete_object(
-        self, obj_id: internal.objects.interfaces.ObjectId
+            self, obj_id: internal.objects.interfaces.ObjectId
     ):
         logging.debug('deleting object=%s', obj_id)
         self._repo.delete(obj_id)
         self._on_feature_finish()
 
     def edit_focus(
-        self, obj_id: internal.objects.interfaces.ObjectId, focus: bool
+            self, obj_id: internal.objects.interfaces.ObjectId, focus: bool
     ):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectWithPosition
@@ -76,7 +76,7 @@ class Controller(interfaces.IController):
         logging.debug('no object id=%s found to edit focus=%s', obj_id, focus)
 
     def edit_text(
-        self, obj_id: internal.objects.interfaces.ObjectId, text: str
+            self, obj_id: internal.objects.interfaces.ObjectId, text: str
     ):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectWithFont
@@ -120,7 +120,7 @@ class Controller(interfaces.IController):
         logging.debug('no object id=%s found to edit with font=%s', obj_id, kwargs)
 
     def move_object(
-        self, obj_id: internal.objects.interfaces.ObjectId, position: internal.models.Position
+            self, obj_id: internal.objects.interfaces.ObjectId, position: internal.models.Position
     ):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectWithPosition
@@ -169,3 +169,38 @@ class Controller(interfaces.IController):
             self._on_feature_finish()
             return
         logging.debug('no object id=%s found to edit with width=%s', obj_id, width)
+
+    # def resize_table_column(
+    #         self, obj_id: internal.objects.interfaces.ObjectId, col:int, width:float
+    # ):
+    #     obj: typing.Optional[
+    #         internal.objects.interfaces.IBoardObjectTable
+    #     ] = self._repo.get(object_id=obj_id)
+    #
+    #     if obj:
+    def change_table(
+            self,
+            obj_id: internal.objects.interfaces.ObjectId,
+            list_col,
+            list_row
+    ):
+        obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectTable
+        ] = self._repo.get(object_id=obj_id)
+        if obj:
+            logging.debug(
+                'editing shape of a table old shape: columns_width=%s and rows_height=%s, new shape: columns_width=%s '
+                'and rows_height=%s ',
+                obj.columns_width,
+                obj.rows_height,
+                list_col,
+                list_row
+            )
+            obj.columns_width = list_col
+            obj.rows_height = list_row
+            obj.columns = len(list_col)
+            obj.rows = len(list_row)
+            self._on_feature_finish()
+            return
+        logging.debug('no object id=%s found to edit with column_width=%s and row_height=%s', obj_id, list_col,
+                      list_row)

@@ -15,6 +15,7 @@ import internal.view.modules.move_object
 import internal.view.modules.text
 import internal.view.modules.card
 import internal.view.modules.pen
+import internal.view.modules.table
 
 import internal.view.modules.submenu
 import internal.view.state_machine.impl.state_machine
@@ -112,6 +113,9 @@ def _create_obj(obj: internal.objects.interfaces.IBoardObject):
         internal.view.modules.card.create_card_object(dependencies, obj)
     if obj.type == internal.objects.BoardObjectType.PEN:
         internal.view.modules.pen.create_pen_object(dependencies, obj)
+
+    if obj.type == internal.objects.BoardObjectType.TABLE:
+        internal.view.modules.table.create_table_object(dependencies, obj)
 
 
 def main(

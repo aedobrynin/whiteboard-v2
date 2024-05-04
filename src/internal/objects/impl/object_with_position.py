@@ -29,6 +29,7 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
     def position(self, position: Position) -> None:
         self._position = position
         self._publish(events.EventObjectMoved(self.id))
+        # self.obj()
 
     @property
     def focus(self) -> bool:

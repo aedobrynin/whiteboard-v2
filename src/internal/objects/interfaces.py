@@ -131,3 +131,64 @@ class IBoardObjectPen(IBoardObjectWithPosition):
     @abc.abstractmethod
     def width(self, width: float) -> None:
         pass
+
+class IBoardObjectTable(IBoardObjectWithPosition):
+    @property
+    @abc.abstractmethod
+    def default_width(self) -> float:
+        pass
+
+    @default_width.setter
+    @abc.abstractmethod
+    def default_width(self, val: float) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def default_height(self) -> float:
+        pass
+
+    @default_height.setter
+    @abc.abstractmethod
+    def default_height(self, val: float) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def columns(self) -> int:
+        pass
+
+    @columns.setter
+    @abc.abstractmethod
+    def columns(self, val: int) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def rows(self) -> int:
+        pass
+
+    @rows.setter
+    @abc.abstractmethod
+    def rows(self, val: int) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def columns_width(self) -> list:
+        pass
+
+    @columns_width.setter
+    @abc.abstractmethod
+    def columns_width(self, val: list) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def rows_height(self) -> list:
+        pass
+
+    @rows_height.setter
+    @abc.abstractmethod
+    def rows_height(self, val: list) -> None:
+        pass
