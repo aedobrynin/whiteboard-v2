@@ -15,12 +15,12 @@ def test_board_object_with_font_serialization():
     width = 2.0
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
-    obj = BoardObjectPen(id, type, position, broker, points, color, width)
+    obj = BoardObjectPen(id, position, broker, points, color, width)
     assert obj.serialize() == {
         'id': id,
         'type': type.value,
         'position': position.serialize(),
-        'points': points,
+        'points': [p.serialize() for p in points],
         'color': color,
         'width': width
     }
@@ -38,7 +38,7 @@ def test_board_object_with_font_deserialization():
         'id': id,
         'type': type.value,
         'position': position.serialize(),
-        'points': points,
+        'points': [p.serialize() for p in points],
         'color': color,
         'width': width
     }
