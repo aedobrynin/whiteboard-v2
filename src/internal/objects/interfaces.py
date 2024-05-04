@@ -1,6 +1,7 @@
 from __future__ import annotations
 import abc
 from abc import ABC
+from typing import List
 
 import internal.models
 import internal.pub_sub.interfaces
@@ -90,10 +91,43 @@ class IBoardObjectText(IBoardObjectWithFont, ABC):
 class IBoardObjectCard(IBoardObjectWithFont):
     @property
     @abc.abstractmethod
-    def card_color(self) -> str:
+    def color(self) -> str:
         pass
 
-    @card_color.setter
+    @color.setter
     @abc.abstractmethod
-    def card_color(self, color: str) -> None:
+    def color(self, color: str) -> None:
+        pass
+
+
+class IBoardObjectPen(IBoardObjectWithPosition):
+
+    @property
+    @abc.abstractmethod
+    def points(self) -> List[internal.models.Position]:
+        pass
+
+    @points.setter
+    @abc.abstractmethod
+    def points(self, points: List[internal.models.Position]) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def color(self) -> str:
+        pass
+
+    @color.setter
+    @abc.abstractmethod
+    def color(self, color: str) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def width(self) -> float:
+        pass
+
+    @width.setter
+    @abc.abstractmethod
+    def width(self, width: float) -> None:
         pass

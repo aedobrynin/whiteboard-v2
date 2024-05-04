@@ -1,5 +1,6 @@
 from __future__ import annotations
 import abc
+from typing import List
 
 import internal.models
 import internal.objects
@@ -32,8 +33,20 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def edit_card_color(
+    def edit_color(
         self, obj_id: internal.objects.interfaces.ObjectId, color: str
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_width(
+        self, obj_id: internal.objects.interfaces.ObjectId, width: float
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_points(
+        self, obj_id: internal.objects.interfaces.ObjectId, points: List[internal.models.Position]
     ):
         pass
 

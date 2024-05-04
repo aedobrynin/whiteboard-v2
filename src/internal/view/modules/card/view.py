@@ -26,7 +26,7 @@ def create_card_object(
     arr = create_note_coord(dependencies, obj.id, _WIDTH)
     dependencies.canvas.create_rectangle(
         arr,
-        fill=obj.card_color,
+        fill=obj.color,
         tags=[obj.id, note_tag],
     )
     dependencies.canvas.tag_lower(note_tag, text_tag)

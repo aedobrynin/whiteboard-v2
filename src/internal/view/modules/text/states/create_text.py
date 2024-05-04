@@ -36,14 +36,14 @@ def _predicate_from_root_to_create_text(
 
 def _on_leave(
     global_dependencies: internal.view.dependencies.Dependencies,
-    _: Dict,
-    __: tkinter.Event
+    state_ctx: Dict,
+    event: tkinter.Event
 ):
     global_dependencies.menu.set_selected_state()
 
 
 def _predicate_from_create_text_to_root(
-    _: internal.view.dependencies.Dependencies,
+    global_dependencies: internal.view.dependencies.Dependencies,
     event: tkinter.Event
 ) -> bool:
     # Release left mouse button

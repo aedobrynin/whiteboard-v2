@@ -9,7 +9,7 @@ from .. import types
 
 _TEXT_FIELD = 'text'
 _FONT_FIELD = 'font'
-_CARD_COLOR_FIELD = 'card_color'
+_COLOR_FIELD = 'color'
 
 
 class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
@@ -20,22 +20,22 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         text: str = 'text',
         font: internal.models.Font = internal.models.Font(),
-        card_color: str = 'light yellow'
+        color: str = 'light yellow'
     ):
         super().__init__(id, types.BoardObjectType.CARD, position, pub_sub_broker, text, font)
-        self._card_color = card_color
+        self._color = color
 
     @property
-    def card_color(self) -> str:
-        return self._card_color
+    def color(self) -> str:
+        return self._color
 
-    @card_color.setter
-    def card_color(self, color: str) -> None:
-        self._card_color = color
+    @color.setter
+    def color(self, color: str) -> None:
+        self._color = color
 
     def serialize(self) -> dict:
         serialized = super().serialize()
-        serialized[_CARD_COLOR_FIELD] = self.card_color
+        serialized[_COLOR_FIELD] = self.color
         return serialized
 
     @staticmethod
@@ -50,5 +50,5 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
             pub_sub_broker,
             data[_TEXT_FIELD],
             internal.models.Font.from_serialized(data[_FONT_FIELD]),
-            data[_CARD_COLOR_FIELD]
+            data[_COLOR_FIELD]
         )

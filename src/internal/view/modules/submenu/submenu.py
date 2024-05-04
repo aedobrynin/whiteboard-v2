@@ -10,7 +10,7 @@ import internal.view.dependencies
 import internal.view.utils
 import internal.view.modules.text.property_bar
 import internal.view.modules.card.property_bar
-
+import internal.view.modules.pen.property_bar
 
 class Submenu:
     obj_id: internal.objects.interfaces.ObjectId
@@ -27,11 +27,20 @@ class Submenu:
         self._option_menu: Menu = None
         obj: internal.objects.interfaces.IBoardObjectWithPosition = dependencies.repo.get(obj_id)
         if obj.type == internal.objects.types.BoardObjectType.TEXT:
-            self._property_widgets = internal.view.modules.text.property_bar.widgets(dependencies,
-                                                                                     obj_id)
+            self._property_widgets = internal.view.modules.text.property_bar.widgets(
+                dependencies,
+                obj_id
+            )
         elif obj.type == internal.objects.types.BoardObjectType.CARD:
-            self._property_widgets = internal.view.modules.card.property_bar.widgets(dependencies,
-                                                                                     obj_id)
+            self._property_widgets = internal.view.modules.card.property_bar.widgets(
+                dependencies,
+                obj_id
+            )
+        elif obj.type == internal.objects.types.BoardObjectType.PEN:
+            self._property_widgets = internal.view.modules.pen.property_bar.widgets(
+                dependencies,
+                obj_id
+            )
         else:
             self._property_widgets = []
         self._init_option_menu(dependencies)

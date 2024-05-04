@@ -40,7 +40,7 @@ def test_card_building():
             'family': 'Arial',
             'size': 14
         },
-        'card_color': 'light yellow'
+        'color': 'light yellow'
     }
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 

@@ -227,4 +227,4 @@ def _set_card_color(
     color: str
 ):
     dependencies.canvas.itemconfig(CARD_NOTE_PREFIX + obj_id, fill=color)
-    dependencies.controller.edit_card_color(obj_id, color=color)
+    dependencies.controller.edit_color(obj_id, color=color)
