@@ -170,14 +170,6 @@ class Controller(interfaces.IController):
             return
         logging.debug('no object id=%s found to edit with width=%s', obj_id, width)
 
-    # def resize_table_column(
-    #         self, obj_id: internal.objects.interfaces.ObjectId, col:int, width:float
-    # ):
-    #     obj: typing.Optional[
-    #         internal.objects.interfaces.IBoardObjectTable
-    #     ] = self._repo.get(object_id=obj_id)
-    #
-    #     if obj:
     def change_table(
             self,
             obj_id: internal.objects.interfaces.ObjectId,
@@ -204,3 +196,50 @@ class Controller(interfaces.IController):
             return
         logging.debug('no object id=%s found to edit with column_width=%s and row_height=%s', obj_id, list_col,
                       list_row)
+
+    def add_object_to(
+            self,
+            obj_id: internal.objects.interfaces.ObjectId,
+            parent_obj_id: internal.objects.interfaces.ObjectId,
+            coord: [int, int]
+    ):
+        obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectWithPosition
+        ] = self._repo.get(object_id=obj_id)
+        parent_obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectTable
+        ] = self._repo.get(object_id=parent_obj_id)
+
+        if not parent_obj:
+            logging.debug('no table id=%s found', parent_obj)
+        if not obj:
+            logging.debug('no object id=%s found to add', obj_id)
+
+        logging.debug('object added to a table: column=%s, row=%s', coord[0], coord[1])
+        print('added to', coord)
+        parent_obj.linked_objects[obj_id] = coord
+        self._on_feature_finish()
+
+
+    def remove_object_from(
+            self,
+            obj_id: internal.objects.interfaces.ObjectId,
+            parent_obj_id: internal.objects.interfaces.ObjectId,
+            coord: [int, int]
+    ):
+        obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectWithPosition
+        ] = self._repo.get(object_id=obj_id)
+        parent_obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectTable
+        ] = self._repo.get(object_id=parent_obj_id)
+
+        if not parent_obj:
+            logging.debug('no table id=%s found', parent_obj)
+        if not obj:
+            logging.debug('no object id=%s found to add', obj_id)
+
+        logging.debug('object removed from a table: column=%s, row=%s', coord[0], coord[1])
+        print('removed from', coord)
+        del parent_obj.linked_objects[obj_id]
+        self._on_feature_finish()

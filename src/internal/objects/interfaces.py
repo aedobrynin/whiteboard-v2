@@ -192,3 +192,13 @@ class IBoardObjectTable(IBoardObjectWithPosition):
     @abc.abstractmethod
     def rows_height(self, val: list) -> None:
         pass
+
+    @property
+    @abc.abstractmethod
+    def linked_objects(self) -> dict[str, [int, int]]:
+        pass
+
+    @linked_objects.setter
+    @abc.abstractmethod
+    def linked_objects(self, val: dict[str, [int, int]]) -> None:
+        pass

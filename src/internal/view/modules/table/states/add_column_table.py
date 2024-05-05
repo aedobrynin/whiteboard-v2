@@ -52,9 +52,7 @@ def _on_leave(
         state_ctx: Dict,
         __: tkinter.Event
 ):
-    print(state_ctx[_OBJ_ID],
-        state_ctx[_LIST_COL],
-        state_ctx[_LIST_ROW])
+
     global_dependencies.controller.change_table(
         state_ctx[_OBJ_ID],
         state_ctx[_LIST_COL],

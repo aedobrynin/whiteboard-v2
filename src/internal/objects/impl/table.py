@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
-from internal.objects import interfaces
+from internal.objects import interfaces, events
 import internal.models
 import internal.pub_sub.interfaces
 from .object_with_position import BoardObjectWithPosition
@@ -15,6 +15,7 @@ _COLUMNS_WIDTH = 'columns-width'
 _ROWS_HEIGHT = 'rows-height'
 _DEFAULT_WIDTH = 'default-width'
 _DEFAULT_HEIGHT = 'default-height'
+_LINKED_OBJECTS = 'linked-objects'
 
 
 class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
@@ -28,7 +29,8 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
             width: float = 50,
             height: float = 30,
             col_widths: list[float] = None,
-            row_heights: list[float] = None
+            row_heights: list[float] = None,
+            linked_objects: dict[str, [int, int]] = None
     ):
         super().__init__(id, types.BoardObjectType.TABLE, position, pub_sub_broker)
         self.columns = columns
@@ -43,6 +45,10 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
             self.rows_height = [height] * rows
         else:
             self.rows_height = row_heights
+        if linked_objects is None:
+            self.linked_objects = dict()
+        else:
+            self.linked_objects = linked_objects
 
     def serialize(self) -> dict:
         serialized = super().serialize()
@@ -53,6 +59,8 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
 
         serialized[_COLUMNS_WIDTH] = self.columns_width
         serialized[_ROWS_HEIGHT] = self.rows_height
+
+        serialized[_LINKED_OBJECTS] = self.linked_objects
 
         return serialized
 
@@ -71,9 +79,10 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
             data[_DEFAULT_WIDTH],
             data[_DEFAULT_HEIGHT],
             data[_COLUMNS_WIDTH],
-            data[_ROWS_HEIGHT]
-
+            data[_ROWS_HEIGHT],
+            data[_LINKED_OBJECTS]
         )
+
     @property
     def default_width(self) -> float:
         return self._default_width
@@ -122,16 +131,14 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
     def rows_height(self, val: list) -> None:
         self._rows_height = val
 
-    # @property
-    # def props(self) -> List[str]:
-    #     return [
-    #             _TABLE_COLUMNS_FIELD,
-    #             _TABLE_ROWS_FIELD,
-    #             _DEFAULT_WIDTH,
-    #             _DEFAULT_HEIGHT,
-    #             _COLUMNS_WIDTH,
-    #             _ROWS_HEIGHT
-    #     ]
+    @property
+    def linked_objects(self) -> dict[str, [int, int]]:
+        return self._linked_objects
+
+    @linked_objects.setter
+    def linked_objects(self, val: dict[str, [int, int]]) -> None:
+        self._linked_objects = val
 
     def tags_object(self, coords):
         return f"cell~" + coords + f"/{self.id}"
+

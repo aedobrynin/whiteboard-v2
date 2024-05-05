@@ -1,14 +1,21 @@
 import copy
+import re
 
 import internal.objects.interfaces
 import internal.view.dependencies
+import internal.controller
+from typing import Optional
 
 
 # TODO function for tags
+from internal.models import Position
+
+
 def create_table_object(
         dependencies: internal.view.dependencies.Dependencies,
         obj: internal.objects.interfaces.IBoardObjectTable
 ) -> None:
+    print(obj.linked_objects)
     cells = [[dependencies.canvas.create_rectangle(obj.position.x + sum(obj.columns_width[:i]),
                                                    obj.position.y + sum(obj.rows_height[:j]),
                                                    obj.position.x + sum(obj.columns_width[:i + 1]),
@@ -170,6 +177,43 @@ def resize_row(
     temp[row_n] = y2 - y1
     return obj.columns_width, temp
 
+def add_object(
+        dependencies: internal.view.dependencies.Dependencies,
+        obj: internal.objects.interfaces.IBoardObjectWithPosition,
+        position: Position
+) -> (Optional[internal.objects.interfaces.ObjectId], (int,int)):
+    # TODO think about the type
 
+    x = position.x
+    y = position.y
+    overlap = list(dependencies.canvas.find_overlapping(x, y, x, y))
+    for widget_id in overlap:
+        tags = dependencies.canvas.gettags(widget_id)
+        if "table" in tags:
+            ids = [s for s in tags if re.search("[0-9]+,[0-9]+", s)]
+            cell, obj_id = ids[0].split('/')
+            x, y = map(lambda c: int(c), cell.split(','))
+            if ids:
+                return tags[0], (x, y)
 
-# TODO adjust cells to the object
+            break
+    return None, (None, None)
+
+def unsub(
+        dependencies: internal.view.dependencies.Dependencies,
+        obj: internal.objects.interfaces.IBoardObjectWithPosition,
+        parent_id: internal.objects.interfaces.ObjectId
+):
+    parent_obj: internal.objects.interfaces.IBoardObjectTable = dependencies.repo.get(parent_id)
+    if obj.id not in parent_obj.linked_objects.keys():
+        return
+
+    coords = parent_obj.linked_objects[obj.id]
+
+    x1, y1, x2, y2 = dependencies.canvas.coords(f"{coords[0]},{coords[1]}/" + parent_id)
+    if (obj.position.x > x2 or
+        obj.position.x < x1 or
+        obj.position.y > y2 or
+        obj.position.y < y1):
+        var = dependencies.controller.remove_object_from(obj.id, parent_id, coords)
+

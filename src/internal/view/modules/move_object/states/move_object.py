@@ -3,11 +3,14 @@ from typing import Dict, Optional
 import tkinter
 
 from internal.models import Position
-from internal.objects.interfaces import IBoardObjectWithPosition
+from internal.objects.interfaces import IBoardObjectWithPosition, IBoardObjectTable
+from internal.objects.events import EVENT_TYPE_OBJECT_MOVED
+from internal.view.modules.table.view import add_object
 from internal.view.state_machine.impl import State
 from internal.view.utils.canvas_repo_obj import get_current_opt
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
+import internal.view.modules.table.view
 
 _MOVE_OBJECT_STATE_NAME = 'MOVE_OBJECT'
 _INITIAL_POSITION = 'obj_position'
@@ -57,6 +60,34 @@ def _on_leave(
     global_dependencies.controller.move_object(state_ctx[_OBJ_ID], position)
     global_dependencies.canvas.configure(background='white')
 
+    obj = global_dependencies.repo.get(state_ctx[_OBJ_ID])
+    if not obj:
+        return
+    # for table
+    if isinstance(obj, internal.objects.interfaces.IBoardObjectTable):
+        obj: IBoardObjectTable = obj
+        if not obj:
+            return
+        for (id, _) in obj.linked_objects.items():
+            child: Optional[IBoardObjectWithPosition] = global_dependencies.repo.get(id)
+            global_dependencies.controller.move_object(id, child.position + diff)
+
+        return
+
+    parent_obj_id, coords = add_object(global_dependencies, obj, position)
+    if parent_obj_id:
+        global_dependencies.controller.add_object_to(state_ctx[_OBJ_ID], parent_obj_id, coords)
+
+        global_dependencies.pub_sub_broker.subscribe(
+                parent_obj_id,
+                obj.id,
+                EVENT_TYPE_OBJECT_MOVED,
+                lambda *_: internal.view.modules.table.view.unsub(global_dependencies, obj, parent_obj_id)
+            )
+
+
+
+
 
 def _handle_event(
     global_dependencies: internal.view.dependencies.Dependencies,
@@ -74,8 +105,25 @@ def _handle_event(
         x - state_ctx[_LAST_DRAG_EVENT_X],
         y - state_ctx[_LAST_DRAG_EVENT_Y]
     )
+
+    obj = global_dependencies.repo.get(state_ctx[_OBJ_ID])
+    # for table
+    if isinstance(obj, internal.objects.interfaces.IBoardObjectTable):
+        obj: IBoardObjectTable = obj
+        if not obj:
+            return
+        for (key, _) in obj.linked_objects.items():
+            global_dependencies.canvas.move(
+                key,
+                x - state_ctx[_LAST_DRAG_EVENT_X],
+                y - state_ctx[_LAST_DRAG_EVENT_Y]
+            )
+
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y
+
+
+
 
 
 def _predicate_from_root_to_move_object(
