@@ -20,6 +20,10 @@ from .object_border import (
     draw_border,
     remove_border
 )
+from .object_aligning import (
+    aligning,
+    remove_aligning
+)
 
 __all__ = [
     'get_current',
@@ -35,5 +39,7 @@ __all__ = [
     'get_line_types',
     'geometry',
     'draw_border',
-    'remove_border'
+    'remove_border',
+    'aligning',
+    'remove_aligning'
 ]

@@ -46,6 +46,7 @@ def _on_leave(
     state_ctx: Dict,
     event: tkinter.Event
 ):
+    internal.view.utils.remove_aligning(global_dependencies, state_ctx[_OBJ_ID])
     # TODO: Z-Coordinate
     diff: Position = Position(
         state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X],
@@ -66,6 +67,7 @@ def _handle_event(
     # Motion with Left mouse button pressed
     if event.type != tkinter.EventType.Motion or event.state & (1 << 8) == 0:
         return
+    internal.view.utils.aligning(global_dependencies, state_ctx[_OBJ_ID])
 
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
