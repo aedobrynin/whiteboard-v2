@@ -15,6 +15,7 @@ import internal.view.modules.move_object
 import internal.view.modules.text
 import internal.view.modules.card
 import internal.view.modules.pen
+import internal.view.modules.table_view
 
 import internal.view.modules.submenu
 import internal.view.state_machine.impl.state_machine

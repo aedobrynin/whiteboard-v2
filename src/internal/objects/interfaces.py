@@ -99,6 +99,16 @@ class IBoardObjectCard(IBoardObjectWithFont):
     def color(self, color: str) -> None:
         pass
 
+    @property
+    @abc.abstractmethod
+    def attributes(self) -> dict:
+        pass
+
+    @attributes.setter
+    @abc.abstractmethod
+    def attributes(self, attributes: dict) -> None:
+        pass
+
 
 class IBoardObjectPen(IBoardObjectWithPosition):
 
