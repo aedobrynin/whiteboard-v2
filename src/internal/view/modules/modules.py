@@ -9,8 +9,8 @@ __MODULE_DEPENDENCIES = {}
 
 def register_module(module_name: str, dependencies: List[str] = []):  # noqa
     def __register(init_func):
-        if module_name in __MODULES:
-            raise AttributeError(f'module with name {module_name} was already registered')
+        # if module_name in __MODULES:
+        #     raise AttributeError(f'module with name {module_name} was already registered')
         __MODULES[module_name] = init_func
         __MODULE_DEPENDENCIES[module_name] = dependencies
         return init_func

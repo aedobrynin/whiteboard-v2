@@ -7,7 +7,7 @@ import internal.models.position
 from internal.view.state_machine.impl import State
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
-from ..consts import TEXT_MENU_ENTRY_NAME, TEXT_CREATE_STATE_NAME
+from internal.view.modules.text.consts import TEXT_MENU_ENTRY_NAME, TEXT_CREATE_STATE_NAME
 
 
 def _predicate_from_root_to_create_text(

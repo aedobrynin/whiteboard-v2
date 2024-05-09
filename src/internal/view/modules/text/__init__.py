@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import internal.view.modules.modules
 import internal.objects.types
 import internal.view.dependencies
 from .states import create_text, change_text

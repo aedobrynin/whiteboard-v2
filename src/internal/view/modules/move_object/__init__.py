@@ -1,10 +1,11 @@
+import internal.view.modules.modules
 import internal.view.dependencies
-import internal.view.modules.move_object.states.move_object
+import internal.view.modules.move_object.states.move_object_state
 
 
 def create_states(dependencies: internal.view.dependencies.Dependencies):
     dependencies.state_machine.add_state(
-        internal.view.modules.move_object.states.move_object.create_state(
+        internal.view.modules.move_object.states.move_object_state.create_state(
             dependencies.state_machine)
     )
 

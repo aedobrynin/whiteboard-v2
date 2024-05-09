@@ -1,7 +1,7 @@
 from __future__ import annotations
-
+import internal.view.modules.modules
 import internal.view.dependencies
-from .states import submenu
+from .states import submenu_state
 
 
 def create_states(dependencies: internal.view.dependencies):

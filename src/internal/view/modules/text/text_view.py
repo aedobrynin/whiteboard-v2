@@ -12,7 +12,7 @@ import internal.repositories.interfaces
 import internal.view.dependencies
 import internal.view.objects.interfaces
 from internal.view.objects.impl.object import ViewObject
-from ...consts import VIEW_OBJECT_ID
+from internal.view.consts import VIEW_OBJECT_ID
 
 from internal.view.utils import (
     get_font_families,

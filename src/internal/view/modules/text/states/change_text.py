@@ -7,8 +7,8 @@ import internal.view.dependencies
 import internal.view.state_machine.interfaces
 from internal.view.objects.interfaces import IViewObject
 from internal.view.state_machine.impl import State
-from ..consts import OBJ_ID, TEXT_CHANGE_STATE_NAME
-from ..text_view import TextObject
+from internal.view.modules.text.consts import OBJ_ID, TEXT_CHANGE_STATE_NAME
+from internal.view.modules.text.text_view import TextObject
 
 
 def _on_enter(
