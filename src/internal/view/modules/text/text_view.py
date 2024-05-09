@@ -171,6 +171,7 @@ class TextObject(ViewObject):
         font = obj.font
         tk_font = as_tkinter_object_font(font)
         dependencies.canvas.itemconfigure(self.text_id, font=tk_font)
+        dependencies.canvas.itemconfigure(self.text_id, fill=font.color)
 
     def get_text_update_from_repo(
         self, dependencies: internal.view.dependencies.Dependencies

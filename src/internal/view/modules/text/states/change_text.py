@@ -63,12 +63,16 @@ def _handle_event(
         return
     global_dependencies.canvas.index(obj.text_id, 'insert')
     # TODO: to many events
+
     text_new: str = global_dependencies.canvas.itemcget(obj.id, 'text')
     global_dependencies.controller.edit_text(
         state_ctx[OBJ_ID],
         text_new + event.char
     )
     global_dependencies.canvas.index(obj.text_id, 'insert')
+    new_index = global_dependencies.canvas.index(obj.text_id, 'insert') + 1
+    global_dependencies.canvas.icursor(obj.text_id, new_index)
+    global_dependencies.canvas.select_clear()
     # global_dependencies.canvas.insert(obj.text_id, 'insert', event.char)
 
 

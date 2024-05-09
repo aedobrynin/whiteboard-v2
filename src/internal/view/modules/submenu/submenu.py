@@ -1,3 +1,4 @@
+import logging
 import tkinter
 from tkinter import ttk, Menu
 from typing import List
@@ -42,7 +43,13 @@ class Submenu:
         dependencies.pub_sub_broker.subscribe(
             'submenu' + self.obj_id,
             self.obj_id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_FONT,
+            lambda *_: self._draw_border(dependencies)
+        )
+        dependencies.pub_sub_broker.subscribe(
+            'submenu' + self.obj_id,
+            self.obj_id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_TEXT,
             lambda *_: self._draw_border(dependencies)
         )
 

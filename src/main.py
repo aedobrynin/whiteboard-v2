@@ -7,7 +7,7 @@ import internal.repositories.impl
 import internal.controller.impl
 import internal.pub_sub.impl
 import internal.objects
-import internal.view.main
+import internal.view.view
 
 _logging_choice_to_loglevel = {
     'DEBUG': logging.DEBUG,
@@ -58,8 +58,9 @@ def main():
 
     logging.debug('initializing controller')
     controller = internal.controller.impl.Controller(repo, storage, broker)
+
     logging.debug('initializing tkinter')
-    internal.view.main.main(
+    internal.view.view.main(
         controller=controller,
         repo=repo,
         pub_sub=broker
