@@ -1,4 +1,3 @@
-import logging
 import tkinter
 import tkinter.font
 import tkinter.ttk

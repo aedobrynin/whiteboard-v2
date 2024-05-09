@@ -9,9 +9,6 @@ import internal.view.dependencies
 ROOT_STATE_NAME = 'ROOT'
 OBJECT_FOCUS_STATE_NAME = 'OBJECT-FOCUS'
 
-PUB_SUB_ID = 'STATE_MACHINE'
-STATE_CHANGED_NOTIFICATION = 'state_changed'
-
 
 class IState(abc.ABC):
     @abc.abstractmethod

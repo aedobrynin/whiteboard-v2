@@ -102,19 +102,19 @@ class Controller(interfaces.IController):
         logging.debug('no object id=%s found to edit with font=%s', obj_id, font)
 
     def move_object(
-        self, obj_id: internal.objects.interfaces.ObjectId, position: internal.models.Position
+        self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position
     ):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectWithPosition
         ] = self._repo.get(object_id=obj_id)
         if not obj:
-            logging.debug('no object id=%s found to edit with position=%s', obj_id, position)
+            logging.debug('no object id=%s found to edit with delta=%s', obj_id, delta)
             return
         logging.debug(
             'editing object with new delta=%s',
-            position
+            delta
         )
-        obj.position = position
+        obj.position = obj.position + delta
         self._on_feature_finish()
 
     def edit_points(

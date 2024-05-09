@@ -18,7 +18,7 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ):
         BoardObject.__init__(self, id, type, pub_sub_broker)
-        self._position = position  # to escape calling setter pub-sub event
+        self.position = position
 
     @property
     def position(self) -> Position:

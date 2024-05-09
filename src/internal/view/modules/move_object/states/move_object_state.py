@@ -4,7 +4,6 @@ import tkinter
 
 from internal.models import Position
 from internal.view.objects.interfaces import IViewObject
-from internal.objects.interfaces import IBoardObjectWithPosition
 from internal.view.state_machine.impl import State
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
@@ -12,8 +11,6 @@ import internal.view.dependencies
 _MOVE_OBJECT_STATE_NAME = 'MOVE_OBJECT'
 _LAST_DRAG_EVENT_X = 'last_drag_event_x'
 _LAST_DRAG_EVENT_Y = 'last_drag_event_y'
-_FIRST_DRAG_EVENT_X = 'first_drag_event_x'
-_FIRST_DRAG_EVENT_Y = 'first_drag_event_y'
 _OBJ_ID = 'obj_id'
 
 
@@ -22,7 +19,7 @@ def _on_enter(
     state_ctx: Dict,
     event: tkinter.Event
 ):
-    global_dependencies.canvas.scan_mark(event.x, event.y)
+    # global_dependencies.canvas.scan_mark(event.x, event.y)
 
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
@@ -35,9 +32,6 @@ def _on_enter(
 
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y
-
-    state_ctx[_FIRST_DRAG_EVENT_X] = x
-    state_ctx[_FIRST_DRAG_EVENT_Y] = y
     state_ctx[_OBJ_ID] = obj.id
 
 
@@ -66,9 +60,9 @@ def _handle_event(
         y - state_ctx[_LAST_DRAG_EVENT_Y],
         0
     )
-    obj: IBoardObjectWithPosition = global_dependencies.repo.get(object_id=state_ctx[_OBJ_ID])
+    # TODO: we send difference, if 2 people uses it collapse
     global_dependencies.controller.move_object(
-        state_ctx[_OBJ_ID], obj.position + diff
+        state_ctx[_OBJ_ID], diff
     )
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y

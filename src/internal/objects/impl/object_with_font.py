@@ -23,8 +23,8 @@ class BoardObjectWithFont(interfaces.IBoardObjectWithFont, BoardObjectWithPositi
         font: internal.models.Font = internal.models.Font()
     ):
         BoardObjectWithPosition.__init__(self, id, type, position, pub_sub_broker)
-        self._text = text
-        self._font = font  # to escape calling setter pub-sub event
+        self.text = text
+        self.font = font
 
     @property
     def text(self) -> str:

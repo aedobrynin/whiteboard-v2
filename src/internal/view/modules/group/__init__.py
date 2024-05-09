@@ -3,7 +3,7 @@
 # import internal.view.dependencies
 # from .states import create_group
 # from .view import create_group_object as create_group_object
-# from .consts import GROUP_MENU_ENTRY_NAME, GROUP_MODULE_NAME
+# from .consts.py import GROUP_MENU_ENTRY_NAME, GROUP_MODULE_NAME
 #
 #
 # def create_states(dependencies: internal.view.dependencies):

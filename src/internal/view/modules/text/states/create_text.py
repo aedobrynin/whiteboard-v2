@@ -4,9 +4,9 @@ import tkinter
 
 import internal.objects
 import internal.models.position
-from internal.view.state_machine.impl import State
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
+from internal.view.state_machine.impl import State
 from internal.view.modules.text.consts import TEXT_MENU_ENTRY_NAME, TEXT_CREATE_STATE_NAME
 
 

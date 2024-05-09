@@ -1,5 +1,4 @@
 import internal.pub_sub.mocks
-from internal.models import Position
 
 from .group import BoardObjectGroup
 from ..types import BoardObjectType

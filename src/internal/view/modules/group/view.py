@@ -4,7 +4,7 @@
 # import internal.objects.events
 # import internal.view.dependencies
 # import internal.view.utils
-# from .consts import GROUP_PREFIX
+# from .consts.py import GROUP_PREFIX
 #
 #
 # def create_group_object(

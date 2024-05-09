@@ -11,7 +11,7 @@
 # import internal.view.dependencies
 # import internal.view.utils
 # from internal.view.state_machine.impl import State
-# from ..consts import GROUP_MENU_ENTRY_NAME
+# from ..consts.py import GROUP_MENU_ENTRY_NAME
 #
 # CREATE_GROUP_STATE_NAME = 'CREATE_GROUP'
 # FRAME_TKINTER_OBJECT_TAG = 'group_module_frame_object_tag'

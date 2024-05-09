@@ -1,4 +1,3 @@
-import logging
 import tkinter
 from tkinter import ttk, Menu
 from typing import List
@@ -11,6 +10,11 @@ import internal.view.dependencies
 import internal.view.utils
 import internal.view.modules.text
 import internal.view.modules.pen.property_bar
+
+_SUBMENU_PREFIX = 'submenu'
+_BRING_TO_FRONT_DESC = 'Bring To Front'
+_SEND_TO_BACK_DESC = 'Send To Back'
+_DELETE_DESC = 'Delete'
 
 
 class Submenu:
@@ -41,7 +45,7 @@ class Submenu:
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         dependencies.pub_sub_broker.subscribe(
-            'submenu' + self.obj_id,
+            _SUBMENU_PREFIX + self.obj_id,
             self.obj_id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
             lambda *_: self._draw_border(dependencies)
@@ -67,12 +71,12 @@ class Submenu:
     ):
         self._option_menu = Menu(None, tearoff=0)
         self._option_menu.add_command(
-            label='Bring To Front', command=lambda: self._bring_to_front(dependencies)
+            label=_BRING_TO_FRONT_DESC, command=lambda: self._bring_to_front(dependencies)
         )
         self._option_menu.add_command(
-            label='Send To Back', command=lambda: self._send_to_back(dependencies))
+            label=_SEND_TO_BACK_DESC, command=lambda: self._send_to_back(dependencies))
         self._option_menu.add_command(
-            label='Delete', command=lambda: self._delete(dependencies)
+            label=_DELETE_DESC, command=lambda: self._delete(dependencies)
         )
 
     def _bring_to_front(

@@ -12,9 +12,7 @@ import internal.view.dependencies
 
 from internal.view.state_machine.impl import State
 from internal.view.modules.submenu.submenu import Submenu
-
-SUBMENU = 'SUBMENU'
-
+from internal.view.modules.submenu.consts import SUBMENU_STATE
 
 def _on_enter(
     global_dependencies: internal.view.dependencies.Dependencies,
@@ -25,8 +23,8 @@ def _on_enter(
     if not obj:
         # TODO: log
         return
-    state_ctx[SUBMENU] = Submenu(obj.id, global_dependencies)
-    state_ctx[SUBMENU].show_menu(global_dependencies)
+    state_ctx[SUBMENU_STATE] = Submenu(obj.id, global_dependencies)
+    state_ctx[SUBMENU_STATE].show_menu(global_dependencies)
 
 
 def _handle_event(
@@ -36,7 +34,7 @@ def _handle_event(
 ):
     if event.type != tkinter.EventType.ButtonRelease or event.num != 3:
         return
-    submenu: Submenu = state_ctx[SUBMENU]
+    submenu: Submenu = state_ctx[SUBMENU_STATE]
     submenu.show_option_menu(global_dependencies, event)
 
 
@@ -45,11 +43,11 @@ def _on_leave(
     state_ctx: Dict,
     event: tkinter.Event
 ):
-    if SUBMENU not in state_ctx:
+    if SUBMENU_STATE not in state_ctx:
         return
-    submenu: Submenu = state_ctx[SUBMENU]
+    submenu: Submenu = state_ctx[SUBMENU_STATE]
     if submenu.obj_id is not None:
-        state_ctx[SUBMENU].destroy_menu(global_dependencies)
+        state_ctx[SUBMENU_STATE].destroy_menu(global_dependencies)
 
 
 def _predicate_from_root_to_context(

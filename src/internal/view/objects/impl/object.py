@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from abc import ABC
 
 import internal.objects.interfaces
@@ -46,7 +45,7 @@ class ViewObject(IViewObject, ABC):
     def move_to(
         self, dependencies: internal.view.dependencies.Dependencies, x: int, y: int
     ):
-        dependencies.canvas.moveto(self.id, x, y)
+        dependencies.canvas.coords(self.id, x, y)
 
     def get_frame_rect(
         self, dependencies: internal.view.dependencies.Dependencies

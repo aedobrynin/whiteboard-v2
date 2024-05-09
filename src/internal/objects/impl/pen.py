@@ -10,9 +10,11 @@ from .object import BoardObject
 from .. import types
 from .. import events
 
-_POINT_FIELD = 'points'
+_POINTS_FIELD = 'points'
 _COLOR_FIELD = 'color'
 _WIDTH_FIELD = 'width'
+_DEFAULT_WIDTH = 2
+_DEFAULT_COLOR = 'black'
 
 
 class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
@@ -21,17 +23,17 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
         id: interfaces.ObjectId,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         points: List[internal.models.Position],  # noqa
-        color: str = 'black',
-        width: float = 2
+        color: str = _DEFAULT_COLOR,
+        width: float = _DEFAULT_WIDTH
     ):
         BoardObject.__init__(
             self, id,
             types.BoardObjectType.PEN,
             pub_sub_broker
         )
-        self._points = points
-        self._color = color  # to escape calling setter pub-sub event
-        self._width = width
+        self.points = points
+        self.color = color
+        self.width = width
 
     @property
     def points(self) -> List[internal.models.Position]:
@@ -61,7 +63,7 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
 
     def serialize(self) -> dict:
         serialized = super().serialize()
-        serialized[_POINT_FIELD] = [p.serialize() for p in self.points]
+        serialized[_POINTS_FIELD] = [p.serialize() for p in self.points]
         serialized[_COLOR_FIELD] = self.color
         serialized[_WIDTH_FIELD] = self.width
         return serialized
@@ -74,7 +76,7 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
         return BoardObjectPen(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
             pub_sub_broker,
-            [Position.from_serialized(p) for p in data[_POINT_FIELD]],
+            [Position.from_serialized(p) for p in data[_POINTS_FIELD]],
             data[_COLOR_FIELD],
             data[_WIDTH_FIELD]
         )
