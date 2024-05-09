@@ -19,7 +19,6 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
     ):
         BoardObject.__init__(self, id, type, pub_sub_broker)
         self._position = position  # to escape calling setter pub-sub event
-        self._focus = False
 
     @property
     def position(self) -> Position:
@@ -29,14 +28,6 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
     def position(self, position: Position) -> None:
         self._position = position
         self._publish(events.EventObjectMoved(self.id))
-
-    @property
-    def focus(self) -> bool:
-        return self._focus
-
-    @focus.setter
-    def focus(self, focus: bool) -> None:
-        self._focus = focus
 
     def serialize(self) -> dict:
         serialized = super().serialize()

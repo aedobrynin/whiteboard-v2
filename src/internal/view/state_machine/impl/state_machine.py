@@ -97,9 +97,5 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
                 return
         self._cur_state.handle_event(self._global_dependencies, self._cur_state_context, event)
 
-    def reset(self):
-        self._cur_state = self._states[internal.view.state_machine.interfaces.ROOT_STATE_NAME]
-        self._cur_state_context = self._make_empty_context()
-
     def cur_state_name(self) -> str:
         return self._cur_state.name

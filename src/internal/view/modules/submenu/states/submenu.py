@@ -11,8 +11,8 @@ import internal.view.state_machine.interfaces
 import internal.view.dependencies
 
 from internal.view.state_machine.impl import State
-from internal.view.utils import get_current_opt
 from internal.view.modules.submenu.submenu import Submenu
+
 SUBMENU = 'SUBMENU'
 
 
@@ -21,7 +21,7 @@ def _on_enter(
     state_ctx: Dict,
     event: tkinter.Event
 ):
-    obj = get_current_opt(global_dependencies)
+    obj = global_dependencies.objects_storage.get_current_opt(global_dependencies)
     if not obj:
         # TODO: log
         return
@@ -59,7 +59,7 @@ def _predicate_from_root_to_context(
     # Release Left mouse button
     if event.type != tkinter.EventType.ButtonRelease or event.num != 1:
         return False
-    cur_obj = get_current_opt(global_dependencies)
+    cur_obj = global_dependencies.objects_storage.get_current_opt(global_dependencies)
     return cur_obj is not None
 
 
@@ -70,7 +70,7 @@ def _predicate_from_context_to_root(
     # Release Left mouse button
     if event.type != tkinter.EventType.ButtonRelease or event.num != 1:
         return False
-    cur_obj = get_current_opt(global_dependencies)
+    cur_obj = global_dependencies.objects_storage.get_current_opt(global_dependencies)
     return cur_obj is None
 
 
@@ -81,7 +81,7 @@ def _predicate_from_context_to_context(
     # Release Left mouse button
     if event.type != tkinter.EventType.ButtonRelease or event.num != 1:
         return False
-    cur_obj = get_current_opt(global_dependencies)
+    cur_obj = global_dependencies.objects_storage.get_current_opt(global_dependencies)
     return cur_obj is not None
 
 

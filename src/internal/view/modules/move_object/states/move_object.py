@@ -3,14 +3,13 @@ from typing import Dict, Optional
 import tkinter
 
 from internal.models import Position
+from internal.view.objects.interfaces import IViewObject
 from internal.objects.interfaces import IBoardObjectWithPosition
 from internal.view.state_machine.impl import State
-from internal.view.utils.canvas_repo_obj import get_current_opt
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
 
 _MOVE_OBJECT_STATE_NAME = 'MOVE_OBJECT'
-_INITIAL_POSITION = 'obj_position'
 _LAST_DRAG_EVENT_X = 'last_drag_event_x'
 _LAST_DRAG_EVENT_Y = 'last_drag_event_y'
 _FIRST_DRAG_EVENT_X = 'first_drag_event_x'
@@ -28,7 +27,9 @@ def _on_enter(
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
 
-    obj: Optional[IBoardObjectWithPosition] = get_current_opt(global_dependencies)
+    obj: Optional[IViewObject] = global_dependencies.objects_storage.get_current_opt(
+        global_dependencies
+    )
     if not obj:
         return
 
@@ -37,7 +38,6 @@ def _on_enter(
 
     state_ctx[_FIRST_DRAG_EVENT_X] = x
     state_ctx[_FIRST_DRAG_EVENT_Y] = y
-    state_ctx[_INITIAL_POSITION] = obj.position
     state_ctx[_OBJ_ID] = obj.id
 
 
@@ -47,14 +47,6 @@ def _on_leave(
     event: tkinter.Event
 ):
     # TODO: Z-Coordinate
-    diff: Position = Position(
-        state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X],
-        state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y],
-        0
-    )
-    position = state_ctx[_INITIAL_POSITION] + diff
-    # TODO: correct the coord
-    global_dependencies.controller.move_object(state_ctx[_OBJ_ID], position)
     global_dependencies.canvas.configure(background='white')
 
 
@@ -69,10 +61,14 @@ def _handle_event(
 
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
-    global_dependencies.canvas.move(
-        state_ctx[_OBJ_ID],
+    diff: Position = Position(
         x - state_ctx[_LAST_DRAG_EVENT_X],
-        y - state_ctx[_LAST_DRAG_EVENT_Y]
+        y - state_ctx[_LAST_DRAG_EVENT_Y],
+        0
+    )
+    obj: IBoardObjectWithPosition = global_dependencies.repo.get(object_id=state_ctx[_OBJ_ID])
+    global_dependencies.controller.move_object(
+        state_ctx[_OBJ_ID], obj.position + diff
     )
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y
@@ -85,7 +81,9 @@ def _predicate_from_root_to_move_object(
     # Motion with Left mouse button pressed
     if event.type != tkinter.EventType.Motion or event.state & (1 << 8) == 0:
         return False
-    cur_obj = get_current_opt(global_dependencies)
+    cur_obj = global_dependencies.objects_storage.get_current_opt(
+        global_dependencies
+    )
     return cur_obj is not None
 
 

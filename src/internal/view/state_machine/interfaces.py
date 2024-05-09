@@ -89,10 +89,6 @@ class IStateMachine(abc.ABC):
     def handle_event(self, event: tkinter.Event):
         pass
 
-    @abc.abstractmethod
-    def reset(self):
-        pass
-
     @property
     @abc.abstractmethod
     def cur_state_name(self) -> str:

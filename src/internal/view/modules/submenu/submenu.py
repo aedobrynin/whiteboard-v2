@@ -8,9 +8,9 @@ import internal.pub_sub.interfaces
 import internal.repositories.interfaces
 import internal.view.dependencies
 import internal.view.utils
-import internal.view.modules.text.property_bar
-import internal.view.modules.card.property_bar
+import internal.view.modules.text
 import internal.view.modules.pen.property_bar
+
 
 class Submenu:
     obj_id: internal.objects.interfaces.ObjectId
@@ -27,34 +27,39 @@ class Submenu:
         self._option_menu: Menu = None
         obj: internal.objects.interfaces.IBoardObjectWithPosition = dependencies.repo.get(obj_id)
         if obj.type == internal.objects.types.BoardObjectType.TEXT:
-            self._property_widgets = internal.view.modules.text.property_bar.widgets(
-                dependencies,
+            obj_canvas: internal.view.modules.text.TextObject = dependencies.objects_storage.get_by_id(
                 obj_id
             )
-        elif obj.type == internal.objects.types.BoardObjectType.CARD:
-            self._property_widgets = internal.view.modules.card.property_bar.widgets(
-                dependencies,
-                obj_id
-            )
-        elif obj.type == internal.objects.types.BoardObjectType.PEN:
-            self._property_widgets = internal.view.modules.pen.property_bar.widgets(
-                dependencies,
-                obj_id
-            )
+            self._property_widgets = obj_canvas.widgets(dependencies)
         else:
             self._property_widgets = []
         self._init_option_menu(dependencies)
-        self._subscribe(dependencies)
+        self._subscribe_draw_border(dependencies)
 
-    def _subscribe(
+    def _subscribe_draw_border(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         dependencies.pub_sub_broker.subscribe(
             'submenu' + self.obj_id,
             self.obj_id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
-            lambda *_: internal.view.utils.draw_border(dependencies, obj_id=self.obj_id)
+            lambda *_: self._draw_border(dependencies)
         )
+
+    def _draw_border(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
+        obj = dependencies.objects_storage.get_opt_by_id(self.obj_id)
+        if obj and obj.get_focused(dependencies):
+            obj.draw_rect(dependencies)
+
+    def _remove_border(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
+        obj = dependencies.objects_storage.get_opt_by_id(self.obj_id)
+        if obj:
+            obj.remove_rect(dependencies)
+            obj.set_focused(dependencies, False)
 
     def _init_option_menu(
         self, dependencies: internal.view.dependencies.Dependencies
@@ -97,16 +102,20 @@ class Submenu:
     def show_menu(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
-        internal.view.utils.draw_border(dependencies, obj_id=self.obj_id)
-        dependencies.controller.edit_focus(obj_id=self.obj_id, focus=True)
+        obj = dependencies.objects_storage.get_opt_by_id(self.obj_id)
+        if obj:
+            obj.set_focused(dependencies, True)
+            self._draw_border(dependencies)
         for w in self._property_widgets:
             w.pack(pady=1, fill='both')
 
     def destroy_menu(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
-        internal.view.utils.remove_border(dependencies, obj_id=self.obj_id)
-        dependencies.controller.edit_focus(obj_id=self.obj_id, focus=False)
+        obj = dependencies.objects_storage.get_opt_by_id(self.obj_id)
+        if obj:
+            obj.set_focused(dependencies, False)
+            self._remove_border(dependencies)
         self._option_menu.destroy()
         for w in self._property_widgets:
             w.destroy()

@@ -47,16 +47,6 @@ class IBoardObjectWithPosition(IBoardObject):
     def position(self, pos: internal.models.Position) -> None:
         pass
 
-    @property
-    @abc.abstractmethod
-    def focus(self) -> bool:
-        pass
-
-    @focus.setter
-    @abc.abstractmethod
-    def focus(self, focus: bool) -> None:
-        pass
-
 
 class IBoardObjectWithFont(IBoardObjectWithPosition):
     @property
@@ -79,10 +69,6 @@ class IBoardObjectWithFont(IBoardObjectWithPosition):
     def font(self, font: internal.models.Font) -> None:
         pass
 
-    @abc.abstractmethod
-    def update_font(self, **kwargs):
-        pass
-
 
 class IBoardObjectText(IBoardObjectWithFont, ABC):
     pass
@@ -100,7 +86,7 @@ class IBoardObjectCard(IBoardObjectWithFont):
         pass
 
 
-class IBoardObjectPen(IBoardObjectWithPosition):
+class IBoardObjectPen(IBoardObject):
 
     @property
     @abc.abstractmethod
@@ -130,4 +116,17 @@ class IBoardObjectPen(IBoardObjectWithPosition):
     @width.setter
     @abc.abstractmethod
     def width(self, width: float) -> None:
+        pass
+
+
+class IBoardObjectGroup(IBoardObject):
+
+    @property
+    @abc.abstractmethod
+    def children_ids(self) -> tuple[ObjectId]:
+        pass
+
+    @children_ids.setter
+    @abc.abstractmethod
+    def children_ids(self, children_ids: tuple[ObjectId]) -> None:
         pass

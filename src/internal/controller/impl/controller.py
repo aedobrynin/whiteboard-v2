@@ -44,10 +44,10 @@ class Controller(interfaces.IController):
         logging.debug('finished executing feature finish pipeline')
 
     def create_object(
-        self, type: internal.objects.BoardObjectType, position: internal.models.Position  # noqa
+        self, type: internal.objects.BoardObjectType, **kwargs  # noqa
     ):
-        logging.debug('creating object with type=%s, position=%s', type, position)
-        obj = internal.objects.build_by_type(type, position, self._pub_sub_broker)
+        logging.debug('creating object with type=%s and kwargs=%s', type, kwargs)
+        obj = internal.objects.build_by_type(type, self._pub_sub_broker, **kwargs)
         self._repo.add(obj)
         self._on_feature_finish()
 
@@ -57,23 +57,6 @@ class Controller(interfaces.IController):
         logging.debug('deleting object=%s', obj_id)
         self._repo.delete(obj_id)
         self._on_feature_finish()
-
-    def edit_focus(
-        self, obj_id: internal.objects.interfaces.ObjectId, focus: bool
-    ):
-        obj: typing.Optional[
-            internal.objects.interfaces.IBoardObjectWithPosition
-        ] = self._repo.get(object_id=obj_id)
-        if obj:
-            logging.debug(
-                'editing object old focus=%s with new focus=%s ',
-                obj.focus,
-                focus
-            )
-            obj.focus = focus
-            self._on_feature_finish()
-            return
-        logging.debug('no object id=%s found to edit focus=%s', obj_id, focus)
 
     def edit_text(
         self, obj_id: internal.objects.interfaces.ObjectId, text: str
@@ -105,19 +88,18 @@ class Controller(interfaces.IController):
         logging.debug('no object id=%s found to edit with color=%s', obj_id, color)
 
     def edit_font(
-        self, obj_id: internal.objects.interfaces.ObjectId, **kwargs
+        self, obj_id: internal.objects.interfaces.ObjectId, font: internal.models.Font
     ):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectWithFont
         ] = self._repo.get(object_id=obj_id)
         # TODO: think about incorrect obj type
         if obj:
-            logging.debug('editing object with old font=%s, to=%s',
-                          obj.font, kwargs)
-            obj.update_font(**kwargs)
+            logging.debug('editing object with old font=%s, to=%s', obj.font, font)
+            obj.font = font
             self._on_feature_finish()
             return
-        logging.debug('no object id=%s found to edit with font=%s', obj_id, kwargs)
+        logging.debug('no object id=%s found to edit with font=%s', obj_id, font)
 
     def move_object(
         self, obj_id: internal.objects.interfaces.ObjectId, position: internal.models.Position
@@ -125,19 +107,19 @@ class Controller(interfaces.IController):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectWithPosition
         ] = self._repo.get(object_id=obj_id)
-        if obj:
-            logging.debug(
-                'editing object old coord=%s with new coord=%s',
-                obj.position,
-                position
-            )
-            obj.position = position
-            self._on_feature_finish()
+        if not obj:
+            logging.debug('no object id=%s found to edit with position=%s', obj_id, position)
             return
-        logging.debug('no object id=%s found to edit with position=%s', obj_id, position)
+        logging.debug(
+            'editing object with new delta=%s',
+            position
+        )
+        obj.position = position
+        self._on_feature_finish()
 
     def edit_points(
-        self, obj_id: internal.objects.interfaces.ObjectId, points: typing.List[internal.models.Position]
+        self, obj_id: internal.objects.interfaces.ObjectId,
+        points: typing.List[internal.models.Position]
     ):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectPen
@@ -152,6 +134,24 @@ class Controller(interfaces.IController):
             self._on_feature_finish()
             return
         logging.debug('no object id=%s found to edit with points=%s', obj_id, points)
+
+    def edit_children_ids(
+        self, obj_id: internal.objects.interfaces.ObjectId,
+        children_ids: typing.Tuple[internal.objects.interfaces.ObjectId]
+    ):
+        obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectGroup
+        ] = self._repo.get(object_id=obj_id)
+        if obj:
+            logging.debug(
+                'editing object old children_ids=%s with new children_ids=%s',
+                obj.children_ids,
+                children_ids
+            )
+            obj.children_ids = children_ids
+            self._on_feature_finish()
+            return
+        logging.debug('no object id=%s found to edit with children_ids=%s', obj_id, children_ids)
 
     def edit_width(
         self, obj_id: internal.objects.interfaces.ObjectId, width: float

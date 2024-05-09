@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import List
 
 from internal.objects import interfaces
-from internal.models import Position, Font
+from internal.models import Position
 import internal.pub_sub.interfaces
 from .common import field_names
-from .object_with_position import BoardObjectWithPosition
+from .object import BoardObject
 from .. import types
 from .. import events
 
@@ -15,20 +15,18 @@ _COLOR_FIELD = 'color'
 _WIDTH_FIELD = 'width'
 
 
-class BoardObjectPen(interfaces.IBoardObjectPen, BoardObjectWithPosition):
+class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
     def __init__(
         self,
         id: interfaces.ObjectId,
-        position: Position,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
-        points: List[internal.models.Position] = [Position(0, 0, 0)],  # noqa
+        points: List[internal.models.Position],  # noqa
         color: str = 'black',
         width: float = 2
     ):
-        BoardObjectWithPosition.__init__(
+        BoardObject.__init__(
             self, id,
             types.BoardObjectType.PEN,
-            position,
             pub_sub_broker
         )
         self._points = points
@@ -75,7 +73,6 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObjectWithPosition):
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectPen(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
-            Position.from_serialized(data[field_names.POSITION_FIELD]),
             pub_sub_broker,
             [Position.from_serialized(p) for p in data[_POINT_FIELD]],
             data[_COLOR_FIELD],

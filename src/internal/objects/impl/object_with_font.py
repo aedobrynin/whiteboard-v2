@@ -33,6 +33,8 @@ class BoardObjectWithFont(interfaces.IBoardObjectWithFont, BoardObjectWithPositi
     @text.setter
     def text(self, text: str) -> None:
         self._text = text
+        self._publish(events.EventObjectChangedSize(self.id))
+        self._publish(events.EventObjectChangedText(self.id))
 
     @property
     def font(self) -> internal.models.Font:
@@ -42,10 +44,7 @@ class BoardObjectWithFont(interfaces.IBoardObjectWithFont, BoardObjectWithPositi
     def font(self, font: internal.models.Font) -> None:
         self._font = font
         self._publish(events.EventObjectChangedSize(self.id))
-
-    def update_font(self, **kwargs):
-        self.font.update_fields(**kwargs)
-        self._publish(events.EventObjectChangedSize(self.id))
+        self._publish(events.EventObjectChangedFont(self.id))
 
     def serialize(self) -> dict:
         serialized = super().serialize()
