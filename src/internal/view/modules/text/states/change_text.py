@@ -49,31 +49,27 @@ def _handle_event(
         return
 
     if event.keysym == 'BackSpace':
-        insert = global_dependencies.canvas.index(obj.text_id, 'insert')
-        if insert > 0:
-            text_new: str = global_dependencies.canvas.itemcget(obj.id, 'text')
+        index = global_dependencies.canvas.index(obj.text_id, 'insert')
+        if index > 0:
+            text: str = global_dependencies.canvas.itemcget(obj.id, 'text')
             global_dependencies.controller.edit_text(
                 state_ctx[OBJ_ID],
-                text_new[:-1]
+                text[:index - 1] + text[index:]
             )
-            # global_dependencies.canvas.dchars(obj.text_id, insert - 1, insert - 1)
+            global_dependencies.canvas.icursor(obj.text_id, index - 1)
         return
 
     if event.char == '':
         return
     global_dependencies.canvas.index(obj.text_id, 'insert')
     # TODO: to many events
-
-    text_new: str = global_dependencies.canvas.itemcget(obj.id, 'text')
+    index = global_dependencies.canvas.index(obj.text_id, 'insert')
+    text: str = global_dependencies.canvas.itemcget(obj.id, 'text')
     global_dependencies.controller.edit_text(
         state_ctx[OBJ_ID],
-        text_new + event.char
+        text[:index] + event.char + text[index:]
     )
-    global_dependencies.canvas.index(obj.text_id, 'insert')
-    new_index = global_dependencies.canvas.index(obj.text_id, 'insert') + 1
-    global_dependencies.canvas.icursor(obj.text_id, new_index)
-    global_dependencies.canvas.select_clear()
-    # global_dependencies.canvas.insert(obj.text_id, 'insert', event.char)
+    global_dependencies.canvas.icursor(obj.text_id, index + 1)
 
 
 def _on_leave(

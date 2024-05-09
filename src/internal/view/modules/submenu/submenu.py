@@ -43,13 +43,7 @@ class Submenu:
         dependencies.pub_sub_broker.subscribe(
             'submenu' + self.obj_id,
             self.obj_id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_FONT,
-            lambda *_: self._draw_border(dependencies)
-        )
-        dependencies.pub_sub_broker.subscribe(
-            'submenu' + self.obj_id,
-            self.obj_id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_TEXT,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
             lambda *_: self._draw_border(dependencies)
         )
 
