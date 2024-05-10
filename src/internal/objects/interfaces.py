@@ -195,10 +195,10 @@ class IBoardObjectTable(IBoardObjectWithPosition):
 
     @property
     @abc.abstractmethod
-    def linked_objects(self) -> dict[str, [int, int]]:
+    def linked_objects(self) -> dict[str, list]:
         pass
 
     @linked_objects.setter
     @abc.abstractmethod
-    def linked_objects(self, val: dict[str, [int, int]]) -> None:
+    def linked_objects(self, val: dict[str, list]) -> None:
         pass

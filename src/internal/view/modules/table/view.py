@@ -9,13 +9,14 @@ from typing import Optional
 
 # TODO function for tags
 from internal.models import Position
+from internal.objects.events import EVENT_TYPE_OBJECT_MOVED
 
 
 def create_table_object(
         dependencies: internal.view.dependencies.Dependencies,
         obj: internal.objects.interfaces.IBoardObjectTable
 ) -> None:
-    print(obj.linked_objects)
+
     cells = [[dependencies.canvas.create_rectangle(obj.position.x + sum(obj.columns_width[:i]),
                                                    obj.position.y + sum(obj.rows_height[:j]),
                                                    obj.position.x + sum(obj.columns_width[:i + 1]),
@@ -44,6 +45,14 @@ def create_table_object(
                                                  tags=[obj.id, obj.id + 'row_l', 'line', f'{i - 1}',
                                                        obj.id + 'row_l' + f'/{i - 1}']) for i in
                  range(1, obj.rows + 1)]
+
+    for child_id, coord in obj.linked_objects.items():
+        dependencies.pub_sub_broker.subscribe(
+            obj.id,
+            child_id,
+            EVENT_TYPE_OBJECT_MOVED,
+            lambda *_: internal.view.modules.table.view.unsub(dependencies, dependencies.repo.get(child_id), obj.id)
+    )
     # return [cells, add_c, add_r, column_lines, row_lines]
 
 
@@ -181,7 +190,7 @@ def add_object(
         dependencies: internal.view.dependencies.Dependencies,
         obj: internal.objects.interfaces.IBoardObjectWithPosition,
         position: Position
-) -> (Optional[internal.objects.interfaces.ObjectId], (int,int)):
+) -> (Optional[internal.objects.interfaces.ObjectId], list):
     # TODO think about the type
 
     x = position.x
@@ -194,10 +203,10 @@ def add_object(
             cell, obj_id = ids[0].split('/')
             x, y = map(lambda c: int(c), cell.split(','))
             if ids:
-                return tags[0], (x, y)
+                return tags[0], [x, y]
 
             break
-    return None, (None, None)
+    return None, [None, None]
 
 def unsub(
         dependencies: internal.view.dependencies.Dependencies,
@@ -209,8 +218,7 @@ def unsub(
         return
 
     coords = parent_obj.linked_objects[obj.id]
-
-    x1, y1, x2, y2 = dependencies.canvas.coords(f"{coords[0]},{coords[1]}/" + parent_id)
+    x1, y1, x2, y2 = dependencies.canvas.coords(f"{int(coords[0])},{int(coords[1])}/" + parent_id)
     if (obj.position.x > x2 or
         obj.position.x < x1 or
         obj.position.y > y2 or

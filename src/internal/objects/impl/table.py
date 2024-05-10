@@ -30,7 +30,7 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
             height: float = 30,
             col_widths: list[float] = None,
             row_heights: list[float] = None,
-            linked_objects: dict[str, [int, int]] = None
+            linked_objects: dict[str, list] = None
     ):
         super().__init__(id, types.BoardObjectType.TABLE, position, pub_sub_broker)
         self.columns = columns
@@ -60,7 +60,7 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
         serialized[_COLUMNS_WIDTH] = self.columns_width
         serialized[_ROWS_HEIGHT] = self.rows_height
 
-        serialized[_LINKED_OBJECTS] = self.linked_objects
+        serialized[_LINKED_OBJECTS] = list(map(lambda x: [x[0], x[1]], self.linked_objects.items()))
 
         return serialized
 
@@ -69,6 +69,12 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
             data: dict,
             pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ) -> BoardObjectTable:
+        temp = dict()
+        if len(data[_LINKED_OBJECTS]) > 0:
+
+            for key, value in data[_LINKED_OBJECTS]:
+                temp[key] = value
+
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectTable(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
@@ -80,7 +86,7 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
             data[_DEFAULT_HEIGHT],
             data[_COLUMNS_WIDTH],
             data[_ROWS_HEIGHT],
-            data[_LINKED_OBJECTS]
+            temp
         )
 
     @property
@@ -132,11 +138,11 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
         self._rows_height = val
 
     @property
-    def linked_objects(self) -> dict[str, [int, int]]:
+    def linked_objects(self) -> dict[str, list]:
         return self._linked_objects
 
     @linked_objects.setter
-    def linked_objects(self, val: dict[str, [int, int]]) -> None:
+    def linked_objects(self, val: dict[str, list]) -> None:
         self._linked_objects = val
 
     def tags_object(self, coords):

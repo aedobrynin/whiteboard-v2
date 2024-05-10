@@ -201,7 +201,7 @@ class Controller(interfaces.IController):
             self,
             obj_id: internal.objects.interfaces.ObjectId,
             parent_obj_id: internal.objects.interfaces.ObjectId,
-            coord: [int, int]
+            coord: list
     ):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectWithPosition
@@ -216,8 +216,8 @@ class Controller(interfaces.IController):
             logging.debug('no object id=%s found to add', obj_id)
 
         logging.debug('object added to a table: column=%s, row=%s', coord[0], coord[1])
-        print('added to', coord)
-        parent_obj.linked_objects[obj_id] = coord
+        # print('added to', coord)
+        parent_obj.linked_objects[obj_id] = coord.copy()
         self._on_feature_finish()
 
 
@@ -225,7 +225,7 @@ class Controller(interfaces.IController):
             self,
             obj_id: internal.objects.interfaces.ObjectId,
             parent_obj_id: internal.objects.interfaces.ObjectId,
-            coord: [int, int]
+            coord: list
     ):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectWithPosition
@@ -240,6 +240,5 @@ class Controller(interfaces.IController):
             logging.debug('no object id=%s found to add', obj_id)
 
         logging.debug('object removed from a table: column=%s, row=%s', coord[0], coord[1])
-        print('removed from', coord)
         del parent_obj.linked_objects[obj_id]
         self._on_feature_finish()
