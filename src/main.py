@@ -23,9 +23,6 @@ _logging_choice_to_loglevel = {
 
 RECONNECTION_TIME_SEC = 1
 
-connection_closed = False
-
-
 async def root_update(
     view: tkinter.Tk
 ):
@@ -142,7 +139,7 @@ async def main():
     )
     await asyncio.gather(
         client_connection_handler(storage),
-        get_updates(storage, controller),
+        get_updates(storage, controller, repo),
         root_update(view)
     )
 
