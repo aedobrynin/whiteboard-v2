@@ -44,19 +44,19 @@ class IViewObject(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_frame_rect(
+    def get_border_rectangle(
         self, dependencies: internal.view.dependencies.Dependencies
     ) -> internal.view.utils.geometry.Rectangle:
         pass
 
     @abc.abstractmethod
-    def draw_rect(
+    def draw_object_border(
         self, dependencies: internal.view.dependencies.Dependencies
     ) -> None:
         pass
 
     @abc.abstractmethod
-    def remove_rect(
+    def remove_object_border(
         self, dependencies: internal.view.dependencies.Dependencies
     ) -> None:
         pass

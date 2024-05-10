@@ -47,7 +47,7 @@ class ViewObject(IViewObject, ABC):
     ):
         dependencies.canvas.coords(self.id, x, y)
 
-    def get_frame_rect(
+    def get_border_rectangle(
         self, dependencies: internal.view.dependencies.Dependencies
     ) -> internal.view.utils.geometry.Rectangle:
         OFFSET = 3
@@ -58,27 +58,27 @@ class ViewObject(IViewObject, ABC):
         obj_frame[3] += OFFSET
         return internal.view.utils.geometry.Rectangle.from_tkinter_rect(tuple(obj_frame))
 
-    def _is_rect_drawn(
+    def _is_border_drawn(
         self, dependencies: internal.view.dependencies.Dependencies
     ) -> bool:
         obj_id = f'{_RECTANGLE_PREFIX}{self.id}'
         return bool(dependencies.canvas.gettags(obj_id))
 
-    def draw_rect(
+    def draw_object_border(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         COLOR = 'black'
         REC_WIDTH = 2
-        rect = self.get_frame_rect(dependencies)
+        rect = self.get_border_rectangle(dependencies)
         obj_id = f'{_RECTANGLE_PREFIX}{self.id}'
-        if self._is_rect_drawn(dependencies):
+        if self._is_border_drawn(dependencies):
             dependencies.canvas.coords(obj_id, *rect.as_tkinter_rect())
         else:
             dependencies.canvas.create_rectangle(
                 *rect.as_tkinter_rect(), outline=COLOR, width=REC_WIDTH, tags=obj_id
             )
 
-    def remove_rect(
+    def remove_object_border(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         obj_id = f'{_RECTANGLE_PREFIX}{self.id}'
