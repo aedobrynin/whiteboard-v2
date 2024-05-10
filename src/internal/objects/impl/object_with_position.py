@@ -6,13 +6,14 @@ import internal.pub_sub.interfaces
 from .common import field_names
 from .object import BoardObject
 from .. import types
+from .. import events
 
 
 class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
     def __init__(
         self,
         id: interfaces.ObjectId,
-        type: types.BoardObjectType,
+        type: types.BoardObjectType,  # noqa
         position: Position,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ):
@@ -26,6 +27,7 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
     @position.setter
     def position(self, position: Position) -> None:
         self._position = position
+        self._publish(events.EventObjectMoved(self.id))
 
     def serialize(self) -> dict:
         serialized = super().serialize()

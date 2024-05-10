@@ -64,7 +64,7 @@ def test_create_object(tmp_path, get_mock_pub_sub_callback):
     controller = internal.controller.impl.Controller(repo, storage, broker)
     controller.create_object(
         type_,
-        position,
+        position=position,
     )
 
     assert len(repo.get_updated()) == 0
@@ -74,7 +74,7 @@ def test_create_object(tmp_path, get_mock_pub_sub_callback):
     serialized_obj = list(serialized_objects.values())[0]
     obj: internal.objects.interfaces.IBoardObjectCard = internal.objects.build_from_serialized(
         serialized_obj, broker
-    )   # type: ignore
+    )  # type: ignore
     assert isinstance(obj, internal.objects.interfaces.IBoardObjectCard)
     assert obj.type == type_
     assert obj.position == position

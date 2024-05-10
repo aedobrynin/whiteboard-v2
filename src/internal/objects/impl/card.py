@@ -3,35 +3,39 @@ from __future__ import annotations
 from internal.objects import interfaces
 import internal.models
 import internal.pub_sub.interfaces
-from .object_with_position import BoardObjectWithPosition
+from .object_with_font import BoardObjectWithFont
 from .common import field_names
 from .. import types
 
 _TEXT_FIELD = 'text'
+_FONT_FIELD = 'font'
+_COLOR_FIELD = 'color'
 
 
-class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithPosition):
+class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
     def __init__(
         self,
         id: interfaces.ObjectId,
         position: internal.models.Position,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         text: str = 'text',
+        font: internal.models.Font = internal.models.Font(),
+        color: str = 'light yellow'
     ):
-        super().__init__(id, types.BoardObjectType.CARD, position, pub_sub_broker)
-        self.text = text
+        super().__init__(id, types.BoardObjectType.CARD, position, pub_sub_broker, text, font)
+        self.color = color
 
     @property
-    def text(self) -> str:
-        return self._text
+    def color(self) -> str:
+        return self._color
 
-    @text.setter
-    def text(self, text: str) -> None:
-        self._text = text
+    @color.setter
+    def color(self, color: str) -> None:
+        self._color = color
 
     def serialize(self) -> dict:
         serialized = super().serialize()
-        serialized[_TEXT_FIELD] = self.text
+        serialized[_COLOR_FIELD] = self.color
         return serialized
 
     @staticmethod
@@ -45,4 +49,6 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithPosition):
             internal.models.Position.from_serialized(data[field_names.POSITION_FIELD]),
             pub_sub_broker,
             data[_TEXT_FIELD],
+            internal.models.Font.from_serialized(data[_FONT_FIELD]),
+            data[_COLOR_FIELD]
         )

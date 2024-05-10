@@ -1,5 +1,7 @@
 from __future__ import annotations
 import abc
+from abc import ABC
+from typing import List
 
 import internal.models
 import internal.pub_sub.interfaces
@@ -46,7 +48,7 @@ class IBoardObjectWithPosition(IBoardObject):
         pass
 
 
-class IBoardObjectCard(IBoardObjectWithPosition):
+class IBoardObjectWithFont(IBoardObjectWithPosition):
     @property
     @abc.abstractmethod
     def text(self) -> str:
@@ -55,4 +57,76 @@ class IBoardObjectCard(IBoardObjectWithPosition):
     @text.setter
     @abc.abstractmethod
     def text(self, text: str) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def font(self) -> internal.models.Font:
+        pass
+
+    @font.setter
+    @abc.abstractmethod
+    def font(self, font: internal.models.Font) -> None:
+        pass
+
+
+class IBoardObjectText(IBoardObjectWithFont, ABC):
+    pass
+
+
+class IBoardObjectCard(IBoardObjectWithFont):
+    @property
+    @abc.abstractmethod
+    def color(self) -> str:
+        pass
+
+    @color.setter
+    @abc.abstractmethod
+    def color(self, color: str) -> None:
+        pass
+
+
+class IBoardObjectPen(IBoardObject):
+
+    @property
+    @abc.abstractmethod
+    def points(self) -> List[internal.models.Position]:
+        pass
+
+    @points.setter
+    @abc.abstractmethod
+    def points(self, points: List[internal.models.Position]) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def color(self) -> str:
+        pass
+
+    @color.setter
+    @abc.abstractmethod
+    def color(self, color: str) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def width(self) -> float:
+        pass
+
+    @width.setter
+    @abc.abstractmethod
+    def width(self, width: float) -> None:
+        pass
+
+
+class IBoardObjectGroup(IBoardObject):
+
+    @property
+    @abc.abstractmethod
+    def children_ids(self) -> tuple[ObjectId]:
+        pass
+
+    @children_ids.setter
+    @abc.abstractmethod
+    def children_ids(self, children_ids: tuple[ObjectId]) -> None:
         pass

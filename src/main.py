@@ -7,6 +7,7 @@ import internal.repositories.impl
 import internal.controller.impl
 import internal.pub_sub.impl
 import internal.objects
+import internal.view.view
 
 _logging_choice_to_loglevel = {
     'DEBUG': logging.DEBUG,
@@ -45,7 +46,6 @@ def main():
 
     logging.debug('initializing storage')
     storage = internal.storages.impl.LocalYDocStorage(args['board-path'])
-
     serialized_objects = storage.get_serialized_objects()
     logging.debug('there are %d objects in storage', len(serialized_objects))
     objects = []
@@ -55,12 +55,17 @@ def main():
 
     logging.debug('initializing repo')
     repo = internal.repositories.impl.Repository(objects, broker)
-
+    logging.debug('clearing created events')
+    broker.clear_events()
     logging.debug('initializing controller')
-    controller = internal.controller.impl.Controller(repo, storage, broker)   # noqa
+    controller = internal.controller.impl.Controller(repo, storage, broker)
 
-    input('press enter to stop')
-
+    logging.debug('initializing tkinter')
+    internal.view.view.main(
+        controller=controller,
+        repo=repo,
+        pub_sub=broker
+    )
     logging.info('shutting down...')
     storage.save()
 

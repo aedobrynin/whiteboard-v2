@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 import internal.objects.interfaces
 
@@ -14,6 +14,12 @@ class MockRepository(interfaces.IRepository):
     ) -> Optional[internal.objects.interfaces.IBoardObject]:
         # TODO: implement when needed
         return None
+
+    def get_all(
+        self
+    ) -> List[internal.objects.interfaces.IBoardObject]:
+        # TODO: implement when needed
+        pass
 
     def add(self, object: internal.objects.interfaces.IBoardObject) -> None:
         # TODO: implement when needed

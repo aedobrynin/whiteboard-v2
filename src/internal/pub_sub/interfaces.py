@@ -23,6 +23,10 @@ class IPubSubBroker(abc.ABC):
     ):
         pass
 
+    @abc.abstractmethod
+    def clear_events(self):
+        pass
+
     # TODO: this probably should be in another class
     # (because now it is accessible from any object)
     @abc.abstractmethod
@@ -31,5 +35,5 @@ class IPubSubBroker(abc.ABC):
 
     # TODO: unsubscribe method (will be useful in View)
 
-    # TODO: unsubsribe_from_all method?
+    # TODO: unsubscribe_from_all method?
     # TODO: myb allow to subscribe on events of particular type published by anyone?

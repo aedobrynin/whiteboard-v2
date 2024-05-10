@@ -22,8 +22,12 @@ def build_from_serialized(
 #       myb we want to restrict that
 def build_by_type(
     type: BoardObjectType,
-    position: internal.models.Position,
     pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
+    **kwargs
 ) -> interfaces.IBoardObjectWithPosition:
     id = generate_object_id()
-    return TYPE_IMPLS[type](id, position, pub_sub_broker)
+    if 'position' in kwargs and isinstance(kwargs['position'], internal.models.Position):
+        return TYPE_IMPLS[type](id, kwargs['position'], pub_sub_broker)
+    if type == BoardObjectType.GROUP and 'children_ids' in kwargs:
+        return TYPE_IMPLS[type](id, pub_sub_broker, kwargs['children_ids'])
+    raise ValueError('No object to build')

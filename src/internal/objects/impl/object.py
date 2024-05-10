@@ -12,7 +12,7 @@ class BoardObject(interfaces.IBoardObject):
     def __init__(
         self,
         id: interfaces.ObjectId,
-        type: types.BoardObjectType,
+        type: types.BoardObjectType,  # noqa
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ):
         self._id = id
