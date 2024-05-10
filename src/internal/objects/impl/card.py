@@ -23,7 +23,7 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         color: str = 'light yellow'
     ):
         super().__init__(id, types.BoardObjectType.CARD, position, pub_sub_broker, text, font)
-        self._color = color
+        self.color = color
 
     @property
     def color(self) -> str:

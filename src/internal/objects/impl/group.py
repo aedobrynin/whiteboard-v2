@@ -15,14 +15,14 @@ class BoardObjectGroup(interfaces.IBoardObjectGroup, BoardObject):
         self,
         id: interfaces.ObjectId,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
-        children_ids: tuple[internal.objects.interfaces.ObjectId] = (),  # noqa
+        children_ids: tuple[internal.objects.interfaces.ObjectId]
     ):
         BoardObject.__init__(
             self, id,
             types.BoardObjectType.GROUP,
             pub_sub_broker
         )
-        self._children_ids = children_ids
+        self.children_ids = children_ids
 
     @property
     def children_ids(self) -> tuple[internal.objects.interfaces.ObjectId]:

@@ -18,7 +18,6 @@ class BoardObject(interfaces.IBoardObject):
         self._id = id
         self._type = type
         self._pub_sub_broker = pub_sub_broker
-        self._focus = False
 
     @property
     def id(self) -> interfaces.ObjectId:
@@ -27,14 +26,6 @@ class BoardObject(interfaces.IBoardObject):
     @property
     def type(self) -> types.BoardObjectType:
         return self._type
-
-    @property
-    def focus(self) -> bool:
-        return self._focus
-
-    @focus.setter
-    def focus(self, focus: bool) -> None:
-        self._focus = focus
 
     def serialize(self) -> dict:
         return {field_names.ID_FIELD: self.id, field_names.TYPE_FIELD: self.type.value}
