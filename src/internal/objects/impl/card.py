@@ -10,7 +10,7 @@ from .. import types
 _TEXT_FIELD = 'text'
 _FONT_FIELD = 'font'
 _COLOR_FIELD = 'color'
-_ATTRIBUTES_FIELD = 'attributes'
+_ATTRIBUTES_FIELD = 'attributes_dict'
 
 class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
     def __init__(
@@ -49,7 +49,7 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
     def serialize(self) -> dict:
         serialized = super().serialize()
         serialized[_COLOR_FIELD] = self.color
-        serialized[_ATTRIBUTES_FIELD] = self.attributes
+        serialized[_ATTRIBUTES_FIELD] = list(map(lambda x: [x[0], x[1]], self.attributes.items()))
         return serialized
 
     @staticmethod
@@ -57,6 +57,9 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         data: dict,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ) -> BoardObjectCard:
+        temp = dict()
+        for key, value in data[_ATTRIBUTES_FIELD]:
+            temp[key] = value
 
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectCard(
@@ -66,5 +69,5 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
             data[_TEXT_FIELD],
             internal.models.Font.from_serialized(data[_FONT_FIELD]),
             data[_COLOR_FIELD],
-            data[_ATTRIBUTES_FIELD]
+            temp
         )

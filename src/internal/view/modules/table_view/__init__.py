@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import internal.view.dependencies
-from .states import add_attribute
+from .states import add_attribute, show_axis
 from .view import open_window as open_window
 
 
 def create_states(dependencies: internal.view.dependencies):
     dependencies.state_machine.add_state(add_attribute.create_state(dependencies.state_machine))
+    dependencies.state_machine.add_state(show_axis.create_state(dependencies.state_machine))
 
 
 def register_module_menu(dependencies: internal.view.dependencies):
     dependencies.menu.add_command_to_menu(add_attribute.ADD_ATTR_MENU_ENTRY_NAME)
+    dependencies.menu.add_command_to_menu(show_axis.SHOW_TABLE_MENU_ENTRY_NAME)
 
 
 @internal.view.modules.modules.register_module('table_view')

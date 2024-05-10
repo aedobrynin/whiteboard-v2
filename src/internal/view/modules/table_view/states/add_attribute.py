@@ -7,17 +7,16 @@ import internal.models.position
 from internal.view.state_machine.impl import State
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
-from ..view import open_window, get_values
+from ..toplevel import Window
+from ..view import open_window, NAME
 ADD_ATTR_MENU_ENTRY_NAME = 'add attribute'
 ADD_ATTRIBUTE_STATE_NAME = 'ADD_ATTRIBUTE'
-_WINDOW = 'window_add'
-_ENTRY = 'entry'
-_NAME = 'name'
+_WINDOW = 'toplevel_window'
 
 
 def _predicate_from_root_to_add_attribute(
     global_dependencies: internal.view.dependencies.Dependencies,
-    event: tkinter.Event
+    _: tkinter.Event
 ) -> bool:
     if global_dependencies.menu.current_state != ADD_ATTR_MENU_ENTRY_NAME:
         return False
@@ -29,30 +28,29 @@ def _on_enter(
     state_ctx: Dict,
     _: tkinter.Event
 ):
-    state_ctx[_WINDOW], state_ctx[_ENTRY] = open_window(global_dependencies)
-    # name = get_values(state_ctx[_WINDOW], state_ctx[_ENTRY])
-    # print(name)
-    # if name:
-    #     global_dependencies.controller.add_attribute(name)
+    state_ctx[_WINDOW] = open_window(global_dependencies)
 
-# def _handle_event(
-#     global_dependencies: internal.view.dependencies.Dependencies,
-#     state_ctx: Dict,
-#     event: tkinter.Event
-# ):
-#     name = get_values(state_ctx[_WINDOW], state_ctx[_ENTRY])
-#     print(name)
-#     if name:
-#         global_dependencies.controller.add_attribute(name)
+
+def _on_leave(
+    global_dependencies: internal.view.dependencies.Dependencies,
+    state_ctx: Dict,
+    _: tkinter.Event
+):
+    name: Window = state_ctx[_WINDOW]
+    if name.saved:
+        global_dependencies.controller.add_attribute(name.get_vals()[NAME])
+    global_dependencies.menu.set_selected_state()
+
+
 
 def _predicate_from_add_attribute_to_root(
     global_dependencies: internal.view.dependencies.Dependencies,
     event: tkinter.Event
 ) -> bool:
-    # ВОТ ТУТ должен быть ивент выхода из конкретного окна, иначе все ломается
-    if event.type != tkinter.EventType.Destroy:
+    if event.type != tkinter.EventType.Deactivate:
         return False
-    return global_dependencies.menu.current_state == ADD_ATTRIBUTE_STATE_NAME
+
+    return True
 
 
 def create_state(
@@ -60,7 +58,7 @@ def create_state(
 ) -> State:
     state = State(ADD_ATTRIBUTE_STATE_NAME)
     state.set_on_enter(_on_enter)
-    # state.set_event_handler(_handle_event)
+    state.set_on_leave(_on_leave)
     state_machine.add_transition(
         internal.view.state_machine.interfaces.ROOT_STATE_NAME,
         ADD_ATTRIBUTE_STATE_NAME,

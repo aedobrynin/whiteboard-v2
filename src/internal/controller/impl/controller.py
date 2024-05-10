@@ -1,6 +1,5 @@
 import logging
 import typing
-from copy import deepcopy
 
 import internal.models
 import internal.objects
@@ -176,11 +175,9 @@ class Controller(interfaces.IController):
             attr_name: str
             # attr: internal.models.Attribute
     ):
-        print()
         for obj in self._repo.get_all():
             if not isinstance(obj, internal.objects.interfaces.IBoardObjectCard):
                 continue
-            print(obj.text)
 
             card: internal.objects.interfaces.IBoardObjectCard = obj
             card.attributes[attr_name] = None
@@ -188,22 +185,25 @@ class Controller(interfaces.IController):
             'adding new attribute with name=%s',
             attr_name
         )
+
     def edit_attribute(
             self,
             obj_id: internal.objects.interfaces.ObjectId,
             attr_name: str,
             value: str
     ):
+        # print(attr_name)
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectCard
         ] = self._repo.get(obj_id)
+        # print(obj.attributes)
         if obj:
             logging.debug(
                 'editing attribute of an object old value=%s with new value=%s',
                 obj.attributes[attr_name],
                 value
             )
-            obj.attributes = value
+            obj.attributes[attr_name] = value
             self._on_feature_finish()
             return
         logging.debug('no object id=%s found to edit with attribute=%s', obj_id, attr_name)

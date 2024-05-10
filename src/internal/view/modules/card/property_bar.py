@@ -136,7 +136,7 @@ def _attribute_widget(
         getter: Callable,
         setter: Callable
 ) -> List[ttk.Widget]:
-    string_var = tkinter.StringVar()
+    string_var = tkinter.StringVar(value=getter(dependencies, obj_id, description))
     label = ttk.Label(
         dependencies.property_bar,
         text=description,
@@ -279,6 +279,7 @@ def _get_attribute(
         attr_name: str
 ):
     card: internal.objects.interfaces.IBoardObjectCard = dependencies.repo.get(obj_id)
+    print(card.attributes[attr_name])
     return card.attributes[attr_name]
     # return dependencies.canvas.itemcget(CARD_NOTE_PREFIX + obj_id, 'fill')
 
