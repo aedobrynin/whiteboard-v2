@@ -9,7 +9,6 @@ import internal.repositories.interfaces
 import internal.view.dependencies
 import internal.view.utils
 import internal.view.modules.text
-import internal.view.modules.pen.property_bar
 
 _SUBMENU_PREFIX = 'submenu'
 _BRING_TO_FRONT_DESC = 'Bring To Front'

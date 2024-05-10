@@ -3,18 +3,18 @@ import tkinter.font
 import tkinter.ttk
 
 import internal.controller.interfaces
-import internal.repositories.interfaces
-import internal.repositories.events
-import internal.pub_sub.interfaces
 import internal.objects.interfaces
+import internal.pub_sub.interfaces
+import internal.repositories.events
+import internal.repositories.interfaces
 import internal.view.dependencies
-import internal.view.modules.modules
 import internal.view.modules.drag_board
+import internal.view.modules.modules
 import internal.view.modules.move_object
-import internal.view.modules.text
 import internal.view.modules.submenu
-import internal.view.state_machine.impl.state_machine
+import internal.view.modules.text
 import internal.view.objects.impl.object_storage
+import internal.view.state_machine.impl.state_machine
 from internal.view.menu.impl.menu import Menu
 
 
@@ -47,7 +47,7 @@ def _create_dependencies(
     return dependencies
 
 
-def main(
+def create_view(
     controller: internal.controller.interfaces.IController,
     repo: internal.repositories.interfaces.IRepository,
     pub_sub: internal.pub_sub.interfaces.IPubSubBroker
@@ -58,4 +58,4 @@ def main(
     dependencies.canvas.focus_set()
     internal.view.modules.modules.init_modules(dependencies)
     dependencies.objects_storage.create_view_objects(dependencies)
-    root_window.mainloop()
+    return root_window

@@ -25,7 +25,7 @@ jobs:
           pip install -r requirements.txt
       - name: Test with pytest
         run: |
-          pip install pytest
+          pip install pytest pytest-asyncio
           pytest ./src --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
       - name: Lint with Ruff
         run: |

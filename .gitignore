@@ -5,3 +5,4 @@ __pycache__/
 junit/
 *.boardobj
 .idea
+server/mongo_data

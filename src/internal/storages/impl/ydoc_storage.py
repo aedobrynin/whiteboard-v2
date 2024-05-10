@@ -19,8 +19,8 @@ class YDocStorage(interfaces.IStorage):
 
     # TODO: better api for updates
     def update(self, updates: interfaces.IStorage.UpdatesType):
-        with self._y_doc.begin_transaction() as tx:
-            for obj_id, new_repr in updates.items():
+        for obj_id, new_repr in updates.items():
+            with self._y_doc.begin_transaction() as tx:
                 if new_repr is None:
                     self._objects.pop(tx, obj_id)
                 else:
