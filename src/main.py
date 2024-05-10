@@ -55,7 +55,8 @@ def main():
 
     logging.debug('initializing repo')
     repo = internal.repositories.impl.Repository(objects, broker)
-
+    logging.debug('clearing created events')
+    broker.clear_events()
     logging.debug('initializing controller')
     controller = internal.controller.impl.Controller(repo, storage, broker)
 
