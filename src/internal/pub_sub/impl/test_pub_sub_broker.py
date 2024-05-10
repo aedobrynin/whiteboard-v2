@@ -78,3 +78,23 @@ def test_pub_sub_broker_processed_events_are_flushed(callback_mock):
     subscriber_callback.calls = []
     broker.process_published(repo_mock)
     assert len(subscriber_callback.calls) == 0
+
+
+def test_pub_sub_broker_clearing_events(callback_mock):
+    broker = PubSubBroker()
+
+    repo_mock = internal.repositories.mocks.MockRepository()
+
+    publisher_id = 'pub'
+    subscriber_id = 'sub'
+
+    event = Event(type='type')
+
+    subscriber_callback = callback_mock()
+
+    broker.subscribe(subscriber_id, publisher_id, event.type, subscriber_callback)
+    broker.publish(publisher_id, event)
+    assert len(subscriber_callback.calls) == 0
+    broker.clear_events()
+    broker.process_published(repo_mock)
+    assert len(subscriber_callback.calls) == 0
