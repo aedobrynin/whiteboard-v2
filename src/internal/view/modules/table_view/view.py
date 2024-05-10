@@ -15,7 +15,7 @@ def open_window(
     window = Window(dependencies)
     window.title('New attribute')
 
-    label = ttk.Label(window.window, text='Name')
+    label = ttk.Label(window, text='Name')
     label.grid(row=0, column=0, padx=5, pady=5, sticky='nsew')
     entry = window.add_entry(NAME)
     entry.grid(row=0, column=1, padx=5, pady=5, sticky='nsew')
@@ -23,14 +23,14 @@ def open_window(
     def dummy():
         window.saved = False
         dependencies.canvas.event_generate('<Deactivate>')
-        window.window.destroy()
+        window.destroy()
 
-    window.window.protocol('WM_DELETE_WINDOW', dummy)
+    window.protocol('WM_DELETE_WINDOW', dummy)
 
     def after_add():
         window.saved = True
         dependencies.canvas.event_generate('<Deactivate>')
-        window.window.destroy()
+        window.destroy()
 
     bt = ttk.Button(window, text='Save', command=after_add)
     bt.grid(row=4, column=1, padx=5, pady=5, sticky='nsew')
