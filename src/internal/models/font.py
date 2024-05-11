@@ -90,20 +90,16 @@ class Font:
     def __eq__(self, other):
         if not isinstance(other, Font):
             return False
-        if self.slant != other.slant:
-            return False
-        if self.weight != other.weight:
-            return False
-        if self.color != other.color:
-            return False
-        if self.family != other.family:
-            return False
-        if self.size != other.size:
-            return False
-        return True
+        return (self.slant, self.weight, self.color, self.family, self.size) == (
+            other.slant,
+            other.weight,
+            other.color,
+            other.family,
+            other.size,
+        )
 
     def __repr__(self):
         return f"""Font(slant='{self.slant}', weight='{self.weight}', color='{self.color}', family='{self.family}', size='{self.size}')"""
 
     def __str__(self):
-        return f"""Font(slant='{self.slant}', weight='{self.weight}', color='{self.color}', family='{self.family}', size='{self.size}')"""
+        return self.__repr__()
