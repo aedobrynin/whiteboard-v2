@@ -1,12 +1,14 @@
 from __future__ import annotations
-from typing import Dict, Optional
-import tkinter
 
+import tkinter
+from typing import Dict, Optional
+
+import internal.view.dependencies
+import internal.view.state_machine.interfaces
 from internal.models import Position
+from internal.view.modules.connector import ConnectorObject
 from internal.view.objects.interfaces import IViewObject
 from internal.view.state_machine.impl import State
-import internal.view.state_machine.interfaces
-import internal.view.dependencies
 
 _MOVE_OBJECT_STATE_NAME = 'MOVE_OBJECT'
 _LAST_DRAG_EVENT_X = 'last_drag_event_x'
@@ -73,6 +75,12 @@ def _handle_event(
     )
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y
+    # TODO: because we notify only when view-move done, connector doesnt update correctly curve
+    other_tags = global_dependencies.canvas.gettags(state_ctx[_OBJ_ID])
+    for tag in other_tags:
+        obj = global_dependencies.objects_storage.get_opt_by_id(tag)
+        if obj and isinstance(obj, ConnectorObject):
+            obj.curve(global_dependencies)
 
 
 def _predicate_from_root_to_move_object(
@@ -80,12 +88,16 @@ def _predicate_from_root_to_move_object(
     event: tkinter.Event
 ) -> bool:
     # Motion with Left mouse button pressed
+    if global_dependencies.menu.current_state != global_dependencies.menu.MENU_ROOT_STATE:
+        return False
     if event.type != tkinter.EventType.Motion or event.state & (1 << 8) == 0:
         return False
     cur_obj = global_dependencies.objects_storage.get_current_opt(
         global_dependencies
     )
-    return cur_obj is not None
+    if cur_obj is None:
+        return False
+    return not isinstance(cur_obj, ConnectorObject)
 
 
 def _predicate_from_move_object_to_root(

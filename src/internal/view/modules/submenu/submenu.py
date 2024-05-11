@@ -2,13 +2,14 @@ import tkinter
 from tkinter import ttk, Menu
 from typing import List
 
-import internal.objects.interfaces
 import internal.objects.events
+import internal.objects.interfaces
 import internal.pub_sub.interfaces
 import internal.repositories.interfaces
 import internal.view.dependencies
-import internal.view.utils
+import internal.view.modules.connector
 import internal.view.modules.text
+import internal.view.utils
 
 _SUBMENU_PREFIX = 'submenu'
 _BRING_TO_FRONT_DESC = 'Bring To Front'
@@ -30,7 +31,10 @@ class Submenu:
         self._property_widgets: List[ttk.Widget] = []
         self._option_menu: Menu = None
         obj: internal.objects.interfaces.IBoardObjectWithPosition = dependencies.repo.get(obj_id)
-        if obj.type == internal.objects.types.BoardObjectType.TEXT:
+        if obj.type in [
+            internal.objects.types.BoardObjectType.TEXT,
+            internal.objects.types.BoardObjectType.CONNECTOR,
+        ]:
             obj_canvas: internal.view.modules.text.TextObject = dependencies.objects_storage.get_by_id(
                 obj_id
             )

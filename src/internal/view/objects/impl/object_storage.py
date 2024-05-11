@@ -1,11 +1,12 @@
 from __future__ import annotations
+
 import logging
 from typing import Type, Optional
 
-import internal.repositories.events
-import internal.repositories.interfaces
 import internal.objects.interfaces
 import internal.pub_sub.interfaces
+import internal.repositories.events
+import internal.repositories.interfaces
 import internal.view.dependencies
 from ..interfaces import IViewObject, IViewObjectStorage
 from ...consts import VIEW_OBJECT_ID
@@ -13,7 +14,7 @@ from ...consts import VIEW_OBJECT_ID
 
 class ViewObjectStorage(IViewObjectStorage):
     _objects: dict[str, IViewObject]
-    _object_types: dict[str, Type[IViewObject]]
+    _object_types: dict[internal.objects.BoardObjectType, Type[IViewObject]]
 
     def __init__(
         self, dependencies: internal.view.dependencies.Dependencies
@@ -58,7 +59,7 @@ class ViewObjectStorage(IViewObjectStorage):
         if obj.id in self._objects:
             logging.debug('obj_id(%s) already in canvas', obj.id)
         if obj.type in self._object_types:
-            self._objects[obj_id] = self._object_types[obj.type](dependencies, obj)
+            self._objects[obj_id] = self._object_types[obj.type](dependencies, obj)  # type: ignore
         else:
             logging.debug('type(%s) of object not found in view', obj.type)
 
@@ -75,7 +76,7 @@ class ViewObjectStorage(IViewObjectStorage):
             logging.debug('object=%s already deleted from canvas', obj_id)
 
     def register_object_type(
-        self, type_name: str, type_class: Type[IViewObject]
+        self, type_name: internal.objects.BoardObjectType, type_class: Type[IViewObject]
     ):
         self._object_types[type_name] = type_class
 
