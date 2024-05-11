@@ -8,5 +8,6 @@ class IAction(abc.ABC):
         pass
 
     # TODO: deps
+    @abc.abstractmethod
     def undo(self):
         pass

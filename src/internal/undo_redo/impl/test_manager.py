@@ -66,12 +66,11 @@ def test_undo_redo_manager_history_size():
     assert lst == [0]
 
 
-def test_undo_redo_manager_complicated_series():
+def test_undo_redo_manager_complicated_undo_redo_series():
     history_size = 5
     manager = UndoRedoManager(history_size)
 
     lst = []
-    acts = []
     for i in range(3):
         act = AppendAction(lst, i)
         act.do()
@@ -105,3 +104,25 @@ def test_undo_redo_manager_complicated_series():
     assert lst == [0, 1, 2]
     manager.redo()   # should be no-op
     assert lst == [0, 1, 2]
+
+
+def test_undo_redo_manager_tail_is_removed_on_store():
+    history_size = 5
+    manager = UndoRedoManager(history_size)
+
+    lst = []
+    for i in range(3):
+        act = AppendAction(lst, i)
+        act.do()
+        manager.store_action(act)
+    assert lst == [0, 1, 2]
+
+    manager.undo()
+    manager.undo()
+    assert lst == [0]
+    act = AppendAction(lst, 3)
+    act.do()
+    manager.store_action(act)
+    assert lst == [0, 3]
+    manager.redo()  # should be no-op
+    assert lst == [0, 3]
