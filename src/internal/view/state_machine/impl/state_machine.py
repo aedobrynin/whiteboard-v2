@@ -6,9 +6,9 @@ from typing import Dict
 from typing import List
 import tkinter
 
-from .state import State
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
+from .state import State
 
 
 class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
@@ -66,8 +66,10 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
         self._states[state.name] = state
 
     def add_transition(
-        self, before: str, after: str,
-        predicate: Callable[[internal.view.dependencies.Dependencies, tkinter.Event], bool]
+        self,
+        before: str,
+        after: str,
+        predicate: Callable[[internal.view.dependencies.Dependencies, tkinter.Event], bool],
     ):
         tr_description = StateMachine._TransitionDescription()
         tr_description.before = before
@@ -96,6 +98,3 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
                 logging.debug('entering to after-state (%s) in state-machine', state_changed_to)
                 return
         self._cur_state.handle_event(self._global_dependencies, self._cur_state_context, event)
-
-    def cur_state_name(self) -> str:
-        return self._cur_state.name
