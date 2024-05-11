@@ -11,7 +11,7 @@ def test_board_pen_serialization():
     type = BoardObjectType.PEN
     points = [Position(1, 2, 3), Position(2, 2, 3), Position(3, 2, 3)]
     color = 'black'
-    width = 2.0
+    width = 2
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
     obj = BoardObjectPen(id, broker, points, color, width)
@@ -29,7 +29,7 @@ def test_board_pen_deserialization():
     type = BoardObjectType.PEN
     points = [Position(1, 2, 3), Position(2, 2, 3), Position(3, 2, 3)]
     color = 'black'
-    width = 2.0
+    width = 2
 
     serialized = {
         'id': id,

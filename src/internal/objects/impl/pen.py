@@ -13,8 +13,8 @@ from .. import events
 _POINTS_FIELD = 'points'
 _COLOR_FIELD = 'color'
 _WIDTH_FIELD = 'width'
-_DEFAULT_WIDTH = 2
-_DEFAULT_COLOR = 'black'
+DEFAULT_WIDTH = 2
+DEFAULT_COLOR = 'black'
 
 
 class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
@@ -23,8 +23,8 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
         id: interfaces.ObjectId,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         points: List[internal.models.Position],  # noqa
-        color: str = _DEFAULT_COLOR,
-        width: float = _DEFAULT_WIDTH
+        color: str = DEFAULT_COLOR,
+        width: int = DEFAULT_WIDTH
     ):
         BoardObject.__init__(
             self, id,
@@ -42,6 +42,7 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
     @points.setter
     def points(self, points: List[internal.models.Position]) -> None:
         self._points = points
+        self._publish(events.EventObjectChangedPoints(self.id))
         self._publish(events.EventObjectChangedSize(self.id))
 
     @property
@@ -51,14 +52,16 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
     @color.setter
     def color(self, color: str) -> None:
         self._color = color
+        self._publish(events.EventObjectChangedColor(self.id))
 
     @property
-    def width(self) -> float:
+    def width(self) -> int:
         return self._width
 
     @width.setter
-    def width(self, width: float) -> None:
+    def width(self, width: int) -> None:
         self._width = width
+        self._publish(events.EventObjectChangedWidth(self.id))
         self._publish(events.EventObjectChangedSize(self.id))
 
     def serialize(self) -> dict:

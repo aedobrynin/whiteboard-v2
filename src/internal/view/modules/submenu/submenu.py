@@ -9,6 +9,7 @@ import internal.repositories.interfaces
 import internal.view.dependencies
 import internal.view.utils
 import internal.view.modules.text
+import internal.view.modules.pen
 
 _SUBMENU_PREFIX = 'submenu'
 _BRING_TO_FRONT_DESC = 'Bring To Front'
@@ -26,10 +27,11 @@ class Submenu:
         self._property_widgets: List[ttk.Widget] = []
         self._option_menu: Menu = None
         obj: internal.objects.interfaces.IBoardObjectWithPosition = dependencies.repo.get(obj_id)
-        if obj.type == internal.objects.types.BoardObjectType.TEXT:
-            obj_canvas: internal.view.modules.text.TextObject = (
-                dependencies.objects_storage.get_by_id(obj_id)
-            )
+        if obj.type in [
+            internal.objects.types.BoardObjectType.TEXT,
+            internal.objects.types.BoardObjectType.PEN,
+        ]:
+            obj_canvas = dependencies.objects_storage.get_by_id(obj_id)
             self._property_widgets = obj_canvas.widgets(dependencies)
         else:
             self._property_widgets = []

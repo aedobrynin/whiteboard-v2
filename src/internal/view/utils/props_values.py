@@ -41,7 +41,7 @@ def get_text_alignments() -> List[str]:
     return ['left', 'center', 'right']
 
 
-def get_text_line_widths() -> List[int]:
+def get_line_widths() -> List[int]:
     return [1, 2, 3, 4, 5]
 
 
