@@ -41,11 +41,9 @@ class Repository(interfaces.IRepository):
         logging.debug('getting object with id=%s, is_present=%d', object_id, obj is not None)
         return obj
 
-    def get_all(
-        self
-    ) -> List[internal.objects.interfaces.IBoardObject]:
+    def get_all(self) -> List[internal.objects.interfaces.IBoardObject]:
         logging.debug('getting all objects')
-        return [obj for obj in self._objects.values()]
+        return list(self._objects.values())
 
     def add(self, object: internal.objects.interfaces.IBoardObject) -> None:
         logging.debug('trying to add object with id=%s', object.id)

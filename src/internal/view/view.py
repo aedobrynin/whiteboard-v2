@@ -22,7 +22,7 @@ def _create_dependencies(
     root: tkinter.Tk,
     controller: internal.controller.interfaces.IController,
     repo: internal.repositories.interfaces.IRepository,
-    pub_sub: internal.pub_sub.interfaces.IPubSubBroker
+    pub_sub: internal.pub_sub.interfaces.IPubSubBroker,
 ) -> internal.view.dependencies.Dependencies:
     """
     Initializing dependencies
@@ -50,7 +50,7 @@ def _create_dependencies(
 def main(
     controller: internal.controller.interfaces.IController,
     repo: internal.repositories.interfaces.IRepository,
-    pub_sub: internal.pub_sub.interfaces.IPubSubBroker
+    pub_sub: internal.pub_sub.interfaces.IPubSubBroker,
 ):
     root_window = tkinter.Tk(className='Whiteboard')
     root_window.geometry('870x600')
