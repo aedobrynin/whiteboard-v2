@@ -1,9 +1,9 @@
 import internal.objects
 import internal.pub_sub.mocks
-
 from .impl.card import BoardObjectCard
-from .impl.text import BoardObjectText
+from .impl.connector import BoardObjectConnector
 from .impl.object_id import generate_object_id
+from .impl.text import BoardObjectText
 
 
 def test_text_building():
@@ -47,3 +47,21 @@ def test_card_building():
     card = internal.objects.build_from_serialized(serialized_card, broker)
     assert isinstance(card, BoardObjectCard)
     assert card.serialize() == serialized_card
+
+
+def test_connector_building():
+    serialized_connector = {
+        'id': generate_object_id(),
+        'type': 'connector',
+        'start_id': generate_object_id(),
+        'end_id': generate_object_id(),
+        'color': 'black',
+        'width': 2.0,
+        'connector_type': 'curved',
+        'stroke_style': 'left'
+    }
+    broker = internal.pub_sub.mocks.MockPubSubBroker()
+
+    connector = internal.objects.build_from_serialized(serialized_connector, broker)
+    assert isinstance(connector, BoardObjectConnector)
+    assert connector.serialize() == serialized_connector

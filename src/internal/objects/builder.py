@@ -1,11 +1,10 @@
 import internal.models
 import internal.pub_sub.interfaces
-
-from .impl.type_impls import TYPE_IMPLS
-from .impl.common import field_names
 from . import interfaces
-from .types import BoardObjectType
+from .impl.common import field_names
 from .impl.object_id import generate_object_id
+from .impl.type_impls import TYPE_IMPLS
+from .types import BoardObjectType
 
 
 def build_from_serialized(
@@ -30,4 +29,6 @@ def build_by_type(
         return TYPE_IMPLS[type](id, kwargs['position'], pub_sub_broker)
     if type == BoardObjectType.GROUP and 'children_ids' in kwargs:
         return TYPE_IMPLS[type](id, pub_sub_broker, kwargs['children_ids'])
+    if type == BoardObjectType.CONNECTOR and 'start_id' in kwargs and 'end_id' in kwargs:
+        return TYPE_IMPLS[type](id, pub_sub_broker, kwargs['start_id'], kwargs['end_id'])
     raise ValueError('No object to build')

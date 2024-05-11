@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import abc
 from abc import ABC
 from typing import List
@@ -129,4 +130,67 @@ class IBoardObjectGroup(IBoardObject):
     @children_ids.setter
     @abc.abstractmethod
     def children_ids(self, children_ids: tuple[ObjectId]) -> None:
+        pass
+
+
+class IBoardObjectConnector(IBoardObject):
+
+    @property
+    @abc.abstractmethod
+    def start_id(self) -> ObjectId:
+        pass
+
+    @start_id.setter
+    @abc.abstractmethod
+    def start_id(self, obj_id: ObjectId) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def end_id(self) -> ObjectId:
+        pass
+
+    @end_id.setter
+    @abc.abstractmethod
+    def end_id(self, obj_id: ObjectId) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def color(self) -> str:
+        pass
+
+    @color.setter
+    @abc.abstractmethod
+    def color(self, color: str) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def width(self) -> float:
+        pass
+
+    @width.setter
+    @abc.abstractmethod
+    def width(self, width: float) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def connector_type(self) -> str:
+        pass
+
+    @connector_type.setter
+    @abc.abstractmethod
+    def connector_type(self, connector_type: str) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def stroke_style(self) -> str:
+        pass
+
+    @stroke_style.setter
+    @abc.abstractmethod
+    def stroke_style(self, stroke_style: str) -> None:
         pass
