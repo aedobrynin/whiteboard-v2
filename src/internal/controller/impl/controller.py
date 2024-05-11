@@ -7,7 +7,6 @@ import internal.objects.interfaces
 import internal.pub_sub.interfaces
 import internal.repositories.interfaces
 import internal.storages
-
 from .. import interfaces
 
 
@@ -169,3 +168,37 @@ class Controller(interfaces.IController):
             self._on_feature_finish()
             return
         logging.debug('no object id=%s found to edit with width=%s', obj_id, width)
+
+    def edit_connector_type(
+        self, obj_id: internal.objects.interfaces.ObjectId, connector_type: str
+    ):
+        obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectConnector
+        ] = self._repo.get(object_id=obj_id)
+        if obj:
+            logging.debug(
+                'editing object old connector_type=%s with new connector_type=%s',
+                obj.connector_type,
+                connector_type
+            )
+            obj.connector_type = connector_type
+            self._on_feature_finish()
+            return
+        logging.debug('no object id=%s found to edit with connector_type=%s', obj_id, connector_type)
+
+    def edit_stroke_style(
+        self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str
+    ):
+        obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectConnector
+        ] = self._repo.get(object_id=obj_id)
+        if obj:
+            logging.debug(
+                'editing object old stroke_style=%s with new stroke_style=%s',
+                obj.stroke_style,
+                stroke_style
+            )
+            obj.stroke_style = stroke_style
+            self._on_feature_finish()
+            return
+        logging.debug('no object id=%s found to edit with stroke_style=%s', obj_id, stroke_style)

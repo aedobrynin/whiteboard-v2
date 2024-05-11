@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import abc
 from typing import List
 
@@ -55,5 +56,17 @@ class IController(abc.ABC):
     @abc.abstractmethod
     def move_object(
         self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_connector_type(
+        self, obj_id: internal.objects.interfaces.ObjectId, connector_type: str
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_stroke_style(
+        self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str
     ):
         pass
