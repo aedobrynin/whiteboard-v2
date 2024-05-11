@@ -6,7 +6,8 @@ from .props_values import (
     get_font_families,
     get_text_alignments,
     get_line_widths,
-    get_line_types
+    get_line_types,
+    get_card_sizes,
 )
 
 from .font import as_tkinter_font, as_object_font, as_tkinter_object_font
@@ -24,5 +25,6 @@ __all__ = [
     'get_text_alignments',
     'get_line_widths',
     'get_line_types',
-    'geometry'
+    'get_card_sizes',
+    'geometry',
 ]

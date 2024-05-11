@@ -9,6 +9,7 @@ EVENT_TYPE_OBJECT_CHANGED_TEXT = 'object_changed_text'
 EVENT_TYPE_OBJECT_CHANGED_COLOR = 'object_changed_color'
 EVENT_TYPE_OBJECT_CHANGED_WIDTH = 'object_changed_width'
 EVENT_TYPE_OBJECT_CHANGED_POINTS = 'object_changed_points'
+EVENT_TYPE_OBJECT_CHANGED_DIMENSION = 'object_changed_dimension'
 
 
 class EventObjectMoved(internal.pub_sub.event.Event):
@@ -74,6 +75,16 @@ class EventObjectChangedWidth(internal.pub_sub.event.Event):
 class EventObjectChangedPoints(internal.pub_sub.event.Event):
     def __init__(self, object_id: ObjectId):
         super().__init__(EVENT_TYPE_OBJECT_CHANGED_POINTS)
+        self._object_id = object_id
+
+    @property
+    def object_id(self) -> ObjectId:
+        return self._object_id
+
+
+class EventObjectChangedDimension(internal.pub_sub.event.Event):
+    def __init__(self, object_id: ObjectId):
+        super().__init__(EVENT_TYPE_OBJECT_CHANGED_DIMENSION)
         self._object_id = object_id
 
     @property

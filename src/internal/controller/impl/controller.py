@@ -249,6 +249,20 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
+    def edit_dimension(self, obj_id: internal.objects.interfaces.ObjectId, dimension: float):
+        # TODO
+        obj: typing.Optional[internal.objects.interfaces.IBoardObjectCard] = self._repo.get(
+            object_id=obj_id
+        )
+        if obj:
+            logging.debug(
+                'editing object old dimension=%s with new dimension=%s', obj.dimension, dimension
+            )
+            obj.dimension = dimension
+            self._on_feature_finish()
+            return
+        logging.debug('no object id=%s found to edit with dimension=%s', obj_id, dimension)
+
     def undo_last_action(self):
         logging.debug('controller was asked to undo last action')
         self._undo_redo_manager.undo()

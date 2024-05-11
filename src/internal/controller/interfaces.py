@@ -33,6 +33,12 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def edit_dimension(
+        self, obj_id: internal.objects.interfaces.ObjectId, dimension: float
+    ):
+        pass
+
+    @abc.abstractmethod
     def edit_points(
         self, obj_id: internal.objects.interfaces.ObjectId, points: List[internal.models.Position]
     ):

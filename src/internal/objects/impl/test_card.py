@@ -13,16 +13,18 @@ def test_board_object_card_serialization():
     text = 'text'
     font = Font()
     color = 'light blue'
+    dimension = [130, 130]
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
-    card = BoardObjectCard(id, position, broker, text, font, color)
+    card = BoardObjectCard(id, position, broker, text, font, color, dimension)
     assert card.serialize() == {
         'id': id,
         'position': position.serialize(),
         'text': text,
         'type': type.value,
         'font': font.serialize(),
-        'color': color
+        'color': color,
+        'dimension': dimension
     }
 
 
@@ -33,14 +35,15 @@ def test_board_object_card_deserialization():
     text = 'text'
     font = Font()
     color = 'light blue'
-
+    dimension = [130, 130]
     serialized = {
         'id': id,
         'position': position.serialize(),
         'text': text,
         'type': type.value,
         'font': font.serialize(),
-        'color': color
+        'color': color,
+        'dimension': dimension
     }
 
     broker = internal.pub_sub.mocks.MockPubSubBroker()
@@ -52,3 +55,4 @@ def test_board_object_card_deserialization():
     assert card.text == text
     assert card.font == font
     assert card.color == color
+    assert card.dimension == dimension

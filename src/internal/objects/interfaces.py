@@ -85,6 +85,16 @@ class IBoardObjectCard(IBoardObjectWithFont):
     def color(self, color: str) -> None:
         pass
 
+    @property
+    @abc.abstractmethod
+    def dimension(self) -> [int, int]:
+        pass
+
+    @dimension.setter
+    @abc.abstractmethod
+    def dimension(self, dimension: [int, int]) -> None:
+        pass
+
 
 class IBoardObjectPen(IBoardObject):
     DEFAULT_WIDTH = 2

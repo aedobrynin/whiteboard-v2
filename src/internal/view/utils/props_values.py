@@ -49,6 +49,10 @@ def get_line_types() -> List[str]:
     return ['solid', 'dotted', 'dashed']
 
 
+def get_card_sizes() -> List[str]:
+    return ['Small', 'Medium', 'Large']
+
+
 def get_font_families() -> List[str]:
     return [
         'Arial',
