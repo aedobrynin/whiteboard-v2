@@ -75,7 +75,9 @@ class Controller(interfaces.IController):
                 if not self._obj_id:
                     logging.warning('Trying to undo CreateObjectAction with obj_id=None')
                     return
-                self._controller.delete_object(self._obj_id)
+                action = self._controller._build_delete_object_action(self._obj_id)
+                action.do()
+                self._controller._on_feature_finish()
 
         return CreateObjectAction(self, type, **kwargs)
 
@@ -84,10 +86,48 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
+    def _build_delete_object_action(
+        self, obj_id: internal.objects.interfaces.ObjectId
+    ) -> internal.models.IAction:
+        class DeleteObjectAction(internal.models.IAction):
+            _controller: Controller
+            _obj_id: typing.Optional[internal.objects.interfaces.ObjectId]
+            _serialized_obj: typing.Optional[dict]
+
+            def __init__(
+                self, controller: Controller, obj_id: internal.objects.interfaces.ObjectId
+            ):
+                self._controller = controller
+                self._obj_id = obj_id
+                self._serialized_obj = None
+
+            def do(self):
+                logging.debug('deleting object with id=%s', self._obj_id)
+                obj = self._controller._repo.get(self._obj_id)
+                if not obj:
+                    logging.warning('no object with id=%s', self._obj_id)
+                    return
+                self._serialized_obj = obj.serialize()
+                self._controller._repo.delete(obj_id)
+                self._controller._on_feature_finish()
+
+            def undo(self):
+                if not self._serialized_obj:
+                    logging.warning('Trying to undo DeeteObjectAction with serialized_obj=None')
+                    return
+
+                obj = internal.objects.build_from_serialized(
+                    self._serialized_obj, self._pub_sub_broker
+                )
+                self._controller._repo.add(obj)
+                self._controller._on_feature_finish()
+
+        return DeleteObjectAction(self, obj_id)
+
     def delete_object(self, obj_id: internal.objects.interfaces.ObjectId):
-        logging.debug('deleting object=%s', obj_id)
-        self._repo.delete(obj_id)
-        self._on_feature_finish()
+        action = self._build_delete_object_action(obj_id)
+        action.do()
+        self._undo_redo_manager.store_action(action)
 
     def edit_text(self, obj_id: internal.objects.interfaces.ObjectId, text: str):
         obj: typing.Optional[internal.objects.interfaces.IBoardObjectWithFont] = self._repo.get(
