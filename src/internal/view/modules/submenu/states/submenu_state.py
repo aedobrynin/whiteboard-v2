@@ -14,6 +14,7 @@ from internal.view.state_machine.impl import State
 from internal.view.modules.submenu.submenu import Submenu
 from internal.view.modules.submenu.consts import SUBMENU_STATE
 
+
 def _on_enter(
     global_dependencies: internal.view.dependencies.Dependencies,
     state_ctx: Dict,

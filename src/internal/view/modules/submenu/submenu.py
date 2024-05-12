@@ -55,14 +55,14 @@ class Submenu:
     ):
         obj = dependencies.objects_storage.get_opt_by_id(self.obj_id)
         if obj and obj.get_focused(dependencies):
-            obj.draw_rect(dependencies)
+            obj.draw_object_border(dependencies)
 
     def _remove_border(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         obj = dependencies.objects_storage.get_opt_by_id(self.obj_id)
         if obj:
-            obj.remove_rect(dependencies)
+            obj.remove_object_border(dependencies)
             obj.set_focused(dependencies, False)
 
     def _init_option_menu(

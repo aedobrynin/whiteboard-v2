@@ -41,6 +41,11 @@ class PubSubBroker(interfaces.IPubSubBroker):
             self._subscriptions[publisher][type] = []
         self._subscriptions[publisher][type].append(callback)
 
+    def clear_events(self):
+        events_cnt = len(self._unprocessed_events)
+        self._unprocessed_events.clear()
+        logging.debug('pub-sub events cleared, removed %d events', events_cnt)
+
     def process_published(self, repo: internal.repositories.interfaces.IRepository):
         logging.debug('processing published events')
         processed_cnt = 0

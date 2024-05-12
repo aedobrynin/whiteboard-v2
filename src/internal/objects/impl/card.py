@@ -20,10 +20,10 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         text: str = 'text',
         font: internal.models.Font = internal.models.Font(),
-        color: str = 'light yellow'
+        color: str = 'light yellow',
     ):
         super().__init__(id, types.BoardObjectType.CARD, position, pub_sub_broker, text, font)
-        self._color = color
+        self.color = color
 
     @property
     def color(self) -> str:
@@ -50,5 +50,5 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
             pub_sub_broker,
             data[_TEXT_FIELD],
             internal.models.Font.from_serialized(data[_FONT_FIELD]),
-            data[_COLOR_FIELD]
+            data[_COLOR_FIELD],
         )

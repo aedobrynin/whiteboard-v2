@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import abc
 from typing import List
 
@@ -15,10 +14,6 @@ class IController(abc.ABC):
         type: internal.objects.BoardObjectType,
         **kwargs
     ):
-        pass
-
-    @abc.abstractmethod
-    def create_object_from_serialize(self, serialized_obj: dict):
         pass
 
     @abc.abstractmethod

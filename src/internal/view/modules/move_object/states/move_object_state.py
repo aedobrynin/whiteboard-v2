@@ -11,6 +11,8 @@ import internal.view.dependencies
 _MOVE_OBJECT_STATE_NAME = 'MOVE_OBJECT'
 _LAST_DRAG_EVENT_X = 'last_drag_event_x'
 _LAST_DRAG_EVENT_Y = 'last_drag_event_y'
+_FIRST_DRAG_EVENT_X = 'first_drag_event_x'
+_FIRST_DRAG_EVENT_Y = 'first_drag_event_y'
 _OBJ_ID = 'obj_id'
 
 
@@ -19,8 +21,6 @@ def _on_enter(
     state_ctx: Dict,
     event: tkinter.Event
 ):
-    # global_dependencies.canvas.scan_mark(event.x, event.y)
-
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
 
@@ -32,6 +32,8 @@ def _on_enter(
 
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y
+    state_ctx[_FIRST_DRAG_EVENT_X] = x
+    state_ctx[_FIRST_DRAG_EVENT_Y] = y
     state_ctx[_OBJ_ID] = obj.id
 
 
@@ -41,6 +43,15 @@ def _on_leave(
     event: tkinter.Event
 ):
     # TODO: Z-Coordinate
+    diff: Position = Position(
+        state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X],
+        state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y],
+        0
+    )
+    # TODO: we send difference, if 2 people uses it collapse
+    global_dependencies.controller.move_object(
+        state_ctx[_OBJ_ID], diff
+    )
     global_dependencies.canvas.configure(background='white')
 
 
@@ -55,14 +66,10 @@ def _handle_event(
 
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
-    diff: Position = Position(
+    global_dependencies.canvas.move(
+        state_ctx[_OBJ_ID],
         x - state_ctx[_LAST_DRAG_EVENT_X],
-        y - state_ctx[_LAST_DRAG_EVENT_Y],
-        0
-    )
-    # TODO: we send difference, if 2 people uses it collapse
-    global_dependencies.controller.move_object(
-        state_ctx[_OBJ_ID], diff
+        y - state_ctx[_LAST_DRAG_EVENT_Y]
     )
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y

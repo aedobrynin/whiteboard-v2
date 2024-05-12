@@ -32,6 +32,10 @@ class MockPubSubBroker(interfaces.IPubSubBroker):
         # TODO: implement when needed
         pass
 
+    def clear_events(self):
+        # TODO: implement when needed
+        pass
+
     def process_published(self, repo: internal.repositories.interfaces.IRepository):
         # TODO: implement when needed
         pass
