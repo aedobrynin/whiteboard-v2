@@ -148,17 +148,17 @@ class Controller(interfaces.IController):
         self._undo_redo_manager.store_action(action)
 
     def edit_text(self, obj_id: internal.objects.interfaces.ObjectId, text: str):
-        action = EditAction(self, obj_id, 'text', text)   # TODO: property names as consts
+        action = EditAction(self, obj_id, 'text', text)  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_color(self, obj_id: internal.objects.interfaces.ObjectId, color: str):
-        action = EditAction(self, obj_id, 'color', color)   # TODO: property names as consts
+        action = EditAction(self, obj_id, 'color', color)  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_font(self, obj_id: internal.objects.interfaces.ObjectId, font: internal.models.Font):
-        action = EditAction(self, obj_id, 'font', font)   # TODO: property names as consts
+        action = EditAction(self, obj_id, 'font', font)  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
@@ -180,14 +180,27 @@ class Controller(interfaces.IController):
                 self._obj_id = obj_id
                 self._delta = delta
 
+            def _move_by_object(
+                self, delta: internal.models.Position, obj: internal.objects.interfaces.IBoardObject
+            ):
+                if isinstance(obj, internal.objects.interfaces.IBoardObjectWithPosition):
+                    obj.position = obj.position + delta
+                elif isinstance(obj, internal.objects.interfaces.IBoardObjectGroup):
+                    for child_id in obj.children_ids:
+                        child_obj = self._controller._repo.get(child_id)
+                        if child_obj:
+                            self._move_by_object(delta, child_obj)
+                else:
+                    logging.warning('No realization of move for type=%s', obj.type)
+
             def _move(self, delta: internal.models.Position):
                 obj: typing.Optional[
-                    internal.objects.interfaces.IBoardObjectWithPosition
+                    internal.objects.interfaces.IBoardObject
                 ] = self._controller._repo.get(self._obj_id)
                 if not obj:
                     logging.warning('MoveObjectAction: no object with id=%s', self._obj_id)
                     return
-                obj.position = obj.position + delta
+                self._move_by_object(delta, obj)
                 self._controller._on_feature_finish()
 
             def do(self):
@@ -218,23 +231,12 @@ class Controller(interfaces.IController):
         obj_id: internal.objects.interfaces.ObjectId,
         points: typing.List[internal.models.Position],
     ):
-        action = EditAction(self, obj_id, 'points', points)   # TODO: property names as consts
-        action.do()
-        self._undo_redo_manager.store_action(action)
-
-    def edit_children_ids(
-        self,
-        obj_id: internal.objects.interfaces.ObjectId,
-        children_ids: typing.Tuple[internal.objects.interfaces.ObjectId],
-    ):
-        action = EditAction(
-            self, obj_id, 'children_ids', children_ids
-        )   # TODO: property names as consts
+        action = EditAction(self, obj_id, 'points', points)  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: float):
-        action = EditAction(self, obj_id, 'width', width)   # TODO: property names as consts
+        action = EditAction(self, obj_id, 'width', width)  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
