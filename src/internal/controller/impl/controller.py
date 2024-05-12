@@ -10,6 +10,9 @@ import internal.storages.interfaces
 import internal.undo_redo.interfaces
 
 from .. import interfaces
+from .edit_action import EditAction
+
+# TODO: get rid of boilerplate code (edit_... methods looks almost the same)
 
 
 class Controller(interfaces.IController):
@@ -132,85 +135,34 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
-    def _build_edit_text_action(self, obj_id: internal.objects.interfaces.ObjectId, text: str):
-        class EditTextAction(internal.models.IAction):
-            _controller: Controller
-            _obj_id: internal.objects.interfaces.ObjectId
-            _new_text: str
-            _old_text: typing.Optional[str]
-
-            def __init__(
-                self,
-                controller: Controller,
-                obj_id: internal.objects.interfaces.ObjectId,
-                new_text: str,
-            ):
-                self._controller = controller
-                self._obj_id = obj_id
-                self._new_text = new_text
-                self._old_text = None
-
-            def do(self):
-                logging.debug(
-                    'trying to set text=%s for obj with id=%s', self._new_text, self._obj_id
-                )
-                obj = self._controller._repo.get(self._obj_id)
-                if not obj:
-                    logging.warning('EditTextAction(do): no obj with id=%s', self._obj_id)
-                    return
-                self._old_text = obj.text   # type: ignore
-                obj.text = self._new_text
-                self._controller._on_feature_finish()
-
-            def undo(self):
-                if not self._old_text:
-                    logging.warning('EditTextAction: trying to undo action with old_text=None')
-                    return
-
-                obj = self._controller._repo.get(self._obj_id)
-                if not obj:
-                    logging.warning('EditTextAction(undo): no obj with id=%s', self._obj_id)
-                    return
-                obj.text = self._old_text
-                self._controller._on_feature_finish()
-
-        return EditTextAction(self, obj_id, text)
-
     def edit_text(self, obj_id: internal.objects.interfaces.ObjectId, text: str):
-        action = self._build_edit_text_action(obj_id, text)
+        action = EditAction(self, obj_id, 'text', text)   # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_color(self, obj_id: internal.objects.interfaces.ObjectId, color: str):
-        obj: typing.Optional[
-            internal.objects.interfaces.IBoardObjectCard,
-            internal.objects.interfaces.IBoardObjectPen,
-        ] = self._repo.get(object_id=obj_id)
-        # TODO: undo-redo
-        # TODO: think about incorrect obj type
-        if obj:
-            logging.debug('editing object old color=%s with new color=%s', obj.color, color)
-            obj.color = color
-            self._on_feature_finish()
-            return
-        logging.debug('no object id=%s found to edit with color=%s', obj_id, color)
+        action = EditAction(self, obj_id, 'color', color)   # TODO: property names as consts
+        action.do()
+        self._undo_redo_manager.store_action(action)
 
     def edit_font(self, obj_id: internal.objects.interfaces.ObjectId, font: internal.models.Font):
-        obj: typing.Optional[internal.objects.interfaces.IBoardObjectWithFont] = self._repo.get(
-            object_id=obj_id
-        )
-        # TODO: undo-redo
-        # TODO: think about incorrect obj type
-        if obj:
-            logging.debug('editing object with old font=%s, to=%s', obj.font, font)
-            obj.font = font
-            self._on_feature_finish()
-            return
-        logging.debug('no object id=%s found to edit with font=%s', obj_id, font)
+        action = EditAction(self, obj_id, 'font', font)   # TODO: property names as consts
+        action.do()
+        self._undo_redo_manager.store_action(action)
 
+    def _build_move_object_action(self,  obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position) -> internal.models.IAction:
+        class MoveObjectAction(internal.models.IAction):
+            _controller: Controller
+            _obj_id: typing.Optional[internal.objects.interfaces.ObjectId]
+            _delta: internal.models.Position
+
+            def __init__(self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position):
+                
     def move_object(
         self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position
     ):
+        
+
         # TODO: undo-redo
         obj: typing.Optional[internal.objects.interfaces.IBoardObjectWithPosition] = self._repo.get(
             object_id=obj_id
@@ -227,48 +179,25 @@ class Controller(interfaces.IController):
         obj_id: internal.objects.interfaces.ObjectId,
         points: typing.List[internal.models.Position],
     ):
-        # TODO: undo-redo
-        obj: typing.Optional[internal.objects.interfaces.IBoardObjectPen] = self._repo.get(
-            object_id=obj_id
-        )
-        if obj:
-            logging.debug('editing object old points=%s with new points=%s', obj.points, points)
-            obj.points = points
-            self._on_feature_finish()
-            return
-        logging.debug('no object id=%s found to edit with points=%s', obj_id, points)
+        action = EditAction(self, obj_id, 'points', points)   # TODO: property names as consts
+        action.do()
+        self._undo_redo_manager.store_action(action)
 
     def edit_children_ids(
         self,
         obj_id: internal.objects.interfaces.ObjectId,
         children_ids: typing.Tuple[internal.objects.interfaces.ObjectId],
     ):
-        # TODO: undo-redo
-        obj: typing.Optional[internal.objects.interfaces.IBoardObjectGroup] = self._repo.get(
-            object_id=obj_id
-        )
-        if obj:
-            logging.debug(
-                'editing object old children_ids=%s with new children_ids=%s',
-                obj.children_ids,
-                children_ids,
-            )
-            obj.children_ids = children_ids
-            self._on_feature_finish()
-            return
-        logging.debug('no object id=%s found to edit with children_ids=%s', obj_id, children_ids)
+        action = EditAction(
+            self, obj_id, 'children_ids', children_ids
+        )   # TODO: property names as consts
+        action.do()
+        self._undo_redo_manager.store_action(action)
 
     def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: float):
-        obj: typing.Optional[internal.objects.interfaces.IBoardObjectPen] = self._repo.get(
-            object_id=obj_id
-        )
-        # TODO: undo-redo
-        if obj:
-            logging.debug('editing object old width=%s with new width=%s', obj.width, width)
-            obj.width = width
-            self._on_feature_finish()
-            return
-        logging.debug('no object id=%s found to edit with width=%s', obj_id, width)
+        action = EditAction(self, obj_id, 'width', points)   # TODO: property names as consts
+        action.do()
+        self._undo_redo_manager.store_action(action)
 
     def undo_last_action(self):
         logging.debug('controller was asked to undo last action')

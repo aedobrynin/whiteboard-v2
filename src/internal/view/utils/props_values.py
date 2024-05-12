@@ -19,10 +19,21 @@ def get_font_sizes() -> List[int]:
 
 def get_font_colors() -> List[str]:
     return [
-        'gray', 'light yellow', 'yellow', 'orange',
-        'light green', 'green', 'dark green', 'cyan',
-        'light pink', 'pink', 'pink', 'violet',
-        'red', 'light blue', 'dark blue', 'black'
+        'gray',
+        'light yellow',
+        'yellow',
+        'orange',
+        'light green',
+        'green',
+        'dark green',
+        'cyan',
+        'light pink',
+        'pink',
+        'violet',
+        'red',
+        'light blue',
+        'dark blue',
+        'black',
     ]
 
 
@@ -40,10 +51,27 @@ def get_line_types() -> List[str]:
 
 def get_font_families() -> List[str]:
     return [
-        'Arial', 'Calibri', 'Cambria', 'Century',
-        'Consolas', 'Corbel', 'Courier', 'Dubai',
-        'Georgia', 'Impact', 'Mistral', 'Modern',
-        'Montserrat', 'Papyrus', 'Pristina', 'Roman',
-        'Script', 'SimSun', 'Symbol', 'Tahoma',
-        'Terminal', 'Verdana', 'Wingdings'
+        'Arial',
+        'Calibri',
+        'Cambria',
+        'Century',
+        'Consolas',
+        'Corbel',
+        'Courier',
+        'Dubai',
+        'Georgia',
+        'Impact',
+        'Mistral',
+        'Modern',
+        'Montserrat',
+        'Papyrus',
+        'Pristina',
+        'Roman',
+        'Script',
+        'SimSun',
+        'Symbol',
+        'Tahoma',
+        'Terminal',
+        'Verdana',
+        'Wingdings',
     ]
