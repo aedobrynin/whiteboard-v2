@@ -54,6 +54,7 @@ class Controller(interfaces.IController):
             _controller: Controller
             _type: internal.objects.BoardObjectType
             _kwargs: dict
+            _serialized_obj: typing.Optional[dict]
             _obj_id: typing.Optional[internal.objects.interfaces.ObjectId]
 
             def __init__(
@@ -62,16 +63,29 @@ class Controller(interfaces.IController):
                 self._controller = controller
                 self._type = type
                 self._kwargs = kwargs
+                # Myb this will be changed in the future
+                # If we have sequence `create(1) -> undo -> redo(2)`
+                # objects which were created on (1) and (2) should
+                # have the same id in order to other redo actions to be applied successfully
+                self._serialized_obj = None
+                self._obj_id = None
 
             def do(self):
-                # TODO: remember representation of created object
-                # `create(1) -> undo -> redo(2)`
-                # objects which were created on (1) and (2) should have the same id and representation
                 logging.debug('creating object with type=%s and kwargs=%s', type, kwargs)
-                obj = internal.objects.build_by_type(
-                    self._type, self._controller._pub_sub_broker, **self._kwargs
-                )
-                self._obj_id = obj.id
+                if self._serialized_obj:
+                    logging.debug(
+                        'CreateObjectAction: object was created before, restore from serialized'
+                    )
+                    obj = internal.objects.build_from_serialized(
+                        self._serialized_obj, self._controller._pub_sub_broker
+                    )
+                else:
+                    obj = internal.objects.build_by_type(
+                        self._type, self._controller._pub_sub_broker, **self._kwargs
+                    )
+                    self._serialized_obj = obj.serialize()
+                    self._obj_id = obj.id
+
                 self._controller._repo.add(obj)
                 self._controller._on_feature_finish()
 
