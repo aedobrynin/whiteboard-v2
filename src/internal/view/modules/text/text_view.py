@@ -145,8 +145,8 @@ class TextObject(ViewObject):
             values=restrictions,
             state='readonly',
         )
-        string_var.trace('w', lambda *_: setter(dependencies, string_var.get()))
         combobox.current(restrictions.index(getter(dependencies)))
+        string_var.trace('w', lambda *_: setter(dependencies, string_var.get()))
         return label, combobox
 
     def get_font_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):

@@ -18,7 +18,7 @@ from internal.view.modules.submenu.consts import SUBMENU_STATE
 def _on_enter(
     global_dependencies: internal.view.dependencies.Dependencies,
     state_ctx: Dict,
-    event: tkinter.Event
+    event: tkinter.Event,
 ):
     obj = global_dependencies.objects_storage.get_current_opt(global_dependencies)
     if not obj:
@@ -31,7 +31,7 @@ def _on_enter(
 def _handle_event(
     global_dependencies: internal.view.dependencies.Dependencies,
     state_ctx: Dict,
-    event: tkinter.Event
+    event: tkinter.Event,
 ):
     if event.type != tkinter.EventType.ButtonRelease or event.num != 3:
         return
@@ -42,18 +42,18 @@ def _handle_event(
 def _on_leave(
     global_dependencies: internal.view.dependencies.Dependencies,
     state_ctx: Dict,
-    event: tkinter.Event
+    event: tkinter.Event,
 ):
     if SUBMENU_STATE not in state_ctx:
         return
     submenu: Submenu = state_ctx[SUBMENU_STATE]
     if submenu.obj_id is not None:
         state_ctx[SUBMENU_STATE].destroy_menu(global_dependencies)
+    global_dependencies.canvas.focus_set()
 
 
 def _predicate_from_root_to_context(
-    global_dependencies: internal.view.dependencies.Dependencies,
-    event: tkinter.Event
+    global_dependencies: internal.view.dependencies.Dependencies, event: tkinter.Event
 ) -> bool:
     # Release Left mouse button
     if event.type != tkinter.EventType.ButtonRelease or event.num != 1:
@@ -63,8 +63,7 @@ def _predicate_from_root_to_context(
 
 
 def _predicate_from_context_to_root(
-    global_dependencies: internal.view.dependencies.Dependencies,
-    event: tkinter.Event
+    global_dependencies: internal.view.dependencies.Dependencies, event: tkinter.Event
 ) -> bool:
     # Release Left mouse button
     if event.type != tkinter.EventType.ButtonRelease or event.num != 1:
@@ -74,8 +73,7 @@ def _predicate_from_context_to_root(
 
 
 def _predicate_from_context_to_context(
-    global_dependencies: internal.view.dependencies.Dependencies,
-    event: tkinter.Event
+    global_dependencies: internal.view.dependencies.Dependencies, event: tkinter.Event
 ) -> bool:
     # Release Left mouse button
     if event.type != tkinter.EventType.ButtonRelease or event.num != 1:
@@ -84,12 +82,8 @@ def _predicate_from_context_to_context(
     return cur_obj is not None
 
 
-def create_state(
-    state_machine: internal.view.state_machine.interfaces.IStateMachine
-) -> State:
-    state = State(
-        internal.view.state_machine.interfaces.OBJECT_FOCUS_STATE_NAME
-    )
+def create_state(state_machine: internal.view.state_machine.interfaces.IStateMachine) -> State:
+    state = State(internal.view.state_machine.interfaces.OBJECT_FOCUS_STATE_NAME)
     state.set_on_enter(_on_enter)
     state.set_event_handler(_handle_event)
     state.set_on_leave(_on_leave)

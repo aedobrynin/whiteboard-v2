@@ -11,6 +11,7 @@ import internal.objects.interfaces
 import internal.pub_sub.impl
 import internal.repositories.impl
 import internal.storages.impl
+import internal.undo_redo.impl
 import internal.view.view
 
 _logging_choice_to_loglevel = {
@@ -26,8 +27,7 @@ RECONNECTION_TIME_SEC = 1
 async def get_updates(
     shared_storage: internal.storages.impl.SharedYDocStorage,
     controller: internal.controller.impl.Controller,
-    repo: internal.repositories.impl.Repository,
-    broker: internal.pub_sub.impl.PubSubBroker
+    repo: internal.repositories.impl.Repository
 ):
     while True:
         try:
@@ -126,10 +126,18 @@ async def main():
     logging.debug('initializing repo')
     repo = internal.repositories.impl.Repository(objects, broker)
 
-    logging.debug('clearing created events')
+    logging.debug('clearing created pub-sub events')
     broker.clear_events()
+
+    undo_redo_manager_max_history_size = 100  # TODO: move to cfg
+    logging.debug(
+        'initializing undo-redo manager with max_history_size=%d',
+        undo_redo_manager_max_history_size,
+    )
+    undo_redo_manager = internal.undo_redo.impl.UndoRedoManager(undo_redo_manager_max_history_size)
+
     logging.debug('initializing controller')
-    controller = internal.controller.impl.Controller(repo, storage, broker)
+    controller = internal.controller.impl.Controller(repo, storage, broker, undo_redo_manager)
 
     logging.debug('initializing tkinter')
     view = internal.view.view.create_view(
@@ -142,7 +150,7 @@ async def main():
     logging.debug('run client connection, get updates from server and tkinter UI update')
     await asyncio.gather(
         client_connection_handler(storage),
-        get_updates(storage, controller, repo, broker),
+        get_updates(storage, controller, repo),
         internal.view.view.root_update(view)
     )
 
