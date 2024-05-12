@@ -12,8 +12,8 @@ from .ydoc_storage import YDocStorage, _Y_DOC_OBJECTS_FIELD_NAME
 from .. import interfaces
 
 # TODO: .env file
-SERVER_HOST = os.environ.get('SERVER_HOST', 'localhost')
-SERVER_PORT = os.environ.get('SERVER_PORT', 50)
+SERVER_HOST = os.environ.get('SERVER_HOST', '127.0.0.1')
+SERVER_PORT = os.environ.get('SERVER_PORT', 5000)
 URI_WEBSOCKET_SERVER = f'ws://{SERVER_HOST}:{SERVER_PORT}'
 
 
@@ -34,11 +34,15 @@ class SharedYDocStorage(YDocStorage, interfaces.ISharedStorage):
 
     def _transaction_callback_obj(self, event: YMapEvent):
         for obj_id, change in event.keys.items():
-            self._cur_changes.put((obj_id, change['newValue']))
+            obj = dict()
+            obj['obj_repr'] = change['newValue']
+            obj['obj_action'] = change['action']
+            obj['obj_id'] = obj_id
+            self._cur_changes.put(obj)
 
     def is_empty_updates(self):
         return self._cur_changes.empty()
 
-    def get_updates(self) -> Optional[tuple[str, dict]]:
+    def get_updates(self) -> Optional[dict]:
         while not self._cur_changes.empty():
             yield self._cur_changes.get()
