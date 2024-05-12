@@ -164,7 +164,7 @@ class Controller(interfaces.IController):
 
             def undo(self):
                 if not self._old_text:
-                    logging.waring('EditTextAction: trying to undo action with old_text=None')
+                    logging.warning('EditTextAction: trying to undo action with old_text=None')
                     return
 
                 obj = self._controller._repo.get(self._obj_id)
