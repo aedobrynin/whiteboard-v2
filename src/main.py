@@ -1,14 +1,13 @@
 import argparse
 import asyncio
 import logging
-import pathlib
-import tkinter
 
 from websockets import connect, ConnectionClosed
 
 import internal.controller.impl
+import internal.models
 import internal.objects
-import internal.objects
+import internal.objects.interfaces
 import internal.pub_sub.impl
 import internal.repositories.impl
 import internal.storages.impl
@@ -23,41 +22,48 @@ _logging_choice_to_loglevel = {
 
 RECONNECTION_TIME_SEC = 1
 
-async def root_update(
-    view: tkinter.Tk
-):
-    while True:
-        try:
-            view.update()
-            await asyncio.sleep(0)
-        except Exception as ex:
-            logging.error('some exception in tkinter: error=%s', ex)
-
 
 async def get_updates(
     shared_storage: internal.storages.impl.SharedYDocStorage,
     controller: internal.controller.impl.Controller,
-    repo: internal.repositories.impl.Repository
+    repo: internal.repositories.impl.Repository,
+    broker: internal.pub_sub.impl.PubSubBroker
 ):
     while True:
         try:
             for update in shared_storage.get_updates():
-                obj_id = update[0]
-                obj = dict(update[1])
-                type = obj['type']
-                logging.debug('SOME UPDATE: %s', obj)
-            await asyncio.sleep(0)
+                logging.debug('SOME UPDATE: %s', update)
+                obj_id = update['obj_id']
+                action_type = update['obj_action']
+                if action_type in ('add', 'update') and repo.get(obj_id) is None:
+                    obj_repr = update['obj_repr']
+                    controller.create_object_from_serialize(obj_repr)
+                elif action_type == 'update':
+                    obj_repr = update['obj_repr']
+                    data_object_type = internal.objects.BoardObjectType(update['obj_repr']['type'])
+                    if data_object_type == internal.objects.BoardObjectType.TEXT:
+                        obj: internal.objects.interfaces.IBoardObjectText = repo.get(obj_id)
+                        if 'position' in obj_repr:
+                            position = internal.models.Position.from_serialized(obj_repr['position'])
+                            if position != obj.position:
+                                controller.move_object(obj.id, position - obj.position)
+                        elif 'font' in obj_repr:
+                            font = internal.models.Font.from_serialized(obj_repr['font'])
+                            if font != obj.font:
+                                controller.edit_font(obj.id, font)
+                        elif 'text' in obj_repr and obj.text != obj_repr['text']:
+                            controller.edit_text(obj.id, obj_repr['text'])
+                        else:
+                            logging.debug('the other repr %s', obj_repr)
+                elif action_type == 'delete':
+                    if repo.get(obj_id) is None:
+                        continue
+                    pass
+                else:
+                    logging.warning('new action type %s', action_type)
+            await asyncio.sleep(0.01)
         except Exception as ex:
             logging.error('some exception in get_updates: error=%s', ex)
-
-
-def run_loop_connection(
-    loop: asyncio.AbstractEventLoop,
-    shared_storage: internal.storages.impl.SharedYDocStorage
-):
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(client_connection_handler(shared_storage))
-    loop.close()
 
 
 async def client_connection_handler(
@@ -82,18 +88,11 @@ async def client_connection_handler(
 
 async def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'board-path',
-        type=pathlib.Path,
-        help='path to board',
-        nargs='?',
-        default='storage.boardobj',
-    )
 
     parser.add_argument(
         'board-name',
-        type=pathlib.Path,
-        help='server board key',
+        type=str,
+        help='server board name',
         nargs='?',
         default='sample_board',
     )
@@ -135,12 +134,13 @@ async def main():
     view = internal.view.view.create_view(
         controller=controller,
         repo=repo,
-        pub_sub=broker
+        pub_sub=broker,
+        board_name=board_name
     )
     await asyncio.gather(
         client_connection_handler(storage),
-        get_updates(storage, controller, repo),
-        root_update(view)
+        get_updates(storage, controller, repo, broker),
+        internal.view.view.root_update(view)
     )
 
 
