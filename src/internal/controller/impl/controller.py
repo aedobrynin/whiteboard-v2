@@ -120,7 +120,7 @@ class Controller(interfaces.IController):
                     return
 
                 obj = internal.objects.build_from_serialized(
-                    self._serialized_obj, self._pub_sub_broker
+                    self._serialized_obj, self._controller._pub_sub_broker
                 )
                 self._controller._repo.add(obj)
                 self._controller._on_feature_finish()
