@@ -7,7 +7,6 @@ import internal.objects.interfaces
 import internal.pub_sub.interfaces
 import internal.repositories.interfaces
 import internal.storages
-
 from .. import interfaces
 
 
@@ -56,6 +55,12 @@ class Controller(interfaces.IController):
     ):
         logging.debug('deleting object=%s', obj_id)
         self._repo.delete(obj_id)
+        self._on_feature_finish()
+
+    def create_object_from_serialize(self, serialized_obj: dict):
+        logging.debug('creating from serialized=%s', type, serialized_obj)
+        created_object = internal.objects.build_from_serialized(serialized_obj, self._pub_sub_broker)
+        self._repo.add(created_object)
         self._on_feature_finish()
 
     def edit_text(
