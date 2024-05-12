@@ -11,6 +11,7 @@ class AppendAction(internal.models.IAction):
         self._lst.append(self._val)
 
     def undo(self):
+        assert self._lst[-1] == self._val
         self._lst.pop()
 
 

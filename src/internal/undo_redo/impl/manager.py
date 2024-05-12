@@ -23,7 +23,7 @@ class UndoRedoManager(interfaces.IUndoRedoManager):
             del self._history[self._cur_pos + 1]
         self._history.append(action)
 
-        self._history = self._history[: self._max_history_size]
+        self._history = self._history[-self._max_history_size :]
         self._cur_pos = len(self._history) - 1
 
     def undo(self):
