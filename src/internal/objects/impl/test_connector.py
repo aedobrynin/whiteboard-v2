@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import internal.pub_sub.mocks
 from .connector import BoardObjectConnector
 from .object_id import generate_object_id
@@ -7,6 +9,7 @@ from ..types import BoardObjectType
 def test_board_connector_serialization():
     id = generate_object_id()
     type = BoardObjectType.CONNECTOR
+    create_dttm = datetime.now().replace(microsecond=0)
     start_id = generate_object_id()
     end_id = generate_object_id()
     color = 'black'
@@ -16,11 +19,12 @@ def test_board_connector_serialization():
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
     obj = BoardObjectConnector(
-        id, broker, start_id, end_id, color, width, connector_type, stroke_style
+        id, create_dttm, broker, start_id, end_id, color, width, connector_type, stroke_style
     )
     assert obj.serialize() == {
         'id': id,
         'type': type.value,
+        'create_dttm': create_dttm.strftime('%Y-%m-%dT%H-%M-%SZ'),
         'start_id': start_id,
         'end_id': end_id,
         'color': color,
@@ -33,6 +37,7 @@ def test_board_connector_serialization():
 def test_board_connector_deserialization():
     id = generate_object_id()
     type = BoardObjectType.CONNECTOR
+    create_dttm = datetime.now().replace(microsecond=0)
     start_id = generate_object_id()
     end_id = generate_object_id()
     color = 'black'
@@ -43,6 +48,7 @@ def test_board_connector_deserialization():
     serialized = {
         'id': id,
         'type': type.value,
+        'create_dttm': create_dttm.strftime('%Y-%m-%dT%H-%M-%SZ'),
         'start_id': start_id,
         'end_id': end_id,
         'color': color,
@@ -56,6 +62,7 @@ def test_board_connector_deserialization():
     obj: BoardObjectConnector = BoardObjectConnector.from_serialized(serialized, broker)
     assert obj.id == id
     assert obj.type == type
+    assert obj.create_dttm == create_dttm
     assert obj.start_id == start_id
     assert obj.end_id == end_id
     assert obj.color == color

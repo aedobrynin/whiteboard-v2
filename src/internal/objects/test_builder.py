@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import internal.objects
 import internal.pub_sub.mocks
 from .impl.card import BoardObjectCard
@@ -10,6 +12,7 @@ def test_text_building():
     serialized_text = {
         'type': 'text',
         'id': generate_object_id(),
+        'create_dttm': datetime.now().replace(microsecond=0).strftime('%Y-%m-%dT%H-%M-%SZ'),
         'position': {'x': 1, 'y': 2, 'z': 3},
         'text': 'text',
         'font': {
@@ -31,6 +34,7 @@ def test_card_building():
     serialized_card = {
         'type': 'card',
         'id': generate_object_id(),
+        'create_dttm': datetime.now().replace(microsecond=0).strftime('%Y-%m-%dT%H-%M-%SZ'),
         'position': {'x': 1, 'y': 2, 'z': 3},
         'text': 'text',
         'font': {
@@ -53,6 +57,7 @@ def test_connector_building():
     serialized_connector = {
         'id': generate_object_id(),
         'type': 'connector',
+        'create_dttm': datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ'),
         'start_id': generate_object_id(),
         'end_id': generate_object_id(),
         'color': 'black',

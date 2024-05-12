@@ -27,7 +27,7 @@ class ViewObjectStorage(IViewObjectStorage):
     def create_view_objects(
         self, dependencies: internal.view.dependencies.Dependencies
     ) -> None:
-        for obj in dependencies.repo.get_all():
+        for obj in sorted(dependencies.repo.get_all(), key=lambda o: o.create_dttm):
             self._create_obj(obj.id, dependencies)
 
     def _subscribe_to_create_object_event(

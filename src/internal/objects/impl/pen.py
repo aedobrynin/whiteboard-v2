@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import List
 
-from internal.objects import interfaces
-from internal.models import Position
 import internal.pub_sub.interfaces
+from internal.models import Position
+from internal.objects import interfaces
 from .common import field_names
 from .object import BoardObject
-from .. import types
 from .. import events
+from .. import types
 
 _POINTS_FIELD = 'points'
 _COLOR_FIELD = 'color'
@@ -21,6 +22,7 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
     def __init__(
         self,
         id: interfaces.ObjectId,
+        create_dttm: datetime,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         points: List[internal.models.Position],  # noqa
         color: str = _DEFAULT_COLOR,
@@ -29,6 +31,7 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
         BoardObject.__init__(
             self, id,
             types.BoardObjectType.PEN,
+            create_dttm,
             pub_sub_broker
         )
         self.points = points
@@ -75,6 +78,7 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectPen(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
+            datetime.strptime(data[field_names.CREATE_DTTM_FIELD], '%Y-%m-%dT%H-%M-%SZ'),
             pub_sub_broker,
             [Position.from_serialized(p) for p in data[_POINTS_FIELD]],
             data[_COLOR_FIELD],

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime
+
 import internal.pub_sub.interfaces
 from internal.objects import interfaces
 from .common import field_names
@@ -23,6 +25,7 @@ class BoardObjectConnector(interfaces.IBoardObjectConnector, BoardObject):
     def __init__(
         self,
         id: interfaces.ObjectId,
+        create_dttm: datetime,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         start_id: interfaces.ObjectId,
         end_id: interfaces.ObjectId,
@@ -32,7 +35,7 @@ class BoardObjectConnector(interfaces.IBoardObjectConnector, BoardObject):
         stroke_style: str = DEFAULT_STROKE_STYLE,
     ):
         BoardObject.__init__(
-            self, id, types.BoardObjectType.CONNECTOR, pub_sub_broker
+            self, id, types.BoardObjectType.CONNECTOR, create_dttm, pub_sub_broker
         )
         self.start_id = start_id
         self.end_id = end_id
@@ -111,6 +114,7 @@ class BoardObjectConnector(interfaces.IBoardObjectConnector, BoardObject):
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectConnector(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
+            datetime.strptime(data[field_names.CREATE_DTTM_FIELD], '%Y-%m-%dT%H-%M-%SZ'),
             pub_sub_broker,
             data[_START_ID_FIELD],
             data[_END_ID_FIELD],

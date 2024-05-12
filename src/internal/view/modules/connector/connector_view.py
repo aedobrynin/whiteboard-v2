@@ -46,8 +46,8 @@ class ConnectorObject(ViewObject):
         self._subscribe_to_child_change_object(dependencies)
         self._subscribe_to_child_delete_object(dependencies)
         # TODO: because notifications came after move-done, connector doesnt redraw properly
-        dependencies.canvas.addtag_below(obj.id, obj.start_id)
-        dependencies.canvas.addtag_below(obj.id, obj.end_id)
+        dependencies.canvas.addtag_withtag(obj.id, obj.start_id)
+        dependencies.canvas.addtag_withtag(obj.id, obj.end_id)
 
     @property
     def line_id(self):

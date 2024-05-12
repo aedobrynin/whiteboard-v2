@@ -1,11 +1,12 @@
+from datetime import datetime
+
 import pytest
 
 import internal.objects.interfaces
 import internal.pub_sub.mocks
-
 from . import repository
-from .. import exceptions
 from .. import events
+from .. import exceptions
 from .. import interfaces
 
 
@@ -14,6 +15,7 @@ def _get_serialized_card():
     def _impl():
         return {
             'id': '4680838b-4217-4992-9932-3d3ebb22c8ec',
+            'create_dttm': datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ'),
             'position': {
                 'x': 1,
                 'y': 2,
@@ -44,7 +46,7 @@ def test_repository_add_object(get_serialized_card):
         obj.id: get_serialized_card(),
     }
     assert len(broker.published) == 6  # other notifications come
-    event = broker.published[-1] # the last notification is added object
+    event = broker.published[-1]  # the last notification is added object
     assert event == internal.pub_sub.mocks.PublishedEvent(
         interfaces.REPOSITORY_PUB_SUB_ID,
         events.EventObjectAdded(obj.id),

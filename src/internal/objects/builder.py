@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import internal.models
 import internal.pub_sub.interfaces
 from . import interfaces
@@ -26,9 +28,9 @@ def build_by_type(
 ) -> interfaces.IBoardObjectWithPosition:
     id = generate_object_id()
     if 'position' in kwargs and isinstance(kwargs['position'], internal.models.Position):
-        return TYPE_IMPLS[type](id, kwargs['position'], pub_sub_broker)
+        return TYPE_IMPLS[type](id, datetime.now().replace(microsecond=0), kwargs['position'], pub_sub_broker)
     if type == BoardObjectType.GROUP and 'children_ids' in kwargs:
-        return TYPE_IMPLS[type](id, pub_sub_broker, kwargs['children_ids'])
+        return TYPE_IMPLS[type](id, datetime.now().replace(microsecond=0), pub_sub_broker, kwargs['children_ids'])
     if type == BoardObjectType.CONNECTOR and 'start_id' in kwargs and 'end_id' in kwargs:
-        return TYPE_IMPLS[type](id, pub_sub_broker, kwargs['start_id'], kwargs['end_id'])
+        return TYPE_IMPLS[type](id, datetime.now().replace(microsecond=0), pub_sub_broker, kwargs['start_id'], kwargs['end_id'])
     raise ValueError('No object to build')

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import abc
+import datetime
 from abc import ABC
 from typing import List
 
@@ -22,6 +23,10 @@ class IBoardObject(abc.ABC):
     @property
     @abc.abstractmethod
     def type(self) -> types.BoardObjectType:
+        pass
+
+    @property
+    def create_dttm(self) -> datetime.datetime:
         pass
 
     # TODO typedef SerializedObject = dict
