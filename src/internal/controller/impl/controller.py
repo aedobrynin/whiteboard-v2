@@ -133,6 +133,7 @@ class Controller(interfaces.IController):
         obj: typing.Optional[internal.objects.interfaces.IBoardObjectWithFont] = self._repo.get(
             object_id=obj_id
         )
+        # TODO: undo-redo
         # TODO: think about incorrect obj type
         if obj:
             logging.debug('editing object old text=%s with new text=%s', obj.text, text)
@@ -146,6 +147,7 @@ class Controller(interfaces.IController):
             internal.objects.interfaces.IBoardObjectCard,
             internal.objects.interfaces.IBoardObjectPen,
         ] = self._repo.get(object_id=obj_id)
+        # TODO: undo-redo
         # TODO: think about incorrect obj type
         if obj:
             logging.debug('editing object old color=%s with new color=%s', obj.color, color)
@@ -158,6 +160,7 @@ class Controller(interfaces.IController):
         obj: typing.Optional[internal.objects.interfaces.IBoardObjectWithFont] = self._repo.get(
             object_id=obj_id
         )
+        # TODO: undo-redo
         # TODO: think about incorrect obj type
         if obj:
             logging.debug('editing object with old font=%s, to=%s', obj.font, font)
@@ -169,6 +172,7 @@ class Controller(interfaces.IController):
     def move_object(
         self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position
     ):
+        # TODO: undo-redo
         obj: typing.Optional[internal.objects.interfaces.IBoardObjectWithPosition] = self._repo.get(
             object_id=obj_id
         )
@@ -184,6 +188,7 @@ class Controller(interfaces.IController):
         obj_id: internal.objects.interfaces.ObjectId,
         points: typing.List[internal.models.Position],
     ):
+        # TODO: undo-redo
         obj: typing.Optional[internal.objects.interfaces.IBoardObjectPen] = self._repo.get(
             object_id=obj_id
         )
@@ -199,6 +204,7 @@ class Controller(interfaces.IController):
         obj_id: internal.objects.interfaces.ObjectId,
         children_ids: typing.Tuple[internal.objects.interfaces.ObjectId],
     ):
+        # TODO: undo-redo
         obj: typing.Optional[internal.objects.interfaces.IBoardObjectGroup] = self._repo.get(
             object_id=obj_id
         )
@@ -217,6 +223,7 @@ class Controller(interfaces.IController):
         obj: typing.Optional[internal.objects.interfaces.IBoardObjectPen] = self._repo.get(
             object_id=obj_id
         )
+        # TODO: undo-redo
         if obj:
             logging.debug('editing object old width=%s with new width=%s', obj.width, width)
             obj.width = width
