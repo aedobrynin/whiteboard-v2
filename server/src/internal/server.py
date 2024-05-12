@@ -17,6 +17,7 @@ _SERVER_HOST = os.environ.get('SERVER_HOST', '127.0.0.1')
 _SERVER_PORT = os.environ.get('SERVER_PORT', 5000)
 
 _OBJECTS_DB_NAME = 'boards'
+_RECONNECTION_TIME = 15
 
 
 class WhiteBoardServer:
@@ -28,12 +29,17 @@ class WhiteBoardServer:
         self._db: Database[Mapping[str, Any]] = self._client[_OBJECTS_DB_NAME]
 
     async def serve(self):
-        logging.debug('trying to start server')
-        async with (
-            WebsocketServerWithDB(self._db) as websocket_server,
-            serve(websocket_server.serve, _SERVER_HOST, _SERVER_PORT),  # type: ignore
-        ):
-            while not websocket_server.started:
-                await asyncio.sleep(0.5)
-            logging.debug('server started')
-            await asyncio.Future()
+        while True:
+            try:
+                logging.debug('trying to start server')
+                async with (
+                    WebsocketServerWithDB(self._db) as websocket_server,
+                    serve(websocket_server.serve, _SERVER_HOST, _SERVER_PORT),  # type: ignore
+                ):
+                    while not websocket_server.started:
+                        await asyncio.sleep(0.5)
+                    logging.debug('server started')
+                    await asyncio.Future()
+            except Exception as ex:
+                logging.debug('Exception came from server=%s', ex)
+                await asyncio.sleep(_RECONNECTION_TIME)

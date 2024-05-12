@@ -27,12 +27,12 @@ RECONNECTION_TIME_SEC = 1
 async def get_updates(
     shared_storage: internal.storages.impl.SharedYDocStorage,
     controller: internal.controller.impl.Controller,
-    repo: internal.repositories.impl.Repository
+    repo: internal.repositories.impl.Repository,
+    stop: asyncio.Event
 ):
-    while True:
+    while not stop.is_set():
         try:
             for update in shared_storage.get_updates():
-                logging.debug('SOME UPDATE: %s', update)
                 obj_id = update['obj_id']
                 action_type = update['obj_action']
                 if action_type in ('add', 'update') and repo.get(obj_id) is None:
@@ -47,18 +47,16 @@ async def get_updates(
                             position = internal.models.Position.from_serialized(obj_repr['position'])
                             if position != obj.position:
                                 controller.move_object(obj.id, position - obj.position)
-                        elif 'font' in obj_repr:
+                        if 'font' in obj_repr:
                             font = internal.models.Font.from_serialized(obj_repr['font'])
                             if font != obj.font:
                                 controller.edit_font(obj.id, font)
-                        elif 'text' in obj_repr and obj.text != obj_repr['text']:
+                        if 'text' in obj_repr and obj.text != obj_repr['text']:
                             controller.edit_text(obj.id, obj_repr['text'])
-                        else:
-                            logging.debug('the other repr %s', obj_repr)
                 elif action_type == 'delete':
                     if repo.get(obj_id) is None:
                         continue
-                    pass
+                    controller.delete_object(obj_id)
                 else:
                     logging.warning('new action type %s', action_type)
             await asyncio.sleep(0.01)
@@ -67,9 +65,9 @@ async def get_updates(
 
 
 async def client_connection_handler(
-    shared_storage: internal.storages.impl.SharedYDocStorage
+    shared_storage: internal.storages.impl.SharedYDocStorage, stop: asyncio.Event
 ):
-    while True:
+    while not stop.is_set():
         logging.debug('trying to connect to server=%s...', shared_storage.get_uri_connection())
         try:
             async with (
@@ -84,6 +82,13 @@ async def client_connection_handler(
         except Exception as ex:
             logging.error('some exception in websocket connect: error=%s', ex)
             await asyncio.sleep(RECONNECTION_TIME_SEC)
+
+
+async def create_tasks(tasks):
+    # Server and get_update never falls because of future and while, only tk can fall
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
+    for task in pending:
+        task.cancel()
 
 
 async def main():
@@ -148,11 +153,12 @@ async def main():
     )
 
     logging.debug('run client connection, get updates from server and tkinter UI update')
-    await asyncio.gather(
-        client_connection_handler(storage),
-        get_updates(storage, controller, repo),
-        internal.view.view.root_update(view)
-    )
+    stop = asyncio.Event()
+    await create_tasks([
+        asyncio.create_task(client_connection_handler(storage, stop)),
+        asyncio.create_task(get_updates(storage, controller, repo, stop)),
+        asyncio.create_task(internal.view.view.root_update(view, stop))
+    ])
 
 
 if __name__ == '__main__':

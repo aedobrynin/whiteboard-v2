@@ -35,7 +35,7 @@ class SharedYDocStorage(YDocStorage, interfaces.ISharedStorage):
     def _transaction_callback_obj(self, event: YMapEvent):
         for obj_id, change in event.keys.items():
             obj = dict()
-            obj['obj_repr'] = change['newValue']
+            obj['obj_repr'] = change['newValue'] if change['action'] != 'delete' else None
             obj['obj_action'] = change['action']
             obj['obj_id'] = obj_id
             self._cur_changes.put(obj)

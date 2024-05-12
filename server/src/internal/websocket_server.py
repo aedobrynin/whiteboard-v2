@@ -59,11 +59,11 @@ class WebsocketServerWithDB(WebsocketServer):
         logging.debug('updated objects=%d', updated_count)
 
     async def start_room(self, room: YRoom):
-        await super().start_room(room)
         room_name = self.get_room_name(room)[1:]
         logging.debug('room=%s started', room_name)
         self.update_ymap_from_database(room)
         logging.debug('successfully updated collections')
+        await super().start_room(room)
 
     def delete_room(self, *, name: str | None = None, room: YRoom | None = None) -> None:
         try:
@@ -81,4 +81,3 @@ class WebsocketServerWithDB(WebsocketServer):
                 super().delete_room(name=name)
         except Exception as ex:
             logging.error('unexpected exception=%s from delete room came', ex)
-

@@ -17,15 +17,16 @@ import internal.view.modules.modules
 import internal.view.modules.move_object
 import internal.view.modules.submenu
 import internal.view.modules.text
+import internal.view.modules.undo_redo
 import internal.view.objects.impl.object_storage
 import internal.view.state_machine.impl.state_machine
 from internal.view.menu.impl.menu import Menu
 
 
 async def root_update(
-    view: tkinter.Tk
+    view: tkinter.Tk, stop: asyncio.Event
 ):
-    while True:
+    while not stop.is_set():
         # Process all pending events
         while view.dooneevent(_tkinter.DONT_WAIT) > 0:
             pass
@@ -33,7 +34,7 @@ async def root_update(
             view.winfo_exists()  # Will throw TclError if the main window is destroyed
         except tkinter.TclError:
             logging.debug('tkinter window closed')
-            break
+            stop.set()
         await asyncio.sleep(0.01)
 
 
