@@ -8,6 +8,7 @@ import internal.controller.impl
 import internal.pub_sub.impl
 import internal.objects
 import internal.view.view
+import internal.undo_redo.impl
 
 _logging_choice_to_loglevel = {
     'DEBUG': logging.DEBUG,
@@ -55,17 +56,23 @@ def main():
 
     logging.debug('initializing repo')
     repo = internal.repositories.impl.Repository(objects, broker)
-    logging.debug('clearing created events')
-    broker.clear_events()
-    logging.debug('initializing controller')
-    controller = internal.controller.impl.Controller(repo, storage, broker)
 
-    logging.debug('initializing tkinter')
-    internal.view.view.main(
-        controller=controller,
-        repo=repo,
-        pub_sub=broker
+    logging.debug('clearing created pub-sub events')
+    broker.clear_events()
+
+    undo_redo_manager_max_history_size = 100   # TODO: move to cfg
+    logging.debug(
+        'initializing undo-redo manager with max_history_size=%d',
+        undo_redo_manager_max_history_size,
     )
+    undo_redo_manager = internal.undo_redo.impl.UndoRedoManager(undo_redo_manager_max_history_size)
+
+    logging.debug('initializing controller')
+    controller = internal.controller.impl.Controller(repo, storage, broker, undo_redo_manager)
+
+    logging.debug('initializing view')
+    internal.view.view.main(controller=controller, repo=repo, pub_sub=broker)
+
     logging.info('shutting down...')
     storage.save()
 
