@@ -63,6 +63,9 @@ class Controller(interfaces.IController):
                 self._kwargs = kwargs
 
             def do(self):
+                # TODO: remember representation of created object
+                # `create(1) -> undo -> redo(2)`
+                # objects which were created on (1) and (2) should have the same id and representation
                 logging.debug('creating object with type=%s and kwargs=%s', type, kwargs)
                 obj = internal.objects.build_by_type(
                     self._type, self._controller._pub_sub_broker, **self._kwargs
@@ -129,18 +132,54 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
+    def _build_edit_text_action(self, obj_id: internal.objects.interfaces.ObjectId, text: str):
+        class EditTextAction(internal.models.IAction):
+            _controller: Controller
+            _obj_id: internal.objects.interfaces.ObjectId
+            _new_text: str
+            _old_text: typing.Optional[str]
+
+            def __init__(
+                self,
+                controller: Controller,
+                obj_id: internal.objects.interfaces.ObjectId,
+                new_text: str,
+            ):
+                self._controller = controller
+                self._obj_id = obj_id
+                self._new_text = new_text
+                self._old_text = None
+
+            def do(self):
+                logging.debug(
+                    'trying to set text=%s for obj with id=%s', self._new_text, self._obj_id
+                )
+                obj = self._controller._repo.get(self._obj_id)
+                if not obj:
+                    logging.warning('EditTextAction(do): no obj with id=%s', self._obj_id)
+                    return
+                self._old_text = obj.text   # type: ignore
+                obj.text = self._new_text
+                self._controller._on_feature_finish()
+
+            def undo(self):
+                if not self._old_text:
+                    logging.waring('EditTextAction: trying to undo action with old_text=None')
+                    return
+
+                obj = self._controller._repo.get(self._obj_id)
+                if not obj:
+                    logging.warning('EditTextAction(undo): no obj with id=%s', self._obj_id)
+                    return
+                obj.text = self._old_text
+                self._controller._on_feature_finish()
+
+        return EditTextAction(self, obj_id, text)
+
     def edit_text(self, obj_id: internal.objects.interfaces.ObjectId, text: str):
-        obj: typing.Optional[internal.objects.interfaces.IBoardObjectWithFont] = self._repo.get(
-            object_id=obj_id
-        )
-        # TODO: undo-redo
-        # TODO: think about incorrect obj type
-        if obj:
-            logging.debug('editing object old text=%s with new text=%s', obj.text, text)
-            obj.text = text
-            self._on_feature_finish()
-            return
-        logging.debug('no object id=%s found to edit with text=%s', obj_id, text)
+        action = self._build_edit_text_action(obj_id, text)
+        action.do()
+        self._undo_redo_manager.store_action(action)
 
     def edit_color(self, obj_id: internal.objects.interfaces.ObjectId, color: str):
         obj: typing.Optional[
