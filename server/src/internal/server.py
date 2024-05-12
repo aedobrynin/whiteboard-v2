@@ -13,8 +13,8 @@ from .websocket_server import WebsocketServerWithDB
 _MONGO_HOST = os.environ.get('MONGO_HOST', 'localhost')
 _MONGO_PORT = os.environ.get('MONGO_PORT', 27017)
 
-_SERVER_HOST = os.environ.get('SERVER_HOST', 'localhost')
-_SERVER_PORT = os.environ.get('SERVER_PORT', 50)
+_SERVER_HOST = os.environ.get('SERVER_HOST', '127.0.0.1')
+_SERVER_PORT = os.environ.get('SERVER_PORT', 5000)
 
 _OBJECTS_DB_NAME = 'boards'
 
@@ -34,6 +34,6 @@ class WhiteBoardServer:
             serve(websocket_server.serve, _SERVER_HOST, _SERVER_PORT),  # type: ignore
         ):
             while not websocket_server.started:
-                await asyncio.sleep(0)
+                await asyncio.sleep(0.5)
             logging.debug('server started')
             await asyncio.Future()
