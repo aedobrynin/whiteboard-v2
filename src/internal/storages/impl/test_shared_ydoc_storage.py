@@ -1,5 +1,4 @@
 import asyncio
-import logging
 
 import pytest
 from websockets import connect, serve  # type: ignore
