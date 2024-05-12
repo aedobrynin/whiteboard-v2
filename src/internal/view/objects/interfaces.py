@@ -74,6 +74,10 @@ class IViewObjectStorage(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def get_objects(self) -> dict[str, IViewObject]:
+        pass
+
+    @abc.abstractmethod
     def get_by_id(
         self, object_id: str
     ) -> IViewObject:

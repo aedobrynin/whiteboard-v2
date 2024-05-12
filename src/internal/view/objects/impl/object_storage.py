@@ -79,6 +79,9 @@ class ViewObjectStorage(IViewObjectStorage):
     ):
         self._object_types[type_name] = type_class
 
+    def get_objects(self) -> dict[str, IViewObject]:
+        return self._objects
+
     def get_by_id(
         self, object_id: str
     ) -> IViewObject:

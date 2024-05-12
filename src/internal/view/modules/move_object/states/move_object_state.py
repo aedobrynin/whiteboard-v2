@@ -4,6 +4,7 @@ import tkinter
 
 from internal.models import Position
 from internal.view.objects.interfaces import IViewObject
+from internal.view.modules.group import GroupObject
 from internal.view.state_machine.impl import State
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
@@ -35,6 +36,13 @@ def _on_enter(
     state_ctx[_FIRST_DRAG_EVENT_X] = x
     state_ctx[_FIRST_DRAG_EVENT_Y] = y
     state_ctx[_OBJ_ID] = obj.id
+
+    # TODO: because we notify only when view-move done, group doesnt update correctly
+    other_tags = global_dependencies.canvas.gettags(state_ctx[_OBJ_ID])
+    for tag in other_tags:
+        obj = global_dependencies.objects_storage.get_opt_by_id(tag)
+        if obj and isinstance(obj, GroupObject):
+            state_ctx[_OBJ_ID] = obj.id
 
 
 def _on_leave(
