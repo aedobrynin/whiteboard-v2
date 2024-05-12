@@ -12,8 +12,6 @@ import internal.undo_redo.interfaces
 from .. import interfaces
 from .edit_action import EditAction
 
-# TODO: get rid of boilerplate code (edit_... methods looks almost the same)
-
 
 class Controller(interfaces.IController):
     def __init__(
@@ -150,29 +148,56 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
-    def _build_move_object_action(self,  obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position) -> internal.models.IAction:
+    def _build_move_object_action(
+        self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position
+    ) -> internal.models.IAction:
         class MoveObjectAction(internal.models.IAction):
             _controller: Controller
             _obj_id: typing.Optional[internal.objects.interfaces.ObjectId]
             _delta: internal.models.Position
 
-            def __init__(self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position):
-                
+            def __init__(
+                self,
+                controller: Controller,
+                obj_id: internal.objects.interfaces.ObjectId,
+                delta: internal.models.Position,
+            ):
+                self._controller = controller
+                self._obj_id = obj_id
+                self._delta = delta
+
+            def _move(self, delta: internal.models.Position):
+                obj: typing.Optional[
+                    internal.objects.interfaces.IBoardObjectWithPosition
+                ] = self._controller._repo.get(self._obj_id)
+                if not obj:
+                    logging.warning('MoveObjectAction: no object with id=%s', self._obj_id)
+                    return
+                obj.position = obj.position + delta
+                self._controller._on_feature_finish()
+
+            def do(self):
+                logging.debug(
+                    'trying to move object with id=%s, delta=%s', self._obj_id, self._delta
+                )
+                self._move(self._delta)
+
+            def undo(self):
+                logging.debug(
+                    'trying to undo move action for object with id=%s, delta=%s',
+                    self._obj_id,
+                    self._delta,
+                )
+                self._move(-self._delta)
+
+        return MoveObjectAction(self, obj_id, delta)
+
     def move_object(
         self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position
     ):
-        
-
-        # TODO: undo-redo
-        obj: typing.Optional[internal.objects.interfaces.IBoardObjectWithPosition] = self._repo.get(
-            object_id=obj_id
-        )
-        if not obj:
-            logging.debug('no object id=%s found to edit with delta=%s', obj_id, delta)
-            return
-        logging.debug('editing object with new delta=%s', delta)
-        obj.position = obj.position + delta
-        self._on_feature_finish()
+        action = self._build_move_object_action(obj_id, delta)
+        action.do()
+        self._undo_redo_manager.store_action(action)
 
     def edit_points(
         self,
@@ -195,7 +220,7 @@ class Controller(interfaces.IController):
         self._undo_redo_manager.store_action(action)
 
     def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: float):
-        action = EditAction(self, obj_id, 'width', points)   # TODO: property names as consts
+        action = EditAction(self, obj_id, 'width', width)   # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 

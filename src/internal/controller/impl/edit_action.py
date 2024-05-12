@@ -5,13 +5,14 @@ import internal.models
 
 
 # TODO: stop using private controller fields (issue #29)
-# TODO: somehow trigger linter error if class has no field `_prop_name` (for example, text doesn't have property 'color')
+# TODO: somehow trigger linter error if class has no field
+#       `_prop_name` (for example, text doesn't have property 'color')
 
 
 class EditAction(internal.models.IAction):
     """Helper for simple assignment edit actions"""
 
-    _controller: 'Controller'
+    _controller: 'Controller'   # noqa: F821 (will be fixed in issue #29)
     _obj_id: internal.objects.interfaces.ObjectId
     _new_value: typing.Any
     _old_value: typing.Optional[typing.Any]
@@ -19,7 +20,7 @@ class EditAction(internal.models.IAction):
 
     def __init__(
         self,
-        controller: 'Controller',
+        controller: 'Controller',  # noqa: F821 (will be fixed in issue #29)
         obj_id: internal.objects.interfaces.ObjectId,
         property_name: str,
         new_value: typing.Any,
