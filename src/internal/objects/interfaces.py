@@ -123,10 +123,10 @@ class IBoardObjectGroup(IBoardObject):
 
     @property
     @abc.abstractmethod
-    def children_ids(self) -> tuple[ObjectId]:
+    def children_ids(self) -> List[ObjectId]:
         pass
 
     @children_ids.setter
     @abc.abstractmethod
-    def children_ids(self, children_ids: tuple[ObjectId]) -> None:
+    def children_ids(self, children_ids: List[ObjectId]) -> None:
         pass

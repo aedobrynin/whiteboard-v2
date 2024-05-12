@@ -2,6 +2,7 @@ import internal.objects
 import internal.pub_sub.mocks
 
 from .impl.card import BoardObjectCard
+from .impl.group import BoardObjectGroup
 from .impl.text import BoardObjectText
 from .impl.object_id import generate_object_id
 
@@ -47,3 +48,16 @@ def test_card_building():
     card = internal.objects.build_from_serialized(serialized_card, broker)
     assert isinstance(card, BoardObjectCard)
     assert card.serialize() == serialized_card
+
+
+def test_group_building():
+    serialized_card = {
+        'type': 'group',
+        'id': generate_object_id(),
+        'children_ids': [generate_object_id, generate_object_id]
+    }
+    broker = internal.pub_sub.mocks.MockPubSubBroker()
+
+    group = internal.objects.build_from_serialized(serialized_card, broker)
+    assert isinstance(group, BoardObjectGroup)
+    assert group.serialize() == serialized_card

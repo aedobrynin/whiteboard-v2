@@ -8,7 +8,7 @@ from .object_id import generate_object_id
 def test_board_group_serialization():
     id = generate_object_id()
     type = BoardObjectType.GROUP
-    children_ids = (generate_object_id(), generate_object_id())
+    children_ids = [generate_object_id(), generate_object_id()]
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
     obj = BoardObjectGroup(id, broker, children_ids)
@@ -22,7 +22,7 @@ def test_board_group_serialization():
 def test_board_group_deserialization():
     id = generate_object_id()
     type = BoardObjectType.GROUP
-    children_ids = (generate_object_id(), generate_object_id())
+    children_ids = [generate_object_id(), generate_object_id()]
     serialized = {
         'id': id,
         'type': type.value,

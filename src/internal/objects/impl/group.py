@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import List
+
 from internal.objects import interfaces
 import internal.pub_sub.interfaces
 from .common import field_names
@@ -15,7 +17,7 @@ class BoardObjectGroup(interfaces.IBoardObjectGroup, BoardObject):
         self,
         id: interfaces.ObjectId,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
-        children_ids: tuple[internal.objects.interfaces.ObjectId]
+        children_ids: List[internal.objects.interfaces.ObjectId]
     ):
         BoardObject.__init__(
             self, id,
@@ -25,12 +27,12 @@ class BoardObjectGroup(interfaces.IBoardObjectGroup, BoardObject):
         self.children_ids = children_ids
 
     @property
-    def children_ids(self) -> tuple[internal.objects.interfaces.ObjectId]:
+    def children_ids(self) -> List[internal.objects.interfaces.ObjectId]:
         return self._children_ids
 
     @children_ids.setter
     def children_ids(
-        self, children_ids: tuple[internal.objects.interfaces.ObjectId]
+        self, children_ids: List[internal.objects.interfaces.ObjectId]
     ) -> None:
         self._children_ids = children_ids
         self._publish(events.EventObjectChangedSize(self.id))
