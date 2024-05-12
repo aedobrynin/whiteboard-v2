@@ -1,8 +1,7 @@
 import logging
 
-from .. import interfaces
-
 import internal.models
+from .. import interfaces
 
 
 class UndoRedoManager(interfaces.IUndoRedoManager):

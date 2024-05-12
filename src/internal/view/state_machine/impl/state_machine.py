@@ -49,8 +49,10 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
         self._global_dependencies.canvas.bind('<ButtonPress-3>', self.handle_event)
         # motion by mouse
         self._global_dependencies.canvas.bind('<B1-Motion>', self.handle_event)
-        # any key pressed in keyboard
+        # any key pressed on the keyboard
         self._global_dependencies.canvas.bind('<Key>', self.handle_event)
+        # any key is released on the keyboard
+        self._global_dependencies.canvas.bind('<KeyRelease>', self.handle_event)
         # combination of shift+left-button-mouse
         self._global_dependencies.canvas.bind('<Shift-ButtonPress-1>', self.handle_event)
         # on release of pressed left button mouse
@@ -94,7 +96,6 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
                 self._cur_state = after_state
                 logging.debug('entering to after-state (%s) in state-machine', after_state)
                 self._cur_state.on_enter(self._global_dependencies, self._cur_state_context, event)
-                state_changed_to = self._cur_state.name
-                logging.debug('entering to after-state (%s) in state-machine', state_changed_to)
                 return
+
         self._cur_state.handle_event(self._global_dependencies, self._cur_state_context, event)

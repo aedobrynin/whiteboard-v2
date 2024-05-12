@@ -49,7 +49,6 @@ def test_create_object(tmp_path, get_mock_pub_sub_callback):
     type_ = internal.objects.BoardObjectType.CARD
     position = internal.models.Position(1, 2, 3)
 
-    # TODO: is this bad that we access 'impl' directly?
     storage = internal.storages.impl.LocalYDocStorage(tmp_path / 'storage')
     broker = internal.pub_sub.impl.PubSubBroker()
     repo = internal.repositories.impl.Repository([], broker)

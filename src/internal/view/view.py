@@ -13,6 +13,7 @@ import internal.view.modules.drag_board
 import internal.view.modules.move_object
 import internal.view.modules.text
 import internal.view.modules.submenu
+import internal.view.modules.undo_redo
 import internal.view.state_machine.impl.state_machine
 import internal.view.objects.impl.object_storage
 from internal.view.menu.impl.menu import Menu

@@ -25,13 +25,13 @@ class Controller(interfaces.IController):
         self._pub_sub_broker = pub_sub_broker
         self._undo_redo_manager = undo_redo_manager
 
-    # TODO: feature abstraction
+    # TODO: feature abstraction (IFeature)
     def _on_feature_finish(self):
         logging.debug('start executing feature finish pipeline')
         # 1) Process pub-sub
         # 2) Extract updates from repo
         # 3) Push updates to storage
-        # 4) Push updates to UndoRedoManager (future work)
+        # 4) Push updates to UndoRedoManager
         # Fetch updates from storage and update repo sometimes (future work)
 
         logging.debug('processing published pub_sub events')
@@ -46,11 +46,43 @@ class Controller(interfaces.IController):
         self._storage.update(raw_updates)
         logging.debug('finished executing feature finish pipeline')
 
+    def _build_create_object_action(
+        self, type: internal.objects.BoardObjectType, **kwargs
+    ) -> internal.models.IAction:
+        class CreateObjectAction(internal.models.IAction):
+            _controller: Controller
+            _type: internal.objects.BoardObjectType
+            _kwargs: dict
+            _obj_id: typing.Optional[internal.objects.interfaces.ObjectId]
+
+            def __init__(
+                self, controller: Controller, type: internal.objects.BoardObjectType, **kwargs
+            ):
+                self._controller = controller
+                self._type = type
+                self._kwargs = kwargs
+
+            def do(self):
+                logging.debug('creating object with type=%s and kwargs=%s', type, kwargs)
+                obj = internal.objects.build_by_type(
+                    self._type, self._controller._pub_sub_broker, **self._kwargs
+                )
+                self._obj_id = obj.id
+                self._controller._repo.add(obj)
+                self._controller._on_feature_finish()
+
+            def undo(self):
+                if not self._obj_id:
+                    logging.warning('Trying to undo CreateObjectAction with obj_id=None')
+                    return
+                self._controller.delete_object(self._obj_id)
+
+        return CreateObjectAction(self, type, **kwargs)
+
     def create_object(self, type: internal.objects.BoardObjectType, **kwargs):  # noqa
-        logging.debug('creating object with type=%s and kwargs=%s', type, kwargs)
-        obj = internal.objects.build_by_type(type, self._pub_sub_broker, **kwargs)
-        self._repo.add(obj)
-        self._on_feature_finish()
+        action = self._build_create_object_action(type, **kwargs)
+        action.do()
+        self._undo_redo_manager.store_action(action)
 
     def delete_object(self, obj_id: internal.objects.interfaces.ObjectId):
         logging.debug('deleting object=%s', obj_id)
@@ -151,3 +183,11 @@ class Controller(interfaces.IController):
             self._on_feature_finish()
             return
         logging.debug('no object id=%s found to edit with width=%s', obj_id, width)
+
+    def undo_last_action(self):
+        logging.debug('controller was asked to undo last action')
+        self._undo_redo_manager.undo()
+
+    def redo_last_action(self):
+        logging.debug('controller was asked to redo last action')
+        self._undo_redo_manager.redo()

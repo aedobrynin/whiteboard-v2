@@ -1,6 +1,5 @@
-from . import UndoRedoManager
-
 import internal.models
+from . import UndoRedoManager
 
 
 class AppendAction(internal.models.IAction):
