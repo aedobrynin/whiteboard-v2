@@ -8,7 +8,6 @@ import internal.models
 import internal.objects.interfaces
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
-from internal.objects.impl.connector import DEFAULT_COLOR, DEFAULT_WIDTH
 from internal.view.objects.interfaces import IViewObject
 from internal.view.state_machine.impl import State
 from ..connector_view import ConnectorObject
@@ -34,8 +33,8 @@ def _on_enter(
     # We create pseudo-line, then on leave we delete this line and create line from repo
     state_ctx[_CURRENT_CONNECTOR_ID] = global_dependencies.canvas.create_line(
         [x, y, x, y],
-        width=DEFAULT_WIDTH,
-        fill=DEFAULT_COLOR,
+        width=internal.objects.interfaces.IBoardObjectConnector.DEFAULT_WIDTH,
+        fill=internal.objects.interfaces.IBoardObjectConnector.DEFAULT_COLOR,
         capstyle=tkinter.ROUND,
         smooth=True
     )

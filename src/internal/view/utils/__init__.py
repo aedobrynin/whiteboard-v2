@@ -8,9 +8,13 @@ from .props_values import (
     get_font_families,
     get_text_alignments,
     get_line_widths,
+<<<<<<< HEAD
     get_line_types,
     get_connector_types,
     get_stroke_styles
+=======
+    get_line_types
+>>>>>>> main
 )
 
 __all__ = [

@@ -9,6 +9,7 @@ EVENT_TYPE_OBJECT_CHANGED_COLOR = 'object_changed_color'
 EVENT_TYPE_OBJECT_CHANGED_WIDTH = 'object_changed_width'
 EVENT_TYPE_OBJECT_CHANGED_CONNECTOR_TYPE = 'object_changed_connector_type'
 EVENT_TYPE_OBJECT_CHANGED_STROKE_STYLE = 'object_changed_stroke_style'
+EVENT_TYPE_OBJECT_CHANGED_POINTS = 'object_changed_points'
 
 
 class EventObjectMoved(internal.pub_sub.event.Event):
@@ -84,6 +85,16 @@ class EventObjectChangedConnectorType(internal.pub_sub.event.Event):
 class EventObjectChangedStrokeStyle(internal.pub_sub.event.Event):
     def __init__(self, object_id: ObjectId):
         super().__init__(EVENT_TYPE_OBJECT_CHANGED_STROKE_STYLE)
+        self._object_id = object_id
+
+    @property
+    def object_id(self) -> ObjectId:
+        return self._object_id
+
+
+class EventObjectChangedPoints(internal.pub_sub.event.Event):
+    def __init__(self, object_id: ObjectId):
+        super().__init__(EVENT_TYPE_OBJECT_CHANGED_POINTS)
         self._object_id = object_id
 
     @property

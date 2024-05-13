@@ -15,10 +15,6 @@ _COLOR_FIELD = 'color'
 _WIDTH_FIELD = 'width'
 _CONNECTOR_TYPE_FIELD = 'connector_type'
 _STROKE_STYLE_FIELD = 'stroke_style'
-DEFAULT_CONNECTOR_TYPE = 'curved'
-DEFAULT_STROKE_STYLE = 'last'
-DEFAULT_WIDTH = 2
-DEFAULT_COLOR = 'black'
 
 
 class BoardObjectConnector(interfaces.IBoardObjectConnector, BoardObject):
@@ -29,10 +25,10 @@ class BoardObjectConnector(interfaces.IBoardObjectConnector, BoardObject):
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         start_id: interfaces.ObjectId,
         end_id: interfaces.ObjectId,
-        color: str = DEFAULT_COLOR,
-        width: float = DEFAULT_WIDTH,
-        connector_type: str = DEFAULT_CONNECTOR_TYPE,
-        stroke_style: str = DEFAULT_STROKE_STYLE,
+        color: str = interfaces.IBoardObjectConnector.DEFAULT_COLOR,
+        width: float = interfaces.IBoardObjectConnector.DEFAULT_WIDTH,
+        connector_type: str = interfaces.IBoardObjectConnector.DEFAULT_CONNECTOR_TYPE,
+        stroke_style: str = interfaces.IBoardObjectConnector.DEFAULT_STROKE_STYLE,
     ):
         BoardObject.__init__(
             self, id, types.BoardObjectType.CONNECTOR, create_dttm, pub_sub_broker

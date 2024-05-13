@@ -93,6 +93,8 @@ class IBoardObjectCard(IBoardObjectWithFont):
 
 
 class IBoardObjectPen(IBoardObject):
+    DEFAULT_WIDTH = 2
+    DEFAULT_COLOR = 'black'
 
     @property
     @abc.abstractmethod
@@ -116,29 +118,32 @@ class IBoardObjectPen(IBoardObject):
 
     @property
     @abc.abstractmethod
-    def width(self) -> float:
+    def width(self) -> int:
         pass
 
     @width.setter
     @abc.abstractmethod
-    def width(self, width: float) -> None:
+    def width(self, width: int) -> None:
         pass
 
 
 class IBoardObjectGroup(IBoardObject):
-
     @property
     @abc.abstractmethod
-    def children_ids(self) -> tuple[ObjectId]:
+    def children_ids(self) -> list[ObjectId]:
         pass
 
     @children_ids.setter
     @abc.abstractmethod
-    def children_ids(self, children_ids: tuple[ObjectId]) -> None:
+    def children_ids(self, children_ids: list[ObjectId]) -> None:
         pass
 
 
 class IBoardObjectConnector(IBoardObject):
+    DEFAULT_WIDTH = 2
+    DEFAULT_COLOR = 'black'
+    DEFAULT_CONNECTOR_TYPE = 'curved'
+    DEFAULT_STROKE_STYLE = 'last'
 
     @property
     @abc.abstractmethod

@@ -13,7 +13,7 @@ def test_board_pen_serialization():
     create_dttm = datetime.now().replace(microsecond=0)
     points = [Position(1, 2, 3), Position(2, 2, 3), Position(3, 2, 3)]
     color = 'black'
-    width = 2.0
+    width = 2
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
     obj = BoardObjectPen(id, create_dttm, broker, points, color, width)
@@ -33,7 +33,7 @@ def test_board_pen_deserialization():
     create_dttm = datetime.now().replace(microsecond=0)
     points = [Position(1, 2, 3), Position(2, 2, 3), Position(3, 2, 3)]
     color = 'black'
-    width = 2.0
+    width = 2
 
     serialized = {
         'id': id,

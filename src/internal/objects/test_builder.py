@@ -61,7 +61,7 @@ def test_connector_building():
         'start_id': generate_object_id(),
         'end_id': generate_object_id(),
         'color': 'black',
-        'width': 2.0,
+        'width': 2,
         'connector_type': 'curved',
         'stroke_style': 'left'
     }

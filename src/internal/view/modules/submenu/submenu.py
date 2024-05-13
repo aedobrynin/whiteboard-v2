@@ -9,6 +9,7 @@ import internal.repositories.interfaces
 import internal.view.dependencies
 import internal.view.modules.connector
 import internal.view.modules.text
+import internal.view.modules.pen
 import internal.view.utils
 
 _SUBMENU_PREFIX = 'submenu'
@@ -29,7 +30,8 @@ class Submenu:
         obj: internal.objects.interfaces.IBoardObjectWithPosition = dependencies.repo.get(obj_id)
         if obj.type in [
             internal.objects.types.BoardObjectType.TEXT,
-            internal.objects.types.BoardObjectType.CONNECTOR,
+            internal.objects.types.BoardObjectType.PEN,
+            internal.objects.types.BoardObjectType.CONNECTOR
         ]:
             obj_canvas: internal.view.modules.text.TextObject = (
                 dependencies.objects_storage.get_by_id(obj_id)

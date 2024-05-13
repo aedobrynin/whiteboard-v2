@@ -183,12 +183,23 @@ class Controller(interfaces.IController):
 
             def _move(self, delta: internal.models.Position):
                 obj: typing.Optional[
-                    internal.objects.interfaces.IBoardObjectWithPosition
+                    internal.objects.interfaces.IBoardObject
                 ] = self._controller._repo.get(self._obj_id)
                 if not obj:
                     logging.warning('MoveObjectAction: no object with id=%s', self._obj_id)
                     return
-                obj.position = obj.position + delta
+                if isinstance(obj, internal.objects.interfaces.IBoardObjectWithPosition):
+                    obj.position = obj.position + delta
+                elif isinstance(obj, internal.objects.interfaces.IBoardObjectPen):
+                    # TODO: myb make Pen object with position?
+                    points = []
+                    for point in obj.points:
+                        points.append(point + delta)
+                    obj.points = points
+                else:
+                    logging.error('move is not implemented for object of type %s', obj.type)
+                    return
+
                 self._controller._on_feature_finish()
 
             def do(self):
