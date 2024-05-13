@@ -13,8 +13,6 @@ from .. import events
 _POINTS_FIELD = 'points'
 _COLOR_FIELD = 'color'
 _WIDTH_FIELD = 'width'
-DEFAULT_WIDTH = 2
-DEFAULT_COLOR = 'black'
 
 
 class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
@@ -23,14 +21,10 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
         id: interfaces.ObjectId,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         points: List[internal.models.Position],  # noqa
-        color: str = DEFAULT_COLOR,
-        width: int = DEFAULT_WIDTH
+        color: str = interfaces.IBoardObjectPen.DEFAULT_COLOR,
+        width: int = interfaces.IBoardObjectPen.DEFAULT_WIDTH,
     ):
-        BoardObject.__init__(
-            self, id,
-            types.BoardObjectType.PEN,
-            pub_sub_broker
-        )
+        BoardObject.__init__(self, id, types.BoardObjectType.PEN, pub_sub_broker)
         self.points = points
         self.color = color
         self.width = width
@@ -81,5 +75,5 @@ class BoardObjectPen(interfaces.IBoardObjectPen, BoardObject):
             pub_sub_broker,
             [Position.from_serialized(p) for p in data[_POINTS_FIELD]],
             data[_COLOR_FIELD],
-            data[_WIDTH_FIELD]
+            data[_WIDTH_FIELD],
         )

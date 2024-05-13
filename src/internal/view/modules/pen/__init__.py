@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import internal.view.modules.modules
 import internal.objects.types
 import internal.view.dependencies
@@ -13,8 +14,7 @@ def create_states(dependencies: internal.view.dependencies):
 
 def register_object_types(dependencies: internal.view.dependencies):
     dependencies.objects_storage.register_object_type(
-        internal.objects.types.BoardObjectType.PEN,
-        PenObject
+        internal.objects.types.BoardObjectType.PEN, PenObject
     )
 
 

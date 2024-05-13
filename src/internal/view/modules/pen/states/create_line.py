@@ -9,7 +9,6 @@ import internal.view.dependencies
 import internal.view.state_machine.interfaces
 from internal.view.state_machine.impl import State
 from internal.view.modules.pen.consts import PEN_MENU_ENTRY_NAME, PEN_CREATE_STATE_NAME
-from internal.objects.impl.pen import DEFAULT_COLOR, DEFAULT_WIDTH
 
 _CURRENT_LINE_ID = 'line_id'
 
@@ -25,7 +24,7 @@ def _from_canvas_coord_to_object_points(points: list[int]):
 def _on_enter(
     global_dependencies: internal.view.dependencies.Dependencies,
     state_ctx: Dict,
-    event: tkinter.Event
+    event: tkinter.Event,
 ):
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
@@ -33,17 +32,17 @@ def _on_enter(
     # We create pseudo-line, then on leave we delete this line and create line from repo
     state_ctx[_CURRENT_LINE_ID] = global_dependencies.canvas.create_line(
         [x, y, x, y],
-        width=DEFAULT_WIDTH,
-        fill=DEFAULT_COLOR,
+        width=internal.objects.interfaces.IBoardObjectPen.DEFAULT_WIDTH,
+        fill=internal.objects.interfaces.IBoardObjectPen.DEFAULT_COLOR,
         capstyle=tkinter.ROUND,
-        smooth=True
+        smooth=True,
     )
 
 
 def _handle_event(
     global_dependencies: internal.view.dependencies.Dependencies,
     state_ctx: Dict,
-    event: tkinter.Event
+    event: tkinter.Event,
 ):
     # Mouse motion
     if event.type != tkinter.EventType.Motion or event.state & (1 << 8) == 0:
@@ -61,7 +60,7 @@ def _handle_event(
 def _on_leave(
     global_dependencies: internal.view.dependencies.Dependencies,
     state_ctx: Dict,
-    event: tkinter.Event
+    event: tkinter.Event,
 ):
     if _CURRENT_LINE_ID not in state_ctx:
         return
@@ -85,23 +84,10 @@ def _predicate_from_root_to_pen(
 def _predicate_from_pen_to_root(
     global_dependencies: internal.view.dependencies.Dependencies, event: tkinter.Event  # noqa
 ) -> bool:
-    # Menu item clicked
-    if event.type != tkinter.EventType.VirtualEvent:
-        return False
-    # Menu select handle before the commands changed
-    return global_dependencies.menu.current_state == PEN_MENU_ENTRY_NAME
+    return event.type == tkinter.EventType.ButtonRelease and event.num == 1
 
 
-def _predicate_from_pen_to_pen(
-    global_dependencies: internal.view.dependencies.Dependencies, event: tkinter.Event  # noqa
-) -> bool:
-    # Release left mouse button
-    return event.type == tkinter.EventType.ButtonPress and event.num == 1
-
-
-def create_state(
-    state_machine: internal.view.state_machine.interfaces.IStateMachine
-) -> State:
+def create_state(state_machine: internal.view.state_machine.interfaces.IStateMachine) -> State:
     state = State(PEN_CREATE_STATE_NAME)
     state.set_on_enter(_on_enter)
     state.set_event_handler(_handle_event)
@@ -109,17 +95,11 @@ def create_state(
     state_machine.add_transition(
         internal.view.state_machine.interfaces.ROOT_STATE_NAME,
         PEN_CREATE_STATE_NAME,
-        _predicate_from_root_to_pen
-    )
-
-    state_machine.add_transition(
-        PEN_CREATE_STATE_NAME,
-        PEN_CREATE_STATE_NAME,
-        _predicate_from_pen_to_pen
+        _predicate_from_root_to_pen,
     )
     state_machine.add_transition(
         PEN_CREATE_STATE_NAME,
         internal.view.state_machine.interfaces.ROOT_STATE_NAME,
-        _predicate_from_pen_to_root
+        _predicate_from_pen_to_root,
     )
     return state

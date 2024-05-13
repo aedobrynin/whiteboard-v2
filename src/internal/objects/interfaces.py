@@ -87,6 +87,8 @@ class IBoardObjectCard(IBoardObjectWithFont):
 
 
 class IBoardObjectPen(IBoardObject):
+    DEFAULT_WIDTH = 2
+    DEFAULT_COLOR = 'black'
 
     @property
     @abc.abstractmethod
@@ -120,7 +122,6 @@ class IBoardObjectPen(IBoardObject):
 
 
 class IBoardObjectGroup(IBoardObject):
-
     @property
     @abc.abstractmethod
     def children_ids(self) -> list[ObjectId]:
