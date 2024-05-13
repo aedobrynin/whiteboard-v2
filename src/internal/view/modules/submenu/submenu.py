@@ -10,11 +10,8 @@ import internal.view.dependencies
 import internal.view.modules.connector
 import internal.view.modules.text
 import internal.view.modules.pen
-<<<<<<< HEAD
-import internal.view.utils
-=======
 import internal.view.modules.card
->>>>>>> main
+import internal.view.utils
 
 _SUBMENU_PREFIX = 'submenu'
 _BRING_TO_FRONT_DESC = 'Bring To Front'

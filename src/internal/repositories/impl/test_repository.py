@@ -47,11 +47,7 @@ def test_repository_add_object(get_serialized_card):
     assert repo.get_updated() == {
         obj.id: get_serialized_card(),
     }
-<<<<<<< HEAD
-    assert len(broker.published) == 6  # other notifications come
-=======
     assert len(broker.published) == 9  # other notifications come
->>>>>>> main
     event = broker.published[-1]  # the last notification is added object
     assert event == internal.pub_sub.mocks.PublishedEvent(
         interfaces.REPOSITORY_PUB_SUB_ID,
