@@ -1,7 +1,7 @@
 from __future__ import annotations
 import abc
 from abc import ABC
-from typing import List
+import typing
 
 import internal.models
 import internal.pub_sub.interfaces
@@ -85,6 +85,26 @@ class IBoardObjectCard(IBoardObjectWithFont):
     def color(self, color: str) -> None:
         pass
 
+    @property
+    @abc.abstractmethod
+    def width(self) -> int:
+        pass
+
+    @width.setter
+    @abc.abstractmethod
+    def width(self, width: int) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def height(self) -> int:
+        pass
+
+    @height.setter
+    @abc.abstractmethod
+    def height(self, height: int) -> None:
+        pass
+
 
 class IBoardObjectPen(IBoardObject):
     DEFAULT_WIDTH = 2
@@ -92,12 +112,12 @@ class IBoardObjectPen(IBoardObject):
 
     @property
     @abc.abstractmethod
-    def points(self) -> List[internal.models.Position]:
+    def points(self) -> typing.List[internal.models.Position]:
         pass
 
     @points.setter
     @abc.abstractmethod
-    def points(self, points: List[internal.models.Position]) -> None:
+    def points(self, points: typing.List[internal.models.Position]) -> None:
         pass
 
     @property
@@ -124,10 +144,10 @@ class IBoardObjectPen(IBoardObject):
 class IBoardObjectGroup(IBoardObject):
     @property
     @abc.abstractmethod
-    def children_ids(self) -> list[ObjectId]:
+    def children_ids(self) -> typing.List[ObjectId]:
         pass
 
     @children_ids.setter
     @abc.abstractmethod
-    def children_ids(self, children_ids: list[ObjectId]) -> None:
+    def children_ids(self, children_ids: typing.List[ObjectId]) -> None:
         pass

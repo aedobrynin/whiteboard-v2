@@ -144,7 +144,7 @@ class PenObject(ViewObject):
     def _set_color(self, dependencies: internal.view.dependencies.Dependencies, color: str):
         dependencies.controller.edit_color(self.id, color=color)
 
-    def _get_width(self, dependencies: internal.view.dependencies.Dependencies):
+    def _get_width(self, dependencies: internal.view.dependencies.Dependencies) -> int:
         return int(float(dependencies.canvas.itemcget(self.line_id, 'width')))
 
     def _set_width(self, dependencies: internal.view.dependencies.Dependencies, width: int):

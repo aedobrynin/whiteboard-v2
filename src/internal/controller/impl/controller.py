@@ -10,7 +10,7 @@ import internal.storages.interfaces
 import internal.undo_redo.interfaces
 
 from .. import interfaces
-from .edit_action import EditAction
+from .edit_action import EditAction, PropertyChange
 
 
 class Controller(interfaces.IController):
@@ -148,17 +148,23 @@ class Controller(interfaces.IController):
         self._undo_redo_manager.store_action(action)
 
     def edit_text(self, obj_id: internal.objects.interfaces.ObjectId, text: str):
-        action = EditAction(self, obj_id, 'text', text)   # TODO: property names as consts
+        action = EditAction(
+            self, obj_id, [PropertyChange('text', text)]
+        )   # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_color(self, obj_id: internal.objects.interfaces.ObjectId, color: str):
-        action = EditAction(self, obj_id, 'color', color)   # TODO: property names as consts
+        action = EditAction(
+            self, obj_id, [PropertyChange('color', color)]
+        )   # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_font(self, obj_id: internal.objects.interfaces.ObjectId, font: internal.models.Font):
-        action = EditAction(self, obj_id, 'font', font)   # TODO: property names as consts
+        action = EditAction(
+            self, obj_id, [PropertyChange('font', font)]
+        )   # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
@@ -229,7 +235,9 @@ class Controller(interfaces.IController):
         obj_id: internal.objects.interfaces.ObjectId,
         points: typing.List[internal.models.Position],
     ):
-        action = EditAction(self, obj_id, 'points', points)   # TODO: property names as consts
+        action = EditAction(
+            self, obj_id, [PropertyChange('points', points)]
+        )   # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
@@ -239,13 +247,36 @@ class Controller(interfaces.IController):
         children_ids: typing.Tuple[internal.objects.interfaces.ObjectId],
     ):
         action = EditAction(
-            self, obj_id, 'children_ids', children_ids
+            self,
+            obj_id,
+            [PropertyChange('children_ids', children_ids)],
         )   # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
-    def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: float):
-        action = EditAction(self, obj_id, 'width', width)   # TODO: property names as consts
+    def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: int):
+        action = EditAction(
+            self, obj_id, [PropertyChange('width', width)]
+        )   # TODO: property names as consts
+        action.do()
+        self._undo_redo_manager.store_action(action)
+
+    def edit_height(self, obj_id: internal.objects.interfaces.ObjectId, height: int):
+        action = EditAction(
+            self, obj_id, [PropertyChange('height', height)]
+        )   # TODO: property names as consts
+        action.do()
+        self._undo_redo_manager.store_action(action)
+
+    def edit_size(self, obj_id: internal.objects.interfaces.ObjectId, width: int, height: int):
+        action = EditAction(
+            self,
+            obj_id,
+            [
+                PropertyChange('width', width),
+                PropertyChange('height', height),
+            ],
+        )
         action.do()
         self._undo_redo_manager.store_action(action)
 

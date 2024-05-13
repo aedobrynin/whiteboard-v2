@@ -10,6 +10,7 @@ import internal.view.dependencies
 import internal.view.utils
 import internal.view.modules.text
 import internal.view.modules.pen
+import internal.view.modules.card
 
 _SUBMENU_PREFIX = 'submenu'
 _BRING_TO_FRONT_DESC = 'Bring To Front'
@@ -32,6 +33,11 @@ class Submenu:
             internal.objects.types.BoardObjectType.PEN,
         ]:
             obj_canvas = dependencies.objects_storage.get_by_id(obj_id)
+            self._property_widgets = obj_canvas.widgets(dependencies)
+        elif obj.type == internal.objects.types.BoardObjectType.CARD:
+            obj_canvas: internal.view.modules.text.TextObject = (
+                dependencies.objects_storage.get_by_id(obj_id)
+            )
             self._property_widgets = obj_canvas.widgets(dependencies)
         else:
             self._property_widgets = []

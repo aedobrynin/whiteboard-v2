@@ -26,9 +26,11 @@ def _get_serialized_card():
                 'weight': 'normal',
                 'color': 'black',
                 'family': 'Arial',
-                'size': 14
+                'size': 14,
             },
-            'color': 'light yellow'
+            'color': 'light yellow',
+            'width': 100,
+            'height': 150,
         }
 
     return _impl
@@ -43,8 +45,8 @@ def test_repository_add_object(get_serialized_card):
     assert repo.get_updated() == {
         obj.id: get_serialized_card(),
     }
-    assert len(broker.published) == 6  # other notifications come
-    event = broker.published[-1] # the last notification is added object
+    assert len(broker.published) == 9  # other notifications come
+    event = broker.published[-1]  # the last notification is added object
     assert event == internal.pub_sub.mocks.PublishedEvent(
         interfaces.REPOSITORY_PUB_SUB_ID,
         events.EventObjectAdded(obj.id),
@@ -86,11 +88,11 @@ def test_repository_add_with_same_id(get_serialized_card):
 
     obj = internal.objects.build_from_serialized(get_serialized_card(), broker)
     repo.add(obj)
-    assert len(broker.published) == 6  # some other notifications come
+    assert len(broker.published) == 9  # some other notifications come
     with pytest.raises(exceptions.ObjectAlreadyExistsException):
         repo.add(obj)
     assert repo.get(obj.id) == obj
-    assert len(broker.published) == 6  # some other notifications come
+    assert len(broker.published) == 9  # some other notifications come
 
 
 def test_repository_update_object(get_serialized_card):
@@ -134,7 +136,7 @@ def test_repository_delete_object(get_serialized_card):
     assert repo.get_updated() == {
         obj.id: None,
     }
-    assert len(broker.published) == 6  # some other notifications came
+    assert len(broker.published) == 9  # some other notifications came
     event = broker.published[-1]  # the last notification is added object
     assert event == internal.pub_sub.mocks.PublishedEvent(
         interfaces.REPOSITORY_PUB_SUB_ID, events.EventObjectDeleted(obj.id)
@@ -167,4 +169,4 @@ def test_repository_no_updates_after_init(get_serialized_card):
     repo = repository.Repository([obj], broker)
     assert len(repo.get_updated()) == 0
     # some notifications came
-    assert len(broker.published) == 5  # TODO: myb it will be changed in future
+    assert len(broker.published) == 8  # TODO: myb it will be changed in future
