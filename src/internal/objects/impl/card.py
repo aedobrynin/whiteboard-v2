@@ -11,7 +11,8 @@ from .. import events
 _TEXT_FIELD = 'text'
 _FONT_FIELD = 'font'
 _COLOR_FIELD = 'color'
-_DIMENSION_FIELD = 'dimension'
+_WIDTH_FIELD = 'width'
+_HEIGHT_FIELD = 'height'
 
 
 class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
@@ -23,11 +24,13 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         text: str = 'text',
         font: internal.models.Font = internal.models.Font(),
         color: str = 'light yellow',
-        dimension: int = [150, 150],
+        width: int = 150,
+        height: int = 150,
     ):
         super().__init__(id, types.BoardObjectType.CARD, position, pub_sub_broker, text, font)
         self.color = color
-        self.dimension = dimension
+        self.width = width
+        self.height = height
 
     @property
     def color(self) -> str:
@@ -39,19 +42,28 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         self._publish(events.EventObjectChangedColor(self.id))
 
     @property
-    def dimension(self) -> [int, int]:
-        return self._dimension
+    def width(self) -> int:
+        return self._width
 
-    @dimension.setter
-    def dimension(self, dimension: [int, int]) -> None:
-        self._dimension = dimension
-        self._publish(events.EventObjectChangedDimension(self.id))
+    @width.setter
+    def width(self, width: int) -> None:
+        self._width = width
+        self._publish(events.EventObjectChangedSize(self.id))
+
+    @property
+    def height(self) -> int:
+        return self._height
+
+    @height.setter
+    def height(self, height: int) -> None:
+        self._height = height
         self._publish(events.EventObjectChangedSize(self.id))
 
     def serialize(self) -> dict:
         serialized = super().serialize()
         serialized[_COLOR_FIELD] = self.color
-        serialized[_DIMENSION_FIELD] = self.dimension
+        serialized[_WIDTH_FIELD] = self.width
+        serialized[_HEIGHT_FIELD] = self.height
         return serialized
 
     @staticmethod
@@ -67,5 +79,6 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
             data[_TEXT_FIELD],
             internal.models.Font.from_serialized(data[_FONT_FIELD]),
             data[_COLOR_FIELD],
-            data[_DIMENSION_FIELD],
+            data[_WIDTH_FIELD],
+            data[_HEIGHT_FIELD],
         )

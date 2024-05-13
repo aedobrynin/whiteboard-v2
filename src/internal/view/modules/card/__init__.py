@@ -14,8 +14,7 @@ def create_states(dependencies: internal.view.dependencies):
 
 def register_object_types(dependencies: internal.view.dependencies):
     dependencies.objects_storage.register_object_type(
-        internal.objects.types.BoardObjectType.CARD,
-        CardObject
+        internal.objects.types.BoardObjectType.CARD, CardObject
     )
 
 

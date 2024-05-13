@@ -1,6 +1,6 @@
 from __future__ import annotations
 import abc
-from typing import List
+import typing
 
 import internal.models
 import internal.objects
@@ -33,14 +33,18 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def edit_dimension(
-        self, obj_id: internal.objects.interfaces.ObjectId, dimension: float
-    ):
+    def edit_height(self, obj_id: internal.objects.interfaces.ObjectId, height: float):
+        pass
+
+    @abc.abstractmethod
+    def edit_size(self, obj_id: internal.objects.interfaces.ObjectId, width: float, height: float):
         pass
 
     @abc.abstractmethod
     def edit_points(
-        self, obj_id: internal.objects.interfaces.ObjectId, points: List[internal.models.Position]
+        self,
+        obj_id: internal.objects.interfaces.ObjectId,
+        points: typing.List[internal.models.Position],
     ):
         pass
 

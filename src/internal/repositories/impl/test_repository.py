@@ -26,10 +26,11 @@ def _get_serialized_card():
                 'weight': 'normal',
                 'color': 'black',
                 'family': 'Arial',
-                'size': 14
+                'size': 14,
             },
             'color': 'light yellow',
-            'dimension': [150, 150]
+            'width': 100,
+            'height': 150,
         }
 
     return _impl
