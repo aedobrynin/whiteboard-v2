@@ -14,7 +14,6 @@ class WebsocketServerWithDB(WebsocketServer):
     def __init__(self, db: Database[Mapping[str, Any]]):
         WebsocketServer.__init__(self)
         self._db = db
-        super()
 
     def update_ymap_from_database(self, room: YRoom):
         logging.debug('loading collection')
@@ -58,26 +57,28 @@ class WebsocketServerWithDB(WebsocketServer):
             updated_count += 1
         logging.debug('updated objects=%d', updated_count)
 
-    async def start_room(self, room: YRoom):
-        room_name = self.get_room_name(room)[1:]
-        logging.debug('room=%s started', room_name)
-        self.update_ymap_from_database(room)
-        logging.debug('successfully updated collections')
-        await super().start_room(room)
+    async def get_room(self, name: str) -> YRoom:
+        if name not in self.rooms.keys():
+            self.rooms[name] = YRoom(ready=self.rooms_ready, log=self.log)
+            room_name = self.get_room_name(self.rooms[name])[1:]
+            logging.debug('room=%s started', room_name)
+            self.update_ymap_from_database(self.rooms[name])
+            logging.debug('successfully updated collections')
+        room = self.rooms[name]
+        await self.start_room(room)
+        return self.rooms[name]
 
-    def delete_room(self, *, name: str | None = None, room: YRoom | None = None) -> None:
-        try:
-            if room:
-                room_name = self.get_room_name(room)[1:]
-                logging.debug('room=%s deleting', room_name)
-                self.update_database_from_ymap(room)
-                logging.debug('database updated')
-        except Exception as ex:
-            logging.error('exception=%s from delete room came', ex)
-        try:
-            if room:
-                super().delete_room(room=room)
-            elif name:
-                super().delete_room(name=name)
-        except Exception as ex:
-            logging.error('unexpected exception=%s from delete room came', ex)
+    # def delete_room(self, *, name: str | None = None, room: YRoom | None = None) -> None:
+    #     if name is not None and room is not None:
+    #         raise RuntimeError('Cannot pass name and room')
+    #     if name is None:
+    #         assert room is not None
+    #         name = self.get_room_name(room)
+    #     try:
+    #         logging.debug('room=%s deleting', name)
+    #         self.update_database_from_ymap(self.rooms[name])
+    #         logging.debug('database updated')
+    #     except Exception as ex:
+    #         logging.error('exception=%s from delete room came', ex)
+    #     room = self.rooms.pop(name)
+    #     room.stop()
