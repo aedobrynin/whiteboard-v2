@@ -70,11 +70,7 @@ class ConnectorObject(ViewObject):
                 self.id
             )
             self._line_id = dependencies.canvas.create_line(
-                points,
-                width=obj.width,
-                arrow=None if obj.stroke_style == 'none' else obj.stroke_style,  # type: ignore
-                tags=[obj.id],
-                fill=obj.color
+                points, width=obj.width, tags=[obj.id], fill=obj.color, arrow=obj.stroke_style
             )
 
     def _get_points(
@@ -93,7 +89,43 @@ class ConnectorObject(ViewObject):
             points.append(((xs1 + xs2) / 2, (ye1 + ye2) / 2))
             # point 3
             points.append((xe1, (ye1 + ye2) / 2))
-        elif xs2 >= xe1 > xs1 and ys2 < ye2:
+        elif xs1 >= xe2 and (ye1 <= ys1 <= ye2 or ye1 <= ys2 <= ye2):
+            # point 1
+            points.append((xs1, (ys1 + ys2) / 2))
+            # point 2
+            points.append(((xs1 + xe2) / 2, (ys1 + ys2) / 2))
+            # point 3
+            points.append(((xs1 + xe2) / 2, (ye1 + ye2) / 2))
+            # point 4
+            points.append((xe2, (ye1 + ye2) / 2))
+        elif xe1 >= xs2 and (ye1 <= ys1 <= ye2 or ye1 <= ys2 <= ye2):
+            # point 1
+            points.append((xs2, (ys1 + ys2) / 2))
+            # point 2
+            points.append(((xs2 + xe1) / 2, (ys1 + ys2) / 2))
+            # point 3
+            points.append(((xs2 + xe1) / 2, (ye1 + ye2) / 2))
+            # point 4
+            points.append((xe1, (ye1 + ye2) / 2))
+        elif xs1 <= xe1 < xs2 and ys2 < ye1:
+            # point 1
+            points.append(((xs1 + xs2) / 2, ys2))
+            # point 2
+            points.append(((xs1 + xs2) / 2, (ye1 + ys2) / 2))
+            # point 3
+            points.append(((xe1 + xe2) / 2, (ye1 + ys2) / 2))
+            # point 4
+            points.append(((xe1 + xe2) / 2, ye1))
+        elif xe1 <= xs1 < xe2 and ys2 < ye1:
+            # point 1
+            points.append(((xs1 + xs2) / 2, ys2))
+            # point 2
+            points.append(((xs1 + xs2) / 2, (ye1 + ys2) / 2))
+            # point 3
+            points.append(((xe1 + xe2) / 2, (ye1 + ys2) / 2))
+            # point 4
+            points.append(((xe1 + xe2) / 2, ye1))
+        elif xs1 <= (xe1 + xe2) / 2 <= xs2 and ys2 < ye1:
             # point 1
             points.append(((xs1 + xs2) / 2, ys2))
             # point 2
@@ -116,7 +148,16 @@ class ConnectorObject(ViewObject):
             points.append(((xs1 + xs2) / 2, (ye1 + ye2) / 2))
             # point 3
             points.append((xe1, (ye1 + ye2) / 2))
-        elif xs2 >= xe1 > xs1 and ys1 > ye2:
+        elif xs1 <= xe1 < xs2 and ys1 > ye2:
+            # point 1
+            points.append(((xs1 + xs2) / 2, ys1))
+            # point 2
+            points.append(((xs1 + xs2) / 2, (ye2 + ys1) / 2))
+            # point 3
+            points.append(((xe1 + xe2) / 2, (ye2 + ys1) / 2))
+            # point 4
+            points.append(((xe1 + xe2) / 2, ye2))
+        elif xe1 <= xs1 <= xe2 and ys1 > ye2:
             # point 1
             points.append(((xs1 + xs2) / 2, ys1))
             # point 2
@@ -132,15 +173,6 @@ class ConnectorObject(ViewObject):
             points.append(((xs1 + xs2) / 2, (ye1 + ye2) / 2))
             # point 3
             points.append((xe2, (ye1 + ye2) / 2))
-        elif xs2 <= (xe1 + xe2) / 2:
-            # point 1
-            points.append((xs2, (ys1 + ys2) / 2))
-            # point 2
-            points.append(((xs2 + xe1) / 2, (ys1 + ys2) / 2))
-            # point 3
-            points.append(((xs2 + xe1) / 2, (ye1 + ye1) / 2))
-            # point 4
-            points.append(((xe1 + xe2) / 2, (ye1 + ye1) / 2))
         else:
             # point 1
             points.append((xs1, (ys1 + ys2) / 2))
@@ -285,10 +317,7 @@ class ConnectorObject(ViewObject):
     ):
         obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(self.id)
         self._stroke_style = obj.stroke_style
-        if self._stroke_style == 'none':
-            dependencies.canvas.itemconfigure(self.line_id, arrow=None)
-        else:
-            dependencies.canvas.itemconfigure(self.line_id, arrow=self._stroke_style)
+        dependencies.canvas.itemconfigure(self.line_id, arrow=self._stroke_style)
 
     def widgets(
         self, dependencies: internal.view.dependencies.Dependencies

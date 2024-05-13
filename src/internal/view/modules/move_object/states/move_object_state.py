@@ -75,6 +75,7 @@ def _handle_event(
     )
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y
+    # TODO: Issue #20
     # TODO: because we notify only when view-move done, connector doesnt update correctly curve
     other_tags = global_dependencies.canvas.gettags(state_ctx[_OBJ_ID])
     for tag in other_tags:

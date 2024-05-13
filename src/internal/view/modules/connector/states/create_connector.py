@@ -9,10 +9,10 @@ import internal.objects.interfaces
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
 from internal.objects.impl.connector import DEFAULT_COLOR, DEFAULT_WIDTH
-from internal.view.modules.connector import ConnectorObject
-from internal.view.modules.connector.consts import CONNECTOR_CREATE_STATE_NAME, CONNECTOR_MENU_ENTRY_NAME
 from internal.view.objects.interfaces import IViewObject
 from internal.view.state_machine.impl import State
+from ..connector_view import ConnectorObject
+from ..consts import CONNECTOR_CREATE_STATE_NAME, CONNECTOR_MENU_ENTRY_NAME
 
 _CURRENT_CONNECTOR_ID = 'connector_id'
 _START_ID = 'start_id'
@@ -82,6 +82,9 @@ def _on_leave(
         global_dependencies.canvas.delete(state_ctx[_CURRENT_CONNECTOR_ID])
         return
     if isinstance(cur_obj, ConnectorObject):
+        global_dependencies.canvas.delete(state_ctx[_CURRENT_CONNECTOR_ID])
+        return
+    if cur_obj.id != state_ctx[_START_ID]:
         global_dependencies.canvas.delete(state_ctx[_CURRENT_CONNECTOR_ID])
         return
     state_ctx[_END_ID] = cur_obj.id
