@@ -254,21 +254,21 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
-    def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: float):
+    def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: int):
         action = EditAction(
             self, obj_id, [PropertyChange('width', width)]
         )   # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
-    def edit_height(self, obj_id: internal.objects.interfaces.ObjectId, height: float):
+    def edit_height(self, obj_id: internal.objects.interfaces.ObjectId, height: int):
         action = EditAction(
             self, obj_id, [PropertyChange('height', height)]
         )   # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
-    def edit_size(self, obj_id: internal.objects.interfaces.ObjectId, width: float, height: float):
+    def edit_size(self, obj_id: internal.objects.interfaces.ObjectId, width: int, height: int):
         action = EditAction(
             self,
             obj_id,

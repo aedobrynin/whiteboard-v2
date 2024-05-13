@@ -29,15 +29,15 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: float):
+    def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: int):
         pass
 
     @abc.abstractmethod
-    def edit_height(self, obj_id: internal.objects.interfaces.ObjectId, height: float):
+    def edit_height(self, obj_id: internal.objects.interfaces.ObjectId, height: int):
         pass
 
     @abc.abstractmethod
-    def edit_size(self, obj_id: internal.objects.interfaces.ObjectId, width: float, height: float):
+    def edit_size(self, obj_id: internal.objects.interfaces.ObjectId, width: int, height: int):
         pass
 
     @abc.abstractmethod
