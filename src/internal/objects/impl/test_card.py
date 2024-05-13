@@ -19,7 +19,7 @@ def test_board_object_card_serialization():
     height = 150
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
-    card = BoardObjectCard(id, create_dttm, position, broker, text, font, color)
+    card = BoardObjectCard(id, create_dttm, position, broker, text, font, color, width, height)
     assert card.serialize() == {
         'id': id,
         'create_dttm': create_dttm.strftime('%Y-%m-%dT%H-%M-%SZ'),
