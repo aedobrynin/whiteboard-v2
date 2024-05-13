@@ -30,4 +30,6 @@ def build_by_type(
         return TYPE_IMPLS[type](id, kwargs['position'], pub_sub_broker)
     if type == BoardObjectType.GROUP and 'children_ids' in kwargs:
         return TYPE_IMPLS[type](id, pub_sub_broker, kwargs['children_ids'])
+    if type == BoardObjectType.PEN and 'points' in kwargs:
+        return TYPE_IMPLS[type](id, pub_sub_broker, kwargs['points'])
     raise ValueError('No object to build')

@@ -5,7 +5,7 @@ from .props_values import (
     get_font_colors,
     get_font_families,
     get_text_alignments,
-    get_text_line_widths,
+    get_line_widths,
     get_line_types
 )
 
@@ -22,7 +22,7 @@ __all__ = [
     'get_font_colors',
     'get_font_families',
     'get_text_alignments',
-    'get_text_line_widths',
+    'get_line_widths',
     'get_line_types',
     'geometry'
 ]
