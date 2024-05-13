@@ -196,7 +196,9 @@ class Controller(interfaces.IController):
                         points.append(point + delta)
                     obj.points = points
                 else:
-                    log.error('move is not implemented for object of type %s', obj.type)
+                    logging.error('move is not implemented for object of type %s', obj.type)
+                    return
+
                 self._controller._on_feature_finish()
 
             def do(self):
@@ -214,23 +216,6 @@ class Controller(interfaces.IController):
                 self._move(-self._delta)
 
         return MoveObjectAction(self, obj_id, delta)
-
-    def _move_object(
-        self, obj: internal.objects.interfaces.IBoardObject, delta: internal.models.Position
-    ):
-        if isinstance(obj, internal.objects.interfaces.IBoardObjectWithPosition):
-            obj.position = obj.position + delta
-            self._on_feature_finish()
-            return
-        elif isinstance(obj, internal.objects.interfaces.IBoardObjectPen):
-            points = []
-            for point in obj.points:
-                points.append(point + delta)
-            obj.points = points
-            self._on_feature_finish()
-            return
-        else:
-            logging.error('Object %s is unmovable', obj.id)
 
     def move_object(
         self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position
