@@ -20,8 +20,8 @@ def test_text_building():
             'weight': 'normal',
             'color': 'black',
             'family': 'Arial',
-            'size': 14
-        }
+            'size': 14,
+        },
     }
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
@@ -42,9 +42,11 @@ def test_card_building():
             'weight': 'normal',
             'color': 'black',
             'family': 'Arial',
-            'size': 14
+            'size': 14,
         },
-        'color': 'light yellow'
+        'color': 'light yellow',
+        'width': 100,
+        'height': 150,
     }
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 

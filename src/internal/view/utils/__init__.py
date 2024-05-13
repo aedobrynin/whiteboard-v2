@@ -9,11 +9,16 @@ from .props_values import (
     get_text_alignments,
     get_line_widths,
 <<<<<<< HEAD
+<<<<<<< HEAD
     get_line_types,
     get_connector_types,
     get_stroke_styles
 =======
     get_line_types
+>>>>>>> main
+=======
+    get_line_types,
+    get_card_sizes,
 >>>>>>> main
 )
 
@@ -29,7 +34,12 @@ __all__ = [
     'get_text_alignments',
     'get_line_widths',
     'get_line_types',
+<<<<<<< HEAD
     'get_connector_types',
     'get_stroke_styles',
     'geometry'
+=======
+    'get_card_sizes',
+    'geometry',
+>>>>>>> main
 ]
