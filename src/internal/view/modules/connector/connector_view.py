@@ -34,6 +34,8 @@ class ConnectorObject(ViewObject):
     ):
         ViewObject.__init__(self, dependencies, obj)
         self._line_id = None
+        self._start_id = obj.start_id
+        self._end_id = obj.end_id
         self._connector_type = obj.connector_type
         self._stroke_style = obj.stroke_style
         self.curve(dependencies)
@@ -52,6 +54,14 @@ class ConnectorObject(ViewObject):
     @property
     def line_id(self):
         return self._line_id
+
+    @property
+    def start_id(self):
+        return self._start_id
+
+    @property
+    def end_id(self):
+        return self._end_id
 
     def curve(
         self, dependencies: internal.view.dependencies.Dependencies
@@ -76,11 +86,8 @@ class ConnectorObject(ViewObject):
     def _get_points(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
-        obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(
-            self.id
-        )
-        xs1, ys1, xs2, ys2 = dependencies.canvas.bbox(obj.start_id)
-        xe1, ye1, xe2, ye2 = dependencies.canvas.bbox(obj.end_id)
+        xs1, ys1, xs2, ys2 = dependencies.canvas.bbox(self.start_id)
+        xe1, ye1, xe2, ye2 = dependencies.canvas.bbox(self.end_id)
         points = []
         if xs2 < xe1 and ys2 < ye1:
             # point 1
@@ -202,14 +209,13 @@ class ConnectorObject(ViewObject):
     def _subscribe_to_child_move_object(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
-        obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(self.id)
         dependencies.pub_sub_broker.subscribe(
-            self.id, obj.start_id,
+            self.id, self.start_id,
             internal.objects.events.EVENT_TYPE_OBJECT_MOVED,
             lambda publisher, event, repo: self.curve(dependencies)
         )
         dependencies.pub_sub_broker.subscribe(
-            self.id, obj.end_id,
+            self.id, self.end_id,
             internal.objects.events.EVENT_TYPE_OBJECT_MOVED,
             lambda publisher, event, repo: self.curve(dependencies)
         )
@@ -217,17 +223,11 @@ class ConnectorObject(ViewObject):
     def _subscribe_to_child_delete_object(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
-        obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(self.id)
         dependencies.pub_sub_broker.subscribe(
             self.id,
             internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID,
             internal.repositories.events.EVENT_TYPE_OBJECT_DELETED,
             lambda publisher, event, repo: self.destroy_by_end(dependencies, event)
-        )
-        dependencies.pub_sub_broker.subscribe(
-            self.id, obj.end_id,
-            internal.objects.events.EVENT_TYPE_OBJECT_MOVED,
-            lambda publisher, event, repo: self.curve(dependencies)
         )
 
     def destroy_by_end(
@@ -235,11 +235,13 @@ class ConnectorObject(ViewObject):
         dependencies: internal.view.dependencies.Dependencies,
         event: internal.repositories.events.EventObjectDeleted
     ):
-        obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(self.id)
-        if obj and (obj.start_id == event.object_id or obj.end_id == event.object_id):
-            dependencies.canvas.dtag(obj.start_id, obj.id)
-            dependencies.canvas.dtag(obj.end_id, obj.id)
+        if self.start_id == event.object_id or self.end_id == event.object_id:
             dependencies.controller.delete_object(self.id)
+
+    def destroy(self, dependencies: internal.view.dependencies.Dependencies):
+        dependencies.canvas.dtag(self.start_id, self.id)
+        dependencies.canvas.dtag(self.end_id, self.id)
+        dependencies.canvas.delete(self.id)
 
     def _subscribe_to_child_change_object(
         self, dependencies: internal.view.dependencies.Dependencies

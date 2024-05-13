@@ -83,7 +83,7 @@ def _on_leave(
     if isinstance(cur_obj, ConnectorObject):
         global_dependencies.canvas.delete(state_ctx[_CURRENT_CONNECTOR_ID])
         return
-    if cur_obj.id != state_ctx[_START_ID]:
+    if cur_obj.id == state_ctx[_START_ID]:
         global_dependencies.canvas.delete(state_ctx[_CURRENT_CONNECTOR_ID])
         return
     state_ctx[_END_ID] = cur_obj.id
