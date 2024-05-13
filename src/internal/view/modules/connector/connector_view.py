@@ -224,8 +224,7 @@ class ConnectorObject(ViewObject):
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         dependencies.pub_sub_broker.subscribe(
-            self.id,
-            internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID,
+            self.id, internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID,
             internal.repositories.events.EVENT_TYPE_OBJECT_DELETED,
             lambda publisher, event, repo: self.destroy_by_end(dependencies, event)
         )
@@ -262,7 +261,7 @@ class ConnectorObject(ViewObject):
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         dependencies.pub_sub_broker.subscribe(
-            VIEW_OBJECT_ID, self.id,
+            self.id, self.id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_COLOR,
             lambda publisher, event, repo: self.get_color_update_from_repo(dependencies)
         )
@@ -277,7 +276,7 @@ class ConnectorObject(ViewObject):
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         dependencies.pub_sub_broker.subscribe(
-            VIEW_OBJECT_ID, self.id,
+            self.id, self.id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_WIDTH,
             lambda publisher, event, repo: self.get_width_update_from_repo(dependencies)
         )
@@ -292,7 +291,7 @@ class ConnectorObject(ViewObject):
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         dependencies.pub_sub_broker.subscribe(
-            VIEW_OBJECT_ID, self.id,
+            self.id, self.id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_CONNECTOR_TYPE,
             lambda publisher, event, repo: self.get_connector_type_update_from_repo(dependencies)
         )
@@ -308,8 +307,7 @@ class ConnectorObject(ViewObject):
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         dependencies.pub_sub_broker.subscribe(
-            VIEW_OBJECT_ID,
-            self.id,
+            self.id, self.id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_STROKE_STYLE,
             lambda publisher, event, repo: self.get_stroke_style_update_from_repo(dependencies)
         )

@@ -132,9 +132,8 @@ class Controller(interfaces.IController):
 
             def undo(self):
                 if not self._serialized_obj:
-                    logging.warning('Trying to undo DeeteObjectAction with serialized_obj=None')
+                    logging.warning('Trying to undo DeleteObjectAction with serialized_obj=None')
                     return
-
                 obj = internal.objects.build_from_serialized(
                     self._serialized_obj, self._controller._pub_sub_broker
                 )
@@ -144,6 +143,16 @@ class Controller(interfaces.IController):
         return DeleteObjectAction(self, obj_id)
 
     def delete_object(self, obj_id: internal.objects.interfaces.ObjectId):
+        # TODO: Issue #43
+        obj = self._repo.get(obj_id)
+        if not obj:
+            logging.warning('no object with id=%s', obj_id)
+            return
+        if obj.type == internal.objects.BoardObjectType.CONNECTOR:
+            logging.warning('Trying to undo DeleteObjectAction with connector')
+            self._repo.delete(obj.id)
+            self._on_feature_finish()
+            return
         action = self._build_delete_object_action(obj_id)
         action.do()
         self._undo_redo_manager.store_action(action)
@@ -151,21 +160,21 @@ class Controller(interfaces.IController):
     def edit_text(self, obj_id: internal.objects.interfaces.ObjectId, text: str):
         action = EditAction(
             self, obj_id, [PropertyChange('text', text)]
-        )   # TODO: property names as consts
+        )  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_color(self, obj_id: internal.objects.interfaces.ObjectId, color: str):
         action = EditAction(
             self, obj_id, [PropertyChange('color', color)]
-        )   # TODO: property names as consts
+        )  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_font(self, obj_id: internal.objects.interfaces.ObjectId, font: internal.models.Font):
         action = EditAction(
             self, obj_id, [PropertyChange('font', font)]
-        )   # TODO: property names as consts
+        )  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
@@ -238,7 +247,7 @@ class Controller(interfaces.IController):
     ):
         action = EditAction(
             self, obj_id, [PropertyChange('points', points)]
-        )   # TODO: property names as consts
+        )  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
@@ -263,14 +272,14 @@ class Controller(interfaces.IController):
     def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: int):
         action = EditAction(
             self, obj_id, [PropertyChange('width', width)]
-        )   # TODO: property names as consts
+        )  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_height(self, obj_id: internal.objects.interfaces.ObjectId, height: int):
         action = EditAction(
             self, obj_id, [PropertyChange('height', height)]
-        )   # TODO: property names as consts
+        )  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)
 
