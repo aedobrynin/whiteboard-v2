@@ -36,11 +36,9 @@ class IPubSubBroker(abc.ABC):
     @abc.abstractmethod
     def unsubscribe(self, subscriber: SubscriberId, publisher: PublisherId):
         """Unsubscribe from all events of publisher"""
-        pass
 
     @abc.abstractmethod
     def unsubscribe_from_all(self, subscriber: SubscriberId):
         """Unsubscribe from all events"""
-        pass
 
     # TODO: myb allow to subscribe on events of particular type published by anyone?

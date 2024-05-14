@@ -15,7 +15,6 @@ class _EventWithPublisher:
 
 class PubSubBroker(interfaces.IPubSubBroker):
     def __init__(self):
-        self._callbacks: dict[interfaces.SubscriptionId, interfaces.Callback]
         # usage: self._entity_subscribers[publisher_id][event_type][subscriber_id] -> callback
         self._entity_subscribers: collections.defaultdict[
             interfaces.PublisherId,
