@@ -3,7 +3,7 @@ import abc
 from typing import Callable
 
 import internal.repositories.interfaces
-from .event import Event
+from .event import Event, EventType
 
 PubSubId = str
 SubscriberId = PubSubId
@@ -14,12 +14,12 @@ Callback = Callable[[PublisherId, Event, internal.repositories.interfaces.IRepos
 
 class IPubSubBroker(abc.ABC):
     @abc.abstractmethod
-    def publish(self, publisher: str, event: Event):
+    def publish(self, publisher: PublisherId, event: Event):
         pass
 
     @abc.abstractmethod
     def subscribe(
-        self, subscriber: SubscriberId, publisher: PublisherId, type: str, callback: Callback
+        self, subscriber: SubscriberId, publisher: PublisherId, type: EventType, callback: Callback
     ):
         pass
 
@@ -33,7 +33,14 @@ class IPubSubBroker(abc.ABC):
     def process_published(self, repo: internal.repositories.interfaces.IRepository):
         pass
 
-    # TODO: unsubscribe method (will be useful in View)
+    @abc.abstractmethod
+    def unsubscribe(self, subscriber: SubscriberId, publisher: PublisherId):
+        """Unsubscribe from all events of publisher"""
+        pass
 
-    # TODO: unsubscribe_from_all method?
+    @abc.abstractmethod
+    def unsubscribe_from_all(self, subscriber: SubscriberId):
+        """Unsubscribe from all events"""
+        pass
+
     # TODO: myb allow to subscribe on events of particular type published by anyone?

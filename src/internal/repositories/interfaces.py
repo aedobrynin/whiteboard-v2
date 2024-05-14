@@ -16,9 +16,7 @@ class IRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_all(
-        self
-    ) -> List[internal.objects.interfaces.IBoardObject]:
+    def get_all(self) -> List[internal.objects.interfaces.IBoardObject]:
         pass
 
     # raises ObjectAlreadyExistsException if object with the same id already in the repository
@@ -43,30 +41,4 @@ class IRepository(abc.ABC):
     # TODO: move it to another interface (because now it is accessible from any object)
     @abc.abstractmethod
     def get_updated(self) -> dict[internal.objects.interfaces.ObjectId, Optional[dict]]:
-        pass
-
-
-# TODO: implement when needed
-class IObjectsWithPositionRepository(IRepository):
-    @abc.abstractmethod
-    def __init__(self, repo: IRepository):
-        pass
-
-    @abc.abstractmethod
-    def get(
-        self, object_id: internal.objects.interfaces.ObjectId
-    ) -> Optional[internal.objects.interfaces.IBoardObjectWithPosition]:
-        pass
-
-
-# TODO: implement when needed
-class ICardRepository(IObjectsWithPositionRepository):
-    @abc.abstractmethod
-    def __init__(self, repo: IRepository):
-        pass
-
-    @abc.abstractmethod
-    def get(
-        self, object_id: internal.objects.interfaces.ObjectId
-    ) -> Optional[internal.objects.interfaces.IBoardObjectCard]:
         pass
