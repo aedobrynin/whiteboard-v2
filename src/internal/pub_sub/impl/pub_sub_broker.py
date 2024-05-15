@@ -82,12 +82,21 @@ class PubSubBroker(interfaces.IPubSubBroker):
         logging.debug('processed %d events', processed_cnt)
 
     def unsubscribe(self, subscriber: interfaces.SubscriberId, publisher: interfaces.PublisherId):
+        logging.debug(
+            'pub-sub: unsubscribe subscriber=%s from events from publisher=%s',
+            subscriber,
+            publisher,
+        )
         # TODO: myb raise exception if no info about subscriber?
         for type in self._entity_subscriptions[subscriber][publisher]:
             del self._entity_subscribers[publisher][type][subscriber]
         del self._entity_subscriptions[subscriber][publisher]
 
     def unsubscribe_from_all(self, subscriber: interfaces.SubscriberId):
+        logging.debug(
+            'pub-sub: unsubscribe subscriber=%s from all events',
+            subscriber,
+        )
         # TODO: myb raise exception if no info about subscriber?
         for publisher, types in self._entity_subscriptions[subscriber].items():
             for type in types:

@@ -11,7 +11,7 @@ from .props_values import (
 )
 
 from .font import as_tkinter_font, as_object_font, as_tkinter_object_font
-from . import geometry as geometry
+from . import geometry
 
 __all__ = [
     'as_tkinter_font',
