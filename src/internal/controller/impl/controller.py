@@ -143,16 +143,6 @@ class Controller(interfaces.IController):
         return DeleteObjectAction(self, obj_id)
 
     def delete_object(self, obj_id: internal.objects.interfaces.ObjectId):
-        # TODO: Issue #43
-        obj = self._repo.get(obj_id)
-        if not obj:
-            logging.warning('no object with id=%s', obj_id)
-            return
-        if obj.type == internal.objects.BoardObjectType.CONNECTOR:
-            logging.warning('Trying to undo DeleteObjectAction with connector')
-            self._repo.delete(obj.id)
-            self._on_feature_finish()
-            return
         action = self._build_delete_object_action(obj_id)
         action.do()
         self._undo_redo_manager.store_action(action)

@@ -76,6 +76,9 @@ class PubSubBroker(interfaces.IPubSubBroker):
                 continue
             if event.type not in self._entity_subscribers[publisher]:
                 continue
+            # TODO: Issue 47
+            #  Тут пытаемся вызываться колбек, но параллельно может произойти unsubscribe,
+            #  поэтому будет падать ошибка
             for callback in self._entity_subscribers[publisher][event.type].values():
                 callback(publisher, event, repo)
             processed_cnt += 1

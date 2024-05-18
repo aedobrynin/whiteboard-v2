@@ -32,7 +32,7 @@ class ConnectorObject(ViewObject):
         dependencies: internal.view.dependencies.Dependencies,
         obj: internal.objects.interfaces.IBoardObjectConnector
     ):
-        ViewObject.__init__(self, dependencies, obj)
+        ViewObject.__init__(self, obj)
         self._line_id = None
         self._start_id = obj.start_id
         self._end_id = obj.end_id
@@ -40,13 +40,7 @@ class ConnectorObject(ViewObject):
         self._stroke_style = obj.stroke_style
         self.curve(dependencies)
 
-        self._subscribe_to_change_color(dependencies)
-        self._subscribe_to_change_width(dependencies)
-        self._subscribe_to_change_connector_type(dependencies)
-        self._subscribe_to_change_stroke_style(dependencies)
-        self._subscribe_to_child_move_object(dependencies)
-        self._subscribe_to_child_change_object(dependencies)
-        self._subscribe_to_child_delete_object(dependencies)
+        self._subscribe_to_repo_object_events(dependencies)
         # TODO: because notifications came after move-done, connector doesnt redraw properly
         dependencies.canvas.addtag_withtag(obj.id, obj.start_id)
         dependencies.canvas.addtag_withtag(obj.id, obj.end_id)
@@ -206,9 +200,14 @@ class ConnectorObject(ViewObject):
             points = basic_p
         return points
 
-    def _subscribe_to_child_move_object(
+    def _subscribe_to_repo_object_events(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
+        dependencies.pub_sub_broker.subscribe(
+            self.id, internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID,
+            internal.repositories.events.EVENT_TYPE_OBJECT_DELETED,
+            lambda publisher, event, repo: self._destroy_by_end(dependencies, event)
+        )
         dependencies.pub_sub_broker.subscribe(
             self.id, self.start_id,
             internal.objects.events.EVENT_TYPE_OBJECT_MOVED,
@@ -219,102 +218,79 @@ class ConnectorObject(ViewObject):
             internal.objects.events.EVENT_TYPE_OBJECT_MOVED,
             lambda publisher, event, repo: self.curve(dependencies)
         )
-
-    def _subscribe_to_child_delete_object(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
         dependencies.pub_sub_broker.subscribe(
-            self.id, internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID,
-            internal.repositories.events.EVENT_TYPE_OBJECT_DELETED,
-            lambda publisher, event, repo: self.destroy_by_end(dependencies, event)
+            self.id, self.start_id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
+            lambda publisher, event, repo: self.curve(dependencies)
+        )
+        dependencies.pub_sub_broker.subscribe(
+            self.id, self.end_id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
+            lambda publisher, event, repo: self.curve(dependencies)
+        )
+        dependencies.pub_sub_broker.subscribe(
+            self.id, self.id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_COLOR,
+            lambda publisher, event, repo: self._get_color_update_from_repo(dependencies),
+        )
+        dependencies.pub_sub_broker.subscribe(
+            self.id, self.id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_WIDTH,
+            lambda publisher, event, repo: self._get_width_update_from_repo(dependencies),
+        )
+        dependencies.pub_sub_broker.subscribe(
+            self.id, self.id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_CONNECTOR_TYPE,
+            lambda publisher, event, repo: self._get_con_type_update_from_repo(dependencies)
+        )
+        dependencies.pub_sub_broker.subscribe(
+            self.id, self.id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_STROKE_STYLE,
+            lambda publisher, event, repo: self._get_stroke_update_from_repo(dependencies)
         )
 
-    def destroy_by_end(
-        self,
-        dependencies: internal.view.dependencies.Dependencies,
+    def _unsubscribe_from_repo_object_events(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
+        # TODO: Issue 47
+        #  we cannot call unsubscribe when we are in process of published DELETE_OBJECT
+        # dependencies.pub_sub_broker.unsubscribe_from_all(self.id)
+        # dependencies.pub_sub_broker.unsubscribe(
+        #     self.id, internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID
+        # )
+        dependencies.pub_sub_broker.unsubscribe(self.id, self.start_id)
+        dependencies.pub_sub_broker.unsubscribe(self.id, self.end_id)
+        dependencies.pub_sub_broker.unsubscribe(self.id, self.id)
+
+    def _destroy_by_end(
+        self, dependencies: internal.view.dependencies.Dependencies,
         event: internal.repositories.events.EventObjectDeleted
     ):
-        if self.start_id == event.object_id or self.end_id == event.object_id:
+        if self.start_id != event.object_id and self.end_id != event.object_id:
+            return
+        if dependencies.repo.get(self.id):
             dependencies.controller.delete_object(self.id)
 
     def destroy(self, dependencies: internal.view.dependencies.Dependencies):
         dependencies.canvas.dtag(self.start_id, self.id)
         dependencies.canvas.dtag(self.end_id, self.id)
+        self._unsubscribe_from_repo_object_events(dependencies)
         dependencies.canvas.delete(self.id)
 
-    def _subscribe_to_child_change_object(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
-        obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(self.id)
-        dependencies.pub_sub_broker.subscribe(
-            self.id, obj.start_id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
-            lambda publisher, event, repo: self.curve(dependencies)
-        )
-        dependencies.pub_sub_broker.subscribe(
-            self.id, obj.end_id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
-            lambda publisher, event, repo: self.curve(dependencies)
-        )
-
-    def _subscribe_to_change_color(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
-        dependencies.pub_sub_broker.subscribe(
-            self.id, self.id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_COLOR,
-            lambda publisher, event, repo: self.get_color_update_from_repo(dependencies)
-        )
-
-    def get_color_update_from_repo(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
+    def _get_color_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
         dependencies.canvas.itemconfigure(self.line_id, fill=obj.color)
 
-    def _subscribe_to_change_width(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
-        dependencies.pub_sub_broker.subscribe(
-            self.id, self.id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_WIDTH,
-            lambda publisher, event, repo: self.get_width_update_from_repo(dependencies)
-        )
-
-    def get_width_update_from_repo(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
+    def _get_width_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
         dependencies.canvas.itemconfigure(self.line_id, width=obj.width)
 
-    def _subscribe_to_change_connector_type(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
-        dependencies.pub_sub_broker.subscribe(
-            self.id, self.id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_CONNECTOR_TYPE,
-            lambda publisher, event, repo: self.get_connector_type_update_from_repo(dependencies)
-        )
-
-    def get_connector_type_update_from_repo(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
+    def _get_con_type_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(self.id)
         self._connector_type = obj.connector_type
         self.curve(dependencies)
 
-    def _subscribe_to_change_stroke_style(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
-        dependencies.pub_sub_broker.subscribe(
-            self.id, self.id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_STROKE_STYLE,
-            lambda publisher, event, repo: self.get_stroke_style_update_from_repo(dependencies)
-        )
-
-    def get_stroke_style_update_from_repo(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
+    def _get_stroke_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(self.id)
         self._stroke_style = obj.stroke_style
         dependencies.canvas.itemconfigure(self.line_id, arrow=self._stroke_style)
@@ -382,37 +358,27 @@ class ConnectorObject(ViewObject):
             values=restrictions,
             state='readonly'
         )
-        string_var.trace('w', lambda *_: setter(
-            dependencies, string_var.get()
-        ))
         combobox.current(restrictions.index(getter(
             dependencies
         )))
+        string_var.trace('w', lambda *_: setter(
+            dependencies, string_var.get()
+        ))
         return [label, combobox]
 
-    def get_color(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
+    def get_color(self, dependencies: internal.view.dependencies.Dependencies):
         return dependencies.canvas.itemcget(self.line_id, 'fill')
 
-    def set_color(
-        self, dependencies: internal.view.dependencies.Dependencies, color: str
-    ):
+    def set_color(self, dependencies: internal.view.dependencies.Dependencies, color: str):
         dependencies.controller.edit_color(self.id, color=color)
 
-    def get_width(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
+    def get_width(self, dependencies: internal.view.dependencies.Dependencies):
         return int(float(dependencies.canvas.itemcget(self.line_id, 'width')))
 
-    def set_width(
-        self, dependencies: internal.view.dependencies.Dependencies, width: int
-    ):
+    def set_width(self, dependencies: internal.view.dependencies.Dependencies, width: int):
         dependencies.controller.edit_width(self.id, width=width)
 
-    def get_connector_type(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
+    def get_connector_type(self, dependencies: internal.view.dependencies.Dependencies):
         return self._connector_type
 
     def set_connector_type(
@@ -420,9 +386,7 @@ class ConnectorObject(ViewObject):
     ):
         dependencies.controller.edit_connector_type(self.id, connector_type=connector_type)
 
-    def get_stroke_style(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
+    def get_stroke_style(self, dependencies: internal.view.dependencies.Dependencies):
         return self._stroke_style
 
     def set_stroke_style(
@@ -432,9 +396,6 @@ class ConnectorObject(ViewObject):
 
     @staticmethod
     def _bezier(t, *points):
-        """
-        Bezier function
-        """
         c = []
         cnt = len(points)
         if cnt == 3:
