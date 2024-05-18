@@ -49,6 +49,14 @@ def get_line_types() -> List[str]:
     return ['solid', 'dotted', 'dashed']
 
 
+def get_connector_types() -> List[str]:
+    return ['elbowed', 'straight', 'curved']
+
+
+def get_stroke_styles() -> List[str]:
+    return ['first', 'both', 'last', 'none']
+
+
 def get_card_sizes() -> List[str]:
     return ['Small', 'Medium', 'Large']
 

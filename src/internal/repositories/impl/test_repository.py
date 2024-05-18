@@ -1,11 +1,12 @@
+from datetime import datetime
+
 import pytest
 
 import internal.objects.interfaces
 import internal.pub_sub.mocks
-
 from . import repository
-from .. import exceptions
 from .. import events
+from .. import exceptions
 from .. import interfaces
 
 
@@ -14,6 +15,7 @@ def _get_serialized_card():
     def _impl():
         return {
             'id': '4680838b-4217-4992-9932-3d3ebb22c8ec',
+            'create_dttm': datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ'),
             'position': {
                 'x': 1,
                 'y': 2,

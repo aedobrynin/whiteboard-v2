@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import abc
 import typing
 
@@ -55,6 +56,17 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def edit_connector_type(
+        self, obj_id: internal.objects.interfaces.ObjectId, connector_type: str
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_stroke_style(
+        self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str
+    ):
+        pass
+
     def undo_last_action(self):
         pass
 

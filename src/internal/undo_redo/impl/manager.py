@@ -41,5 +41,5 @@ class UndoRedoManager(interfaces.IUndoRedoManager):
             logging.debug('nothing to redo')
             return
         self._history[self._cur_pos + 1].do()
-        logging.debug('successfuly redid action')
+        logging.debug('successfully redid action')
         self._cur_pos += 1
