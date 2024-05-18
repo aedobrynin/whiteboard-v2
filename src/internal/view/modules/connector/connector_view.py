@@ -11,7 +11,6 @@ import internal.repositories.events
 import internal.repositories.interfaces
 import internal.view.dependencies
 import internal.view.objects.interfaces
-from internal.view.consts import VIEW_OBJECT_ID
 from internal.view.objects.impl.object import ViewObject
 from internal.view.utils import (
     get_line_widths,
