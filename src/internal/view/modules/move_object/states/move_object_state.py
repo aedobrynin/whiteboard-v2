@@ -41,7 +41,7 @@ def _on_enter(
 
     # TODO: because we notify only when view-move done, group doesnt update correctly
     other_tags = global_dependencies.canvas.gettags(state_ctx[_OBJ_ID])
-    for tag in other_tags:
+    for tag in reversed(other_tags):
         obj = global_dependencies.objects_storage.get_opt_by_id(tag)
         if obj and isinstance(obj, GroupObject):
             state_ctx[_OBJ_ID] = obj.id
