@@ -126,3 +126,8 @@ def test_undo_redo_manager_tail_is_removed_on_store():
     assert lst == [0, 3]
     manager.redo()  # should be no-op
     assert lst == [0, 3]
+    manager.undo()
+    assert lst == [0]
+    manager.undo()
+    assert lst == []
+
