@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import internal.pub_sub.interfaces
+from datetime import datetime
 
-from .. import interfaces
+import internal.pub_sub.interfaces
 from .common import field_names
+from .. import interfaces
 from .. import types
 
 
@@ -11,13 +12,15 @@ class BoardObject(interfaces.IBoardObject):
     # TODO: think about a better place for pubsubbroker
     def __init__(
         self,
-        id: interfaces.ObjectId,
-        type: types.BoardObjectType,  # noqa
+        id: interfaces.ObjectId,  # type: ignore
+        type: types.BoardObjectType,  # type: ignore
+        create_dttm: datetime,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ):
         self._id = id
         self._type = type
         self._pub_sub_broker = pub_sub_broker
+        self._create_dttm = create_dttm
 
     @property
     def id(self) -> interfaces.ObjectId:
@@ -27,8 +30,16 @@ class BoardObject(interfaces.IBoardObject):
     def type(self) -> types.BoardObjectType:
         return self._type
 
+    @property
+    def create_dttm(self) -> datetime:
+        return self._create_dttm
+
     def serialize(self) -> dict:
-        return {field_names.ID_FIELD: self.id, field_names.TYPE_FIELD: self.type.value}
+        return {
+            field_names.ID_FIELD: self.id,
+            field_names.TYPE_FIELD: self.type.value,
+            field_names.CREATE_DTTM_FIELD: self.create_dttm.strftime('%Y-%m-%dT%H-%M-%SZ')
+        }
 
     @staticmethod
     def from_serialized(
@@ -38,6 +49,7 @@ class BoardObject(interfaces.IBoardObject):
         return BoardObject(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
             types.BoardObjectType(data[field_names.TYPE_FIELD]),
+            datetime.strptime(data[field_names.CREATE_DTTM_FIELD], '%Y-%m-%dT%H-%M-%SZ'),
             pub_sub_broker,
         )
 

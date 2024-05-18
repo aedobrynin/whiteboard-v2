@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC
-
 import internal.objects.interfaces
 import internal.view.dependencies
 import internal.view.utils.geometry
@@ -11,10 +9,9 @@ from ..interfaces import IViewObject
 _RECTANGLE_PREFIX = 'rectangle'
 
 
-class ViewObject(IViewObject, ABC):
+class ViewObject(IViewObject):
     def __init__(
         self,
-        dependencies: internal.view.dependencies.Dependencies,  # TODO: it's not used, remove
         obj: internal.objects.interfaces.IBoardObject,
     ):
         self._id = obj.id

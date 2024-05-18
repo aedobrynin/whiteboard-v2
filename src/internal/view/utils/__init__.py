@@ -5,12 +5,15 @@ from .props_values import (
     get_font_colors,
     get_font_families,
     get_text_alignments,
-    get_text_line_widths,
-    get_line_types
+    get_line_widths,
+    get_line_types,
+    get_card_sizes,
+    get_connector_types,
+    get_stroke_styles,
 )
 
 from .font import as_tkinter_font, as_object_font, as_tkinter_object_font
-from . import geometry as geometry
+from . import geometry
 
 __all__ = [
     'as_tkinter_font',
@@ -22,7 +25,10 @@ __all__ = [
     'get_font_colors',
     'get_font_families',
     'get_text_alignments',
-    'get_text_line_widths',
+    'get_line_widths',
     'get_line_types',
-    'geometry'
+    'get_card_sizes',
+    'get_connector_types',
+    'get_stroke_styles',
+    'geometry',
 ]

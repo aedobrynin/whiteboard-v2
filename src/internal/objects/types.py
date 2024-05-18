@@ -6,3 +6,4 @@ class BoardObjectType(enum.Enum):
     CARD = 'card'
     PEN = 'pen'
     GROUP = 'group'
+    CONNECTOR = 'connector'
