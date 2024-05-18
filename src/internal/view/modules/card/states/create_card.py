@@ -7,7 +7,7 @@ import internal.models.position
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
 from internal.view.state_machine.impl import State
-from internal.view.modules.card.consts import CARD_MENU_ENTRY_NAME, CARD_CREATE_STATE_NAME
+from ..consts import CARD_MENU_ENTRY_NAME, CARD_CREATE_STATE_NAME
 
 
 def _predicate_from_root_to_create_text(

@@ -5,10 +5,10 @@ from typing import Dict, Optional
 
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
+import internal.view.modules.connector
+import internal.view.modules.group
 from internal.models import Position
-from internal.view.modules.connector import ConnectorObject
 from internal.view.objects.interfaces import IViewObject
-from internal.view.modules.group import GroupObject
 from internal.view.state_machine.impl import State
 
 _MOVE_OBJECT_STATE_NAME = 'MOVE_OBJECT'
@@ -43,7 +43,7 @@ def _on_enter(
     other_tags = global_dependencies.canvas.gettags(state_ctx[_OBJ_ID])
     for tag in reversed(other_tags):
         obj = global_dependencies.objects_storage.get_opt_by_id(tag)
-        if obj and isinstance(obj, GroupObject):
+        if obj and isinstance(obj, internal.view.modules.group.GroupObject):
             state_ctx[_OBJ_ID] = obj.id
 
 
@@ -74,7 +74,8 @@ def _handle_event(
     if event.type != tkinter.EventType.Motion or event.state & (1 << 8) == 0:
         return
     if isinstance(
-        global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID]), ConnectorObject
+        global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID]),
+        internal.view.modules.connector.ConnectorObject
     ):
         return
     x = int(global_dependencies.canvas.canvasx(event.x))
@@ -91,7 +92,7 @@ def _handle_event(
     other_tags = global_dependencies.canvas.gettags(state_ctx[_OBJ_ID])
     for tag in other_tags:
         obj = global_dependencies.objects_storage.get_opt_by_id(tag)
-        if obj and isinstance(obj, ConnectorObject):
+        if obj and isinstance(obj, internal.view.modules.connector.ConnectorObject):
             obj.curve(global_dependencies)
 
 
