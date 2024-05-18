@@ -12,7 +12,7 @@ import internal.view.dependencies
 import internal.view.objects.interfaces
 from internal.view.objects.impl.object import ViewObject
 from internal.view.consts import VIEW_OBJECT_ID
-from internal.view.utils import get_line_widths, get_font_colors
+import internal.view.utils
 
 _LINE_WIDTH_DESC = 'Толщина линии'
 _LINE_COLOR_DESC = 'Цвет линии'
@@ -24,7 +24,7 @@ class PenObject(ViewObject):
         dependencies: internal.view.dependencies.Dependencies,
         obj: internal.objects.interfaces.IBoardObjectPen,
     ):
-        ViewObject.__init__(self, dependencies, obj)
+        ViewObject.__init__(self, obj)
         self._line_id = dependencies.canvas.create_line(
             self._get_canvas_points_from_repo_object(dependencies),
             width=obj.width,
@@ -33,10 +33,7 @@ class PenObject(ViewObject):
             smooth=True,
             tags=[obj.id],
         )
-        self._subscribe_to_change_color(dependencies)
-        self._subscribe_to_change_width(dependencies)
-        self._subscribe_to_change_points(dependencies)
-        self._subscribe_to_change_move(dependencies)
+        self._subscribe_to_repo_object_events(dependencies)
 
     @property
     def line_id(self):
@@ -52,31 +49,21 @@ class PenObject(ViewObject):
             points.append(position.y)
         return points
 
-    def _subscribe_to_change_color(self, dependencies: internal.view.dependencies.Dependencies):
+    def _subscribe_to_repo_object_events(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
         dependencies.pub_sub_broker.subscribe(
             VIEW_OBJECT_ID,
             self.id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_COLOR,
             lambda publisher, event, repo: self._get_color_update_from_repo(dependencies),
         )
-
-    def _get_color_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
-        obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
-        dependencies.canvas.itemconfigure(self.line_id, fill=obj.color)
-
-    def _subscribe_to_change_width(self, dependencies: internal.view.dependencies.Dependencies):
         dependencies.pub_sub_broker.subscribe(
             VIEW_OBJECT_ID,
             self.id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_WIDTH,
             lambda publisher, event, repo: self._get_width_update_from_repo(dependencies),
         )
-
-    def _get_width_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
-        obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
-        dependencies.canvas.itemconfigure(self.line_id, width=obj.width)
-
-    def _subscribe_to_change_points(self, dependencies: internal.view.dependencies.Dependencies):
         dependencies.pub_sub_broker.subscribe(
             VIEW_OBJECT_ID,
             self.id,
@@ -85,8 +72,6 @@ class PenObject(ViewObject):
                 self.line_id, self._get_canvas_points_from_repo_object(dependencies)
             ),
         )
-
-    def _subscribe_to_change_move(self, dependencies: internal.view.dependencies.Dependencies):
         dependencies.pub_sub_broker.subscribe(
             VIEW_OBJECT_ID,
             self.id,
@@ -95,6 +80,19 @@ class PenObject(ViewObject):
                 self.line_id, self._get_canvas_points_from_repo_object(dependencies)
             ),
         )
+
+    def _unsubscribe_from_repo_object_events(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
+        dependencies.pub_sub_broker.unsubscribe(VIEW_OBJECT_ID, self.id)
+
+    def _get_color_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
+        obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
+        dependencies.canvas.itemconfigure(self.line_id, fill=obj.color)
+
+    def _get_width_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
+        obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
+        dependencies.canvas.itemconfigure(self.line_id, width=obj.width)
 
     def widgets(
         self, dependencies: internal.view.dependencies.Dependencies
@@ -109,10 +107,18 @@ class PenObject(ViewObject):
     def _widgets_func(self) -> List[Callable]:
         return [
             lambda dependencies: self._base_widget(
-                dependencies, get_font_colors(), _LINE_COLOR_DESC, self._get_color, self._set_color
+                dependencies,
+                internal.view.utils.get_font_colors(),
+                _LINE_COLOR_DESC,
+                self._get_color,
+                self._set_color,
             ),
             lambda dependencies: self._base_widget(
-                dependencies, get_line_widths(), _LINE_WIDTH_DESC, self._get_width, self._set_width
+                dependencies,
+                internal.view.utils.get_line_widths(),
+                _LINE_WIDTH_DESC,
+                self._get_width,
+                self._set_width,
             ),
         ]
 
@@ -149,3 +155,7 @@ class PenObject(ViewObject):
 
     def _set_width(self, dependencies: internal.view.dependencies.Dependencies, width: int):
         dependencies.controller.edit_width(self.id, width=width)
+
+    def destroy(self, dependencies: internal.view.dependencies.Dependencies):
+        self._unsubscribe_from_repo_object_events(dependencies)
+        ViewObject.destroy(self, dependencies)

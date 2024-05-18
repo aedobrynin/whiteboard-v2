@@ -14,9 +14,7 @@ class IViewObject(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def destroy(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ) -> None:
+    def destroy(self, dependencies: internal.view.dependencies.Dependencies) -> None:
         pass
 
     @abc.abstractmethod
@@ -26,9 +24,7 @@ class IViewObject(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_focused(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ) -> bool:
+    def get_focused(self, dependencies: internal.view.dependencies.Dependencies) -> bool:
         pass
 
     @abc.abstractmethod
@@ -50,23 +46,17 @@ class IViewObject(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def draw_object_border(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ) -> None:
+    def draw_object_border(self, dependencies: internal.view.dependencies.Dependencies) -> None:
         pass
 
     @abc.abstractmethod
-    def remove_object_border(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ) -> None:
+    def remove_object_border(self, dependencies: internal.view.dependencies.Dependencies) -> None:
         pass
 
 
 class IViewObjectStorage(abc.ABC):
     @abc.abstractmethod
-    def create_view_objects(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ) -> None:
+    def create_view_objects(self, dependencies: internal.view.dependencies.Dependencies) -> None:
         pass
 
     @abc.abstractmethod
@@ -74,21 +64,15 @@ class IViewObjectStorage(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_by_id(
-        self, object_id: str
-    ) -> IViewObject:
+    def get_by_id(self, object_id: str) -> IViewObject:
         pass
 
     @abc.abstractmethod
-    def get_opt_by_id(
-        self, object_id: str
-    ) -> Optional[IViewObject]:
+    def get_opt_by_id(self, object_id: str) -> Optional[IViewObject]:
         pass
 
     @abc.abstractmethod
-    def get_current(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ) -> IViewObject:
+    def get_current(self, dependencies: internal.view.dependencies.Dependencies) -> IViewObject:
         pass
 
     @abc.abstractmethod

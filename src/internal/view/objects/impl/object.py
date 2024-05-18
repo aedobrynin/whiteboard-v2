@@ -12,7 +12,6 @@ _RECTANGLE_PREFIX = 'rectangle'
 class ViewObject(IViewObject):
     def __init__(
         self,
-        dependencies: internal.view.dependencies.Dependencies,  # TODO: it's not used, remove
         obj: internal.objects.interfaces.IBoardObject,
     ):
         self._id = obj.id

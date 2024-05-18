@@ -2,18 +2,17 @@ import tkinter
 from tkinter import ttk, Menu
 from typing import List
 
-import internal.objects.events
 import internal.objects.interfaces
+import internal.objects.events
 import internal.pub_sub.interfaces
 import internal.repositories.interfaces
 import internal.view.dependencies
-import internal.view.modules.connector
+import internal.view.utils
 import internal.view.modules.text
 import internal.view.modules.pen
 import internal.view.modules.card
-import internal.view.utils
 
-_SUBMENU_PREFIX = 'submenu'
+_SUBMENU_PUB_SUB_ID = 'submenu'
 _BRING_TO_FRONT_DESC = 'Bring To Front'
 _SEND_TO_BACK_DESC = 'Send To Back'
 _DELETE_DESC = 'Delete'
@@ -28,33 +27,26 @@ class Submenu:
         self.obj_id = obj_id
         self._property_widgets: List[ttk.Widget] = []
         self._option_menu: Menu = None
-        obj: internal.objects.interfaces.IBoardObjectWithPosition = dependencies.repo.get(obj_id)
-        if obj.type in [
-            internal.objects.types.BoardObjectType.TEXT,
-            internal.objects.types.BoardObjectType.PEN,
-            internal.objects.types.BoardObjectType.CONNECTOR
-        ]:
-            obj_canvas: internal.view.modules.text.TextObject = (
-                dependencies.objects_storage.get_by_id(obj_id)
-            )
-            self._property_widgets = obj_canvas.widgets(dependencies)
-        elif obj.type == internal.objects.types.BoardObjectType.CARD:
-            obj_canvas: internal.view.modules.text.TextObject = (
-                dependencies.objects_storage.get_by_id(obj_id)
-            )
-            self._property_widgets = obj_canvas.widgets(dependencies)
-        else:
-            self._property_widgets = []
-        self._init_option_menu(dependencies)
-        self._subscribe_draw_border(dependencies)
+        obj_canvas = dependencies.objects_storage.get_by_id(obj_id)
+        self._property_widgets = obj_canvas.widgets(dependencies)
 
-    def _subscribe_draw_border(self, dependencies: internal.view.dependencies.Dependencies):
+        self._init_option_menu(dependencies)
+        self._subscribe_to_events_for_object_border_updates(dependencies)
+
+    def _subscribe_to_events_for_object_border_updates(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
         dependencies.pub_sub_broker.subscribe(
-            _SUBMENU_PREFIX + self.obj_id,
+            _SUBMENU_PUB_SUB_ID,
             self.obj_id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
             lambda *_: self._draw_border(dependencies),
         )
+
+    def _unsubscribe_from_events_for_object_border_updates(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
+        dependencies.pub_sub_broker.unsubscribe(_SUBMENU_PUB_SUB_ID, self.obj_id)
 
     def _draw_border(self, dependencies: internal.view.dependencies.Dependencies):
         obj = dependencies.objects_storage.get_opt_by_id(self.obj_id)
@@ -76,7 +68,7 @@ class Submenu:
             label=_SEND_TO_BACK_DESC, command=lambda: self._send_to_back(dependencies)
         )
         self._option_menu.add_command(
-            label=_DELETE_DESC, command=lambda: self._delete(dependencies)
+            label=_DELETE_DESC, command=lambda: self._delete_object(dependencies)
         )
 
     def _bring_to_front(self, dependencies: internal.view.dependencies.Dependencies):
@@ -87,7 +79,7 @@ class Submenu:
         # TODO: issue #32
         dependencies.canvas.tag_lower(self.obj_id)
 
-    def _delete(self, dependencies: internal.view.dependencies.Dependencies):
+    def _delete_object(self, dependencies: internal.view.dependencies.Dependencies):
         self.destroy_menu(dependencies)
         dependencies.controller.delete_object(self.obj_id)
         self.obj_id = None
@@ -112,6 +104,7 @@ class Submenu:
         obj = dependencies.objects_storage.get_opt_by_id(self.obj_id)
         if obj:
             obj.set_focused(dependencies, False)
+            self._unsubscribe_from_events_for_object_border_updates(dependencies)
             self._remove_border(dependencies)
         self._option_menu.destroy()
         for w in self._property_widgets:
