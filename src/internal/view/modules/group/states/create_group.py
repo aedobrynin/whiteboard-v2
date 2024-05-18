@@ -58,7 +58,7 @@ def _get_children_ids(
         obj = global_dependencies.repo.get(obj_id)
         if isinstance(obj, internal.objects.interfaces.IBoardObjectGroup):
             result_ids.update(obj.children_ids)
-            global_dependencies.repo.delete(obj_id)
+            global_dependencies.controller.delete_object(obj_id)
         else:
             result_ids.add(obj_id)
     return list(result_ids)

@@ -7,7 +7,6 @@ from .impl.group import BoardObjectGroup
 from .impl.text import BoardObjectText
 from .impl.connector import BoardObjectConnector
 from .impl.object_id import generate_object_id
-from .impl.text import BoardObjectText
 
 
 def test_text_building():

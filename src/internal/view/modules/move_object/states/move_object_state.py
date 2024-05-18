@@ -73,7 +73,10 @@ def _handle_event(
     # Motion with Left mouse button pressed
     if event.type != tkinter.EventType.Motion or event.state & (1 << 8) == 0:
         return
-
+    if isinstance(
+        global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID]), ConnectorObject
+    ):
+        return
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
     global_dependencies.canvas.move(
@@ -104,9 +107,7 @@ def _predicate_from_root_to_move_object(
     cur_obj = global_dependencies.objects_storage.get_current_opt(
         global_dependencies
     )
-    if cur_obj is None:
-        return False
-    return not isinstance(cur_obj, ConnectorObject)
+    return cur_obj is not None
 
 
 def _predicate_from_move_object_to_root(

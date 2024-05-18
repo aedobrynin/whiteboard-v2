@@ -11,6 +11,8 @@ import internal.view.utils
 import internal.view.modules.text
 import internal.view.modules.pen
 import internal.view.modules.card
+import internal.view.modules.connector
+import internal.view.modules.group
 
 _SUBMENU_PUB_SUB_ID = 'submenu'
 _BRING_TO_FRONT_DESC = 'Bring To Front'

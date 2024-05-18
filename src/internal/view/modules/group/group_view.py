@@ -44,6 +44,14 @@ class GroupObject(ViewObject):
     def children_ids(self):
         return self._children_ids
 
+    def widgets(self, dependencies: internal.view.dependencies.Dependencies):
+        return []
+
+    def destroy(self, dependencies: internal.view.dependencies.Dependencies):
+        for child_id in self.children_ids:
+            dependencies.canvas.dtag(child_id, self.id)
+        dependencies.canvas.delete(self.id)
+
     def _get_invisible_rect(
         self, dependencies: internal.view.dependencies.Dependencies
     ) -> internal.view.utils.geometry.Rectangle:
@@ -82,11 +90,12 @@ class GroupObject(ViewObject):
         self, dependencies: internal.view.dependencies.Dependencies,
         event: internal.repositories.events.EventObjectDeleted
     ):
-        if event.object_id not in self._children_ids or not dependencies.repo(self.id):
+        if event.object_id not in self._children_ids or not dependencies.repo.get(self.id):
             return
         dependencies.canvas.dtag(event.object_id, self.id)
         dependencies.pub_sub_broker.unsubscribe(self.id, event.object_id)
         self._children_ids.remove(event.object_id)
+        self._get_update_children_from_repo(dependencies)
         if len(self._children_ids) <= 1:
             dependencies.controller.delete_object(self.id)
 
