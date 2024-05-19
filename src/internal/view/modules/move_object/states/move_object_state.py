@@ -5,8 +5,9 @@ from typing import Dict, Optional
 
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
+import internal.view.modules.connector
+import internal.view.modules.group
 from internal.models import Position
-from internal.view.modules.connector import ConnectorObject
 from internal.view.objects.interfaces import IViewObject
 from internal.view.state_machine.impl import State
 
@@ -38,6 +39,13 @@ def _on_enter(
     state_ctx[_FIRST_DRAG_EVENT_Y] = y
     state_ctx[_OBJ_ID] = obj.id
 
+    # TODO: because we notify only when view-move done, group doesnt update correctly
+    other_tags = global_dependencies.canvas.gettags(state_ctx[_OBJ_ID])
+    for tag in reversed(other_tags):
+        obj = global_dependencies.objects_storage.get_opt_by_id(tag)
+        if obj and isinstance(obj, internal.view.modules.group.GroupObject):
+            state_ctx[_OBJ_ID] = obj.id
+
 
 def _on_leave(
     global_dependencies: internal.view.dependencies.Dependencies,
@@ -65,7 +73,11 @@ def _handle_event(
     # Motion with Left mouse button pressed
     if event.type != tkinter.EventType.Motion or event.state & (1 << 8) == 0:
         return
-
+    if isinstance(
+        global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID]),
+        internal.view.modules.connector.ConnectorObject
+    ):
+        return
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
     global_dependencies.canvas.move(
@@ -80,7 +92,7 @@ def _handle_event(
     other_tags = global_dependencies.canvas.gettags(state_ctx[_OBJ_ID])
     for tag in other_tags:
         obj = global_dependencies.objects_storage.get_opt_by_id(tag)
-        if obj and isinstance(obj, ConnectorObject):
+        if obj and isinstance(obj, internal.view.modules.connector.ConnectorObject):
             obj.curve(global_dependencies)
 
 
@@ -96,9 +108,7 @@ def _predicate_from_root_to_move_object(
     cur_obj = global_dependencies.objects_storage.get_current_opt(
         global_dependencies
     )
-    if cur_obj is None:
-        return False
-    return not isinstance(cur_obj, ConnectorObject)
+    return cur_obj is not None
 
 
 def _predicate_from_move_object_to_root(

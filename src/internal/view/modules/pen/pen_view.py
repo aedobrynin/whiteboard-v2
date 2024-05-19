@@ -10,9 +10,9 @@ import internal.objects.events
 import internal.repositories.interfaces
 import internal.view.dependencies
 import internal.view.objects.interfaces
+import internal.view.utils
 from internal.view.objects.impl.object import ViewObject
 from internal.view.consts import VIEW_OBJECT_ID
-import internal.view.utils
 
 _LINE_WIDTH_DESC = 'Толщина линии'
 _LINE_COLOR_DESC = 'Цвет линии'

@@ -26,6 +26,7 @@ class IBoardObject(abc.ABC):
         pass
 
     @property
+    @abc.abstractmethod
     def create_dttm(self) -> datetime.datetime:
         pass
 

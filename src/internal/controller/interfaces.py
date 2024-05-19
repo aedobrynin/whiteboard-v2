@@ -43,9 +43,13 @@ class IController(abc.ABC):
 
     @abc.abstractmethod
     def edit_points(
-        self,
-        obj_id: internal.objects.interfaces.ObjectId,
-        points: typing.List[internal.models.Position],
+        self, obj_id: internal.objects.interfaces.ObjectId, points: typing.List[internal.models.Position],
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_children_ids(
+        self, obj_id: internal.objects.interfaces.ObjectId, children_ids: typing.List[str],
     ):
         pass
 

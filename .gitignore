@@ -6,3 +6,4 @@ junit/
 *.boardobj
 .idea
 .vscode
+venv

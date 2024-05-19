@@ -8,7 +8,7 @@ import internal.objects.interfaces
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
 from internal.view.state_machine.impl import State
-from internal.view.modules.pen.consts import PEN_MENU_ENTRY_NAME, PEN_CREATE_STATE_NAME
+from ..consts import PEN_MENU_ENTRY_NAME, PEN_CREATE_STATE_NAME
 
 _CURRENT_LINE_ID = 'line_id'
 

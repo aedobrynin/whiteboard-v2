@@ -56,6 +56,9 @@ class ViewObjectStorage(IViewObjectStorage):
         dependencies: internal.view.dependencies.Dependencies
     ):
         obj: internal.objects.interfaces.IBoardObject = dependencies.repo.get(obj_id)
+        if not obj:
+            logging.warning('can`t create obj, it`s not in repository')
+            return
         if obj.id in self._objects:
             logging.debug('obj_id(%s) already in canvas', obj.id)
         if obj.type in self._object_types:
@@ -79,6 +82,9 @@ class ViewObjectStorage(IViewObjectStorage):
         self, type_name: internal.objects.BoardObjectType, type_class: Type[IViewObject]
     ):
         self._object_types[type_name] = type_class
+
+    def get_objects(self) -> dict[str, IViewObject]:
+        return self._objects
 
     def get_by_id(
         self, object_id: str

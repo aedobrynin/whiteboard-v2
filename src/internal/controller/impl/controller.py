@@ -186,13 +186,9 @@ class Controller(interfaces.IController):
                 self._obj_id = obj_id
                 self._delta = delta
 
-            def _move(self, delta: internal.models.Position):
-                obj: typing.Optional[
-                    internal.objects.interfaces.IBoardObject
-                ] = self._controller._repo.get(self._obj_id)
-                if not obj:
-                    logging.warning('MoveObjectAction: no object with id=%s', self._obj_id)
-                    return
+            def _move_by_object(
+                self, delta: internal.models.Position, obj: internal.objects.interfaces.IBoardObject
+            ):
                 if isinstance(obj, internal.objects.interfaces.IBoardObjectWithPosition):
                     obj.position = obj.position + delta
                 elif isinstance(obj, internal.objects.interfaces.IBoardObjectPen):
@@ -201,10 +197,22 @@ class Controller(interfaces.IController):
                     for point in obj.points:
                         points.append(point + delta)
                     obj.points = points
+                elif isinstance(obj, internal.objects.interfaces.IBoardObjectGroup):
+                    for child_id in obj.children_ids:
+                        child_obj = self._controller._repo.get(child_id)
+                        if child_obj:
+                            self._move_by_object(delta, child_obj)
                 else:
                     logging.error('move is not implemented for object of type %s', obj.type)
-                    return
 
+            def _move(self, delta: internal.models.Position):
+                obj: typing.Optional[
+                    internal.objects.interfaces.IBoardObject
+                ] = self._controller._repo.get(self._obj_id)
+                if not obj:
+                    logging.warning('MoveObjectAction: no object with id=%s', self._obj_id)
+                    return
+                self._move_by_object(delta, obj)
                 self._controller._on_feature_finish()
 
             def do(self):
@@ -231,12 +239,20 @@ class Controller(interfaces.IController):
         self._undo_redo_manager.store_action(action)
 
     def edit_points(
-        self,
-        obj_id: internal.objects.interfaces.ObjectId,
+        self, obj_id: internal.objects.interfaces.ObjectId,
         points: typing.List[internal.models.Position],
     ):
         action = EditAction(
             self, obj_id, [PropertyChange('points', points)]
+        )  # TODO: property names as consts
+        action.do()
+        self._undo_redo_manager.store_action(action)
+
+    def edit_children_ids(
+        self, obj_id: internal.objects.interfaces.ObjectId, children_ids: typing.List[str],
+    ):
+        action = EditAction(
+            self, obj_id, [PropertyChange('children_ids', children_ids)]
         )  # TODO: property names as consts
         action.do()
         self._undo_redo_manager.store_action(action)

@@ -7,8 +7,8 @@ import internal.view.dependencies
 import internal.view.state_machine.interfaces
 from internal.view.objects.interfaces import IViewObject
 from internal.view.state_machine.impl import State
-from internal.view.modules.card.consts import OBJ_ID, CARD_CHANGE_STATE_NAME
-from internal.view.modules.card.card_view import CardObject
+from ..consts import OBJ_ID, CARD_CHANGE_STATE_NAME
+from ..card_view import CardObject
 
 
 def _on_enter(

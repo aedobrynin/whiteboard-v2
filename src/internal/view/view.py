@@ -16,6 +16,7 @@ import internal.view.modules.text
 import internal.view.modules.pen
 import internal.view.modules.card
 import internal.view.modules.submenu
+import internal.view.modules.group
 import internal.view.modules.undo_redo
 import internal.view.state_machine.impl.state_machine
 import internal.view.objects.impl.object_storage
