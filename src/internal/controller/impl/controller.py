@@ -248,6 +248,15 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
+    def edit_children_ids(
+        self, obj_id: internal.objects.interfaces.ObjectId, children_ids: typing.List[str],
+    ):
+        action = EditAction(
+            self, obj_id, [PropertyChange('children_ids', children_ids)]
+        )  # TODO: property names as consts
+        action.do()
+        self._undo_redo_manager.store_action(action)
+
     def edit_connector_type(
         self, obj_id: internal.objects.interfaces.ObjectId, connector_type: str
     ):

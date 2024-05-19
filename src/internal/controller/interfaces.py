@@ -48,6 +48,12 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def edit_children_ids(
+        self, obj_id: internal.objects.interfaces.ObjectId, children_ids: typing.List[str],
+    ):
+        pass
+
+    @abc.abstractmethod
     def move_object(
         self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position
     ):

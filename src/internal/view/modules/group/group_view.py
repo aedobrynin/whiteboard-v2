@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 import internal.objects.interfaces
 import internal.objects.events
 import internal.repositories.events
@@ -40,24 +42,25 @@ class GroupObject(ViewObject):
     def rectangle_id(self):
         return self._rectangle_id
 
-    @property
-    def children_ids(self):
-        return self._children_ids
-
     def widgets(self, dependencies: internal.view.dependencies.Dependencies):
         return []
 
     def destroy(self, dependencies: internal.view.dependencies.Dependencies):
-        for child_id in self.children_ids:
+        for child_id in self._children_ids:
+            dependencies.pub_sub_broker.unsubscribe(self.id, child_id)
             dependencies.canvas.dtag(child_id, self.id)
+        dependencies.pub_sub_broker.unsubscribe(self.id, self.id)
         dependencies.canvas.delete(self.id)
 
     def _get_invisible_rect(
         self, dependencies: internal.view.dependencies.Dependencies
     ) -> internal.view.utils.geometry.Rectangle:
         invisible_rect = None
-        for child_id in self.children_ids:
+        for child_id in self._children_ids:
             child_obj = dependencies.objects_storage.get_opt_by_id(child_id)
+            if not child_obj:
+                logging.warning('child already removed')
+                continue
             child_rect = child_obj.get_border_rectangle(dependencies)
             invisible_rect = internal.view.utils.geometry.get_min_containing_rect(
                 invisible_rect, child_rect
@@ -71,10 +74,18 @@ class GroupObject(ViewObject):
         dependencies.pub_sub_broker.subscribe(
             self.id, internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID,
             internal.repositories.events.EVENT_TYPE_OBJECT_DELETED,
-            lambda publisher, event, repo: self._get_update_children_ids_from_repo(dependencies,
-                                                                                   event)
+            lambda publisher, event, repo: (
+                self._get_removal_children_ids_from_repo(dependencies, event)
+            )
         )
-        for child_id in self.children_ids:
+        dependencies.pub_sub_broker.subscribe(
+            self.id, self.id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_CHILDREN_IDS,
+            lambda publisher, event, repo: (
+                self._get_update_children_ids_from_repo(dependencies, event)
+            )
+        )
+        for child_id in self._children_ids:
             dependencies.pub_sub_broker.subscribe(
                 self.id, child_id,
                 internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
@@ -86,18 +97,32 @@ class GroupObject(ViewObject):
                 lambda publisher, event, repo: self._get_update_children_from_repo(dependencies),
             )
 
-    def _get_update_children_ids_from_repo(
+    def _get_removal_children_ids_from_repo(
         self, dependencies: internal.view.dependencies.Dependencies,
         event: internal.repositories.events.EventObjectDeleted
     ):
         if event.object_id not in self._children_ids or not dependencies.repo.get(self.id):
             return
-        dependencies.canvas.dtag(event.object_id, self.id)
-        dependencies.pub_sub_broker.unsubscribe(self.id, event.object_id)
-        self._children_ids.remove(event.object_id)
-        self._get_update_children_from_repo(dependencies)
-        if len(self._children_ids) <= 1:
+        children_ids = [child_id for child_id in self._children_ids if child_id != event.object_id]
+        if len(children_ids) <= 1:
             dependencies.controller.delete_object(self.id)
+            return
+        dependencies.pub_sub_broker.unsubscribe(self.id, event.object_id)
+        dependencies.controller.edit_children_ids(self.id, children_ids)
+
+    def _get_update_children_ids_from_repo(
+        self, dependencies: internal.view.dependencies.Dependencies,
+        event: internal.repositories.events.EventObjectDeleted
+    ):
+        obj: internal.objects.interfaces.IBoardObjectGroup = dependencies.repo.get(event.object_id)
+        if not obj:
+            logging.warning('object not found')
+        for child_id in self._children_ids:
+            dependencies.canvas.dtag(child_id, self.id)
+        self._children_ids = obj.children_ids
+        for child_id in self._children_ids:
+            dependencies.canvas.addtag_withtag(obj.id, child_id)
+        self._get_update_children_from_repo(dependencies)
 
     def _get_update_children_from_repo(
         self, dependencies: internal.view.dependencies.Dependencies

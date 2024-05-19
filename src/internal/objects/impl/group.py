@@ -38,6 +38,7 @@ class BoardObjectGroup(interfaces.IBoardObjectGroup, BoardObject):
         self, children_ids: List[internal.objects.interfaces.ObjectId]
     ) -> None:
         self._children_ids = children_ids
+        self._publish(events.EventObjectChangedChildrenIds(self.id))
         self._publish(events.EventObjectChangedSize(self.id))
 
     def serialize(self) -> dict:
