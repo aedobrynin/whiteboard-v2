@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 import abc
-from typing import List
+import typing
 
 import internal.models
 import internal.objects
@@ -9,55 +10,70 @@ import internal.objects.interfaces
 
 class IController(abc.ABC):
     @abc.abstractmethod
-    def create_object(
-        self, type: internal.objects.BoardObjectType, position: internal.models.Position
-    ):
+    def create_object(self, type: internal.objects.BoardObjectType, **kwargs):
         pass
 
     @abc.abstractmethod
-    def delete_object(
-        self, obj_id: internal.objects.interfaces.ObjectId
-    ):
+    def delete_object(self, obj_id: internal.objects.interfaces.ObjectId):
         pass
 
     @abc.abstractmethod
-    def edit_text(
-        self, obj_id: internal.objects.interfaces.ObjectId, text: str
-    ):
+    def edit_text(self, obj_id: internal.objects.interfaces.ObjectId, text: str):
         pass
 
     @abc.abstractmethod
-    def edit_font(
-        self, obj_id: internal.objects.interfaces.ObjectId, **kwargs
-    ):
+    def edit_font(self, obj_id: internal.objects.interfaces.ObjectId, font: internal.models.Font):
         pass
 
     @abc.abstractmethod
-    def edit_color(
-        self, obj_id: internal.objects.interfaces.ObjectId, color: str
-    ):
+    def edit_color(self, obj_id: internal.objects.interfaces.ObjectId, color: str):
         pass
 
     @abc.abstractmethod
-    def edit_width(
-        self, obj_id: internal.objects.interfaces.ObjectId, width: float
-    ):
+    def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: int):
+        pass
+
+    @abc.abstractmethod
+    def edit_height(self, obj_id: internal.objects.interfaces.ObjectId, height: int):
+        pass
+
+    @abc.abstractmethod
+    def edit_size(self, obj_id: internal.objects.interfaces.ObjectId, width: int, height: int):
         pass
 
     @abc.abstractmethod
     def edit_points(
-        self, obj_id: internal.objects.interfaces.ObjectId, points: List[internal.models.Position]
+        self, obj_id: internal.objects.interfaces.ObjectId, points: typing.List[internal.models.Position],
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_children_ids(
+        self, obj_id: internal.objects.interfaces.ObjectId, children_ids: typing.List[str],
     ):
         pass
 
     @abc.abstractmethod
     def move_object(
-        self, obj_id: internal.objects.interfaces.ObjectId, position: internal.models.Position
+        self, obj_id: internal.objects.interfaces.ObjectId, delta: internal.models.Position
     ):
         pass
 
     @abc.abstractmethod
-    def edit_focus(
-        self, obj_id: internal.objects.interfaces.ObjectId, focus: bool
+    def edit_connector_type(
+        self, obj_id: internal.objects.interfaces.ObjectId, connector_type: str
     ):
+        pass
+
+    @abc.abstractmethod
+    def edit_stroke_style(
+        self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str
+    ):
+        pass
+
+    def undo_last_action(self):
+        pass
+
+    @abc.abstractmethod
+    def redo_last_action(self):
         pass

@@ -19,10 +19,21 @@ def get_font_sizes() -> List[int]:
 
 def get_font_colors() -> List[str]:
     return [
-        'gray', 'light yellow', 'yellow', 'orange',
-        'light green', 'green', 'dark green', 'cyan',
-        'light pink', 'pink', 'pink', 'violet',
-        'red', 'light blue', 'dark blue', 'black'
+        'gray',
+        'light yellow',
+        'yellow',
+        'orange',
+        'light green',
+        'green',
+        'dark green',
+        'cyan',
+        'light pink',
+        'pink',
+        'violet',
+        'red',
+        'light blue',
+        'dark blue',
+        'black',
     ]
 
 
@@ -30,7 +41,7 @@ def get_text_alignments() -> List[str]:
     return ['left', 'center', 'right']
 
 
-def get_text_line_widths() -> List[int]:
+def get_line_widths() -> List[int]:
     return [1, 2, 3, 4, 5]
 
 
@@ -38,12 +49,41 @@ def get_line_types() -> List[str]:
     return ['solid', 'dotted', 'dashed']
 
 
+def get_connector_types() -> List[str]:
+    return ['elbowed', 'straight', 'curved']
+
+
+def get_stroke_styles() -> List[str]:
+    return ['first', 'both', 'last', 'none']
+
+
+def get_card_sizes() -> List[str]:
+    return ['Small', 'Medium', 'Large']
+
+
 def get_font_families() -> List[str]:
     return [
-        'Arial', 'Calibri', 'Cambria', 'Century',
-        'Consolas', 'Corbel', 'Courier', 'Dubai',
-        'Georgia', 'Impact', 'Mistral', 'Modern',
-        'Montserrat', 'Papyrus', 'Pristina', 'Roman',
-        'Script', 'SimSun', 'Symbol', 'Tahoma',
-        'Terminal', 'Verdana', 'Wingdings'
+        'Arial',
+        'Calibri',
+        'Cambria',
+        'Century',
+        'Consolas',
+        'Corbel',
+        'Courier',
+        'Dubai',
+        'Georgia',
+        'Impact',
+        'Mistral',
+        'Modern',
+        'Montserrat',
+        'Papyrus',
+        'Pristina',
+        'Roman',
+        'Script',
+        'SimSun',
+        'Symbol',
+        'Tahoma',
+        'Terminal',
+        'Verdana',
+        'Wingdings',
     ]

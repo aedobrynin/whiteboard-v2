@@ -1,8 +1,3 @@
-from .canvas_repo_obj import (
-    get_current,
-    get_current_opt_type,
-    get_current_opt
-)
 from .props_values import (
     get_font_slants,
     get_font_weights,
@@ -10,36 +5,33 @@ from .props_values import (
     get_font_colors,
     get_font_families,
     get_text_alignments,
-    get_text_line_widths,
-    get_line_types
+    get_line_widths,
+    get_line_types,
+    get_card_sizes,
+    get_connector_types,
+    get_stroke_styles,
 )
 
-from . import geometry as geometry
-
-from .object_border import (
-    draw_border,
-    remove_border
-)
-from .object_aligning import (
-    aligning,
-    remove_aligning
-)
+from .font import as_tkinter_font, as_object_font, as_tkinter_object_font
+from . import geometry
+from object_aligning import aligning, remove_aligning
 
 __all__ = [
-    'get_current',
-    'get_current_opt_type',
-    'get_current_opt',
+    'as_tkinter_font',
+    'as_tkinter_object_font',
+    'as_object_font',
     'get_font_slants',
     'get_font_weights',
     'get_font_sizes',
     'get_font_colors',
     'get_font_families',
     'get_text_alignments',
-    'get_text_line_widths',
+    'get_line_widths',
     'get_line_types',
+    'get_card_sizes',
+    'get_connector_types',
+    'get_stroke_styles',
     'geometry',
-    'draw_border',
-    'remove_border',
     'aligning',
     'remove_aligning'
 ]

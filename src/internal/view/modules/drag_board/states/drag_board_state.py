@@ -3,7 +3,6 @@ from typing import Dict
 import tkinter
 
 from internal.view.state_machine.impl import State
-from internal.view.utils import get_current_opt
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
 
@@ -12,7 +11,7 @@ _MOVE_BOARD_STATE_NAME = 'MOVE_BOARD'
 
 def _on_enter(
     global_dependencies: internal.view.dependencies.Dependencies,
-    state_ctx: Dict, # noqa
+    state_ctx: Dict,  # noqa
     event: tkinter.Event
 ):
     global_dependencies.canvas.scan_mark(event.x, event.y)
@@ -20,7 +19,7 @@ def _on_enter(
 
 def _handle_event(
     global_dependencies: internal.view.dependencies.Dependencies,
-    state_ctx: Dict, # noqa
+    state_ctx: Dict,  # noqa
     event: tkinter.Event
 ):
     # Motion with Left mouse button pressed
@@ -36,12 +35,12 @@ def _predicate_from_root_to_move_board(
     # Motion with Left mouse button pressed
     if event.type != tkinter.EventType.Motion or event.state & (1 << 8) == 0:
         return False
-    cur_obj = get_current_opt(global_dependencies)
+    cur_obj = global_dependencies.objects_storage.get_current_opt(global_dependencies)
     return cur_obj is None
 
 
 def _predicate_from_move_board_to_root(
-    global_dependencies: internal.view.dependencies.Dependencies, # noqa
+    global_dependencies: internal.view.dependencies.Dependencies,  # noqa
     event: tkinter.Event
 ) -> bool:
     # Release Left mouse button

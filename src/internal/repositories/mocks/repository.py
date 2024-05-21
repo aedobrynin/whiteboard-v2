@@ -12,8 +12,10 @@ class MockRepository(interfaces.IRepository):
     def get(
         self, object_id: internal.objects.interfaces.ObjectId
     ) -> Optional[internal.objects.interfaces.IBoardObject]:
-        # TODO: implement when needed
-        return None
+        raise NotImplementedError()
+
+    def get_all(self) -> List[internal.objects.interfaces.IBoardObject]:
+        raise NotImplementedError()
 
     def get_all(
         self
@@ -22,13 +24,10 @@ class MockRepository(interfaces.IRepository):
         pass
 
     def add(self, object: internal.objects.interfaces.IBoardObject) -> None:
-        # TODO: implement when needed
-        pass
+        raise NotImplementedError()
 
     def delete(self, object_id: internal.objects.interfaces.ObjectId) -> None:
-        # TODO: implement when needed
-        pass
+        raise NotImplementedError()
 
     def get_updated(self) -> dict[internal.objects.interfaces.ObjectId, Optional[dict]]:
-        # TODO: implement when needed
-        return {}
+        raise NotImplementedError()

@@ -6,9 +6,9 @@ from typing import Dict
 from typing import List
 import tkinter
 
-from .state import State
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
+from .state import State
 
 
 class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
@@ -49,8 +49,10 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
         self._global_dependencies.canvas.bind('<ButtonPress-3>', self.handle_event)
         # motion by mouse
         self._global_dependencies.canvas.bind('<B1-Motion>', self.handle_event)
-        # any key pressed in keyboard
+        # any key pressed on the keyboard
         self._global_dependencies.canvas.bind('<Key>', self.handle_event)
+        # any key is released on the keyboard
+        self._global_dependencies.canvas.bind('<KeyRelease>', self.handle_event)
         # combination of shift+left-button-mouse
         self._global_dependencies.canvas.bind('<Shift-ButtonPress-1>', self.handle_event)
         # on release of pressed left button mouse
@@ -66,8 +68,10 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
         self._states[state.name] = state
 
     def add_transition(
-        self, before: str, after: str,
-        predicate: Callable[[internal.view.dependencies.Dependencies, tkinter.Event], bool]
+        self,
+        before: str,
+        after: str,
+        predicate: Callable[[internal.view.dependencies.Dependencies, tkinter.Event], bool],
     ):
         tr_description = StateMachine._TransitionDescription()
         tr_description.before = before
@@ -78,6 +82,7 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
         self._transitions[before].append(tr_description)
 
     def handle_event(self, event: tkinter.Event):
+        logging.debug('StateMachine: trying to match event to transition predicates')
         for tr_description in self._transitions.get(self._cur_state.name, []):
             if tr_description.predicate(self._global_dependencies, event):
                 logging.debug('trying to change state after predicate')
@@ -92,14 +97,9 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
                 self._cur_state = after_state
                 logging.debug('entering to after-state (%s) in state-machine', after_state)
                 self._cur_state.on_enter(self._global_dependencies, self._cur_state_context, event)
-                state_changed_to = self._cur_state.name
-                logging.debug('entering to after-state (%s) in state-machine', state_changed_to)
                 return
+
+        logging.debug(
+            "StateMachine: couldn't match event to any transition predicate, pass it to current state"
+        )
         self._cur_state.handle_event(self._global_dependencies, self._cur_state_context, event)
-
-    def reset(self):
-        self._cur_state = self._states[internal.view.state_machine.interfaces.ROOT_STATE_NAME]
-        self._cur_state_context = self._make_empty_context()
-
-    def cur_state_name(self) -> str:
-        return self._cur_state.name

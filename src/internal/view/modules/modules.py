@@ -23,7 +23,7 @@ def init_modules(dependencies: internal.view.dependencies.Dependencies):
         for dependency_name in __MODULE_DEPENDENCIES[module_name]:
             if dependency_name not in __MODULES:
                 logging.warning(
-                    f'Skipped module \'{module_name}\' initialization: it depends on module '
-                    f'\'{dependency_name}\' which was not registered'
+                    f"Skipped module '{module_name}' initialization: it depends on module "
+                    f"'{dependency_name}' which was not registered"
                 )
         init_func(dependencies)

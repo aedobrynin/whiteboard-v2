@@ -11,6 +11,7 @@ import internal.models
 import internal.repositories.events
 import internal.storages.impl
 import internal.controller.impl
+import internal.undo_redo.impl
 
 
 # TODO: better (and move it somewhere)
@@ -48,10 +49,10 @@ def test_create_object(tmp_path, get_mock_pub_sub_callback):
     type_ = internal.objects.BoardObjectType.CARD
     position = internal.models.Position(1, 2, 3)
 
-    # TODO: is this bad that we access 'impl' directly?
     storage = internal.storages.impl.LocalYDocStorage(tmp_path / 'storage')
     broker = internal.pub_sub.impl.PubSubBroker()
     repo = internal.repositories.impl.Repository([], broker)
+    undo_redo_manager = internal.undo_redo.impl.UndoRedoManager(15)
 
     add_object_callback = get_mock_pub_sub_callback()
     broker.subscribe(
@@ -61,10 +62,10 @@ def test_create_object(tmp_path, get_mock_pub_sub_callback):
         add_object_callback,
     )
 
-    controller = internal.controller.impl.Controller(repo, storage, broker)
+    controller = internal.controller.impl.Controller(repo, storage, broker, undo_redo_manager)
     controller.create_object(
         type_,
-        position,
+        position=position,
     )
 
     assert len(repo.get_updated()) == 0
@@ -74,7 +75,7 @@ def test_create_object(tmp_path, get_mock_pub_sub_callback):
     serialized_obj = list(serialized_objects.values())[0]
     obj: internal.objects.interfaces.IBoardObjectCard = internal.objects.build_from_serialized(
         serialized_obj, broker
-    )   # type: ignore
+    )  # type: ignore
     assert isinstance(obj, internal.objects.interfaces.IBoardObjectCard)
     assert obj.type == type_
     assert obj.position == position

@@ -29,9 +29,16 @@ class MockPubSubBroker(interfaces.IPubSubBroker):
         type: str,
         callback: interfaces.Callback,
     ):
-        # TODO: implement when needed
-        pass
+        raise NotImplementedError()
+
+    def clear_events(self):
+        raise NotImplementedError()
 
     def process_published(self, repo: internal.repositories.interfaces.IRepository):
-        # TODO: implement when needed
-        pass
+        raise NotImplementedError()
+
+    def unsubscribe(self, subscriber: interfaces.SubscriberId, publisher: interfaces.PublisherId):
+        raise NotImplementedError()
+
+    def unsubscribe_from_all(self, subscriber: interfaces.SubscriberId):
+        raise NotImplementedError()
