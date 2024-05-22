@@ -2,7 +2,7 @@ from typing import List
 
 _FONT_MIN_SIZE = 8
 _FONT_MAX_SIZE = 65
-_FONT_STEP = 2
+_FONT_STEP = 1
 
 
 def get_font_slants() -> List[str]:
