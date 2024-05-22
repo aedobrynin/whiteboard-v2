@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import tkinter
 from typing import Dict, Optional
 
@@ -53,7 +54,6 @@ def _on_leave(
     state_ctx: Dict,
     event: tkinter.Event
 ):
-    internal.view.utils.remove_aligning(global_dependencies, state_ctx[_OBJ_ID])
     # TODO: Z-Coordinate
     diff: Position = Position(
         state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X],
@@ -64,6 +64,11 @@ def _on_leave(
     global_dependencies.controller.move_object(
         state_ctx[_OBJ_ID], diff
     )
+    obj = global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID])
+    if not obj:
+        logging.warning('move object not found')
+        return
+    obj.remove_aligning(dependencies=global_dependencies)
     global_dependencies.canvas.configure(background='white')
 
 
@@ -80,7 +85,11 @@ def _handle_event(
         internal.view.modules.connector.ConnectorObject
     ):
         return
-    internal.view.utils.aligning(global_dependencies, state_ctx[_OBJ_ID])
+    obj = global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID])
+    if not obj:
+        logging.warning('move object not found')
+        return
+    obj.aligning(dependencies=global_dependencies)
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
     global_dependencies.canvas.move(

@@ -4,19 +4,10 @@ import tkinter
 
 import internal.objects
 import internal.models.position
-<<<<<<< HEAD
-from internal.view.state_machine.impl import State
-import internal.view.state_machine.interfaces
-import internal.view.dependencies
-
-TEXT_MENU_ENTRY_NAME = 'text'
-CREATE_TEXT_STATE_NAME = 'CREATE_TEXT'
-=======
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
 from internal.view.state_machine.impl import State
 from ..consts import TEXT_MENU_ENTRY_NAME, TEXT_CREATE_STATE_NAME
->>>>>>> main
 
 
 def _predicate_from_root_to_create_text(
@@ -36,11 +27,7 @@ def _predicate_from_root_to_create_text(
 
     global_dependencies.controller.create_object(
         internal.objects.BoardObjectType.TEXT,
-<<<<<<< HEAD
-        internal.models.position.Position(actual_x, actual_y, z=1)
-=======
         position=internal.models.position.Position(actual_x, actual_y, z=1)
->>>>>>> main
     )
     return True
 
@@ -64,17 +51,6 @@ def _predicate_from_create_text_to_root(
 def create_state(
     state_machine: internal.view.state_machine.interfaces.IStateMachine
 ) -> State:
-<<<<<<< HEAD
-    state = State(CREATE_TEXT_STATE_NAME)
-    state.set_on_leave(_on_leave)
-    state_machine.add_transition(
-        internal.view.state_machine.interfaces.ROOT_STATE_NAME,
-        CREATE_TEXT_STATE_NAME,
-        _predicate_from_root_to_create_text
-    )
-    state_machine.add_transition(
-        CREATE_TEXT_STATE_NAME,
-=======
     state = State(TEXT_CREATE_STATE_NAME)
     state.set_on_leave(_on_leave)
     state_machine.add_transition(
@@ -84,7 +60,6 @@ def create_state(
     )
     state_machine.add_transition(
         TEXT_CREATE_STATE_NAME,
->>>>>>> main
         internal.view.state_machine.interfaces.ROOT_STATE_NAME,
         _predicate_from_create_text_to_root
     )
