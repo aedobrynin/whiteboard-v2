@@ -17,12 +17,6 @@ class MockRepository(interfaces.IRepository):
     def get_all(self) -> List[internal.objects.interfaces.IBoardObject]:
         raise NotImplementedError()
 
-    def get_all(
-        self
-    ) -> List[internal.objects.interfaces.IBoardObject]:
-        # TODO: implement when needed
-        pass
-
     def add(self, object: internal.objects.interfaces.IBoardObject) -> None:
         raise NotImplementedError()
 
