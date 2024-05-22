@@ -5,12 +5,12 @@ import tkinter
 from internal.models import Position
 from internal.objects.interfaces import IBoardObjectWithPosition, IBoardObjectTable
 from internal.objects.events import EVENT_TYPE_OBJECT_MOVED
-from internal.view.modules.table.view import add_object
+from internal.view.modules.table.table_view import add_object
 from internal.view.state_machine.impl import State
 from internal.view.utils.canvas_repo_obj import get_current_opt
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
-import internal.view.modules.table.view
+import internal.view.modules.table.table_view
 
 _MOVE_OBJECT_STATE_NAME = 'MOVE_OBJECT'
 _INITIAL_POSITION = 'obj_position'

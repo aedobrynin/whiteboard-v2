@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 import abc
+import datetime
 from abc import ABC
-from typing import List
+import typing
 
 import internal.models
 import internal.pub_sub.interfaces
@@ -21,6 +23,11 @@ class IBoardObject(abc.ABC):
     @property
     @abc.abstractmethod
     def type(self) -> types.BoardObjectType:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def create_dttm(self) -> datetime.datetime:
         pass
 
     # TODO typedef SerializedObject = dict
@@ -47,16 +54,6 @@ class IBoardObjectWithPosition(IBoardObject):
     def position(self, pos: internal.models.Position) -> None:
         pass
 
-    @property
-    @abc.abstractmethod
-    def focus(self) -> bool:
-        pass
-
-    @focus.setter
-    @abc.abstractmethod
-    def focus(self, focus: bool) -> None:
-        pass
-
 
 class IBoardObjectWithFont(IBoardObjectWithPosition):
     @property
@@ -79,10 +76,6 @@ class IBoardObjectWithFont(IBoardObjectWithPosition):
     def font(self, font: internal.models.Font) -> None:
         pass
 
-    @abc.abstractmethod
-    def update_font(self, **kwargs):
-        pass
-
 
 class IBoardObjectText(IBoardObjectWithFont, ABC):
     pass
@@ -99,17 +92,98 @@ class IBoardObjectCard(IBoardObjectWithFont):
     def color(self, color: str) -> None:
         pass
 
+    @property
+    @abc.abstractmethod
+    def width(self) -> int:
+        pass
 
-class IBoardObjectPen(IBoardObjectWithPosition):
+    @width.setter
+    @abc.abstractmethod
+    def width(self, width: int) -> None:
+        pass
 
     @property
     @abc.abstractmethod
-    def points(self) -> List[internal.models.Position]:
+    def height(self) -> int:
+        pass
+
+    @height.setter
+    @abc.abstractmethod
+    def height(self, height: int) -> None:
+        pass
+
+
+class IBoardObjectPen(IBoardObject):
+    DEFAULT_WIDTH = 2
+    DEFAULT_COLOR = 'black'
+
+    @property
+    @abc.abstractmethod
+    def points(self) -> typing.List[internal.models.Position]:
         pass
 
     @points.setter
     @abc.abstractmethod
-    def points(self, points: List[internal.models.Position]) -> None:
+    def points(self, points: typing.List[internal.models.Position]) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def color(self) -> str:
+        pass
+
+    @color.setter
+    @abc.abstractmethod
+    def color(self, color: str) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def width(self) -> int:
+        pass
+
+    @width.setter
+    @abc.abstractmethod
+    def width(self, width: int) -> None:
+        pass
+
+
+class IBoardObjectGroup(IBoardObject):
+    @property
+    @abc.abstractmethod
+    def children_ids(self) -> typing.List[ObjectId]:
+        pass
+
+    @children_ids.setter
+    @abc.abstractmethod
+    def children_ids(self, children_ids: typing.List[ObjectId]) -> None:
+        pass
+
+
+class IBoardObjectConnector(IBoardObject):
+    DEFAULT_WIDTH = 2
+    DEFAULT_COLOR = 'black'
+    DEFAULT_CONNECTOR_TYPE = 'curved'
+    DEFAULT_STROKE_STYLE = 'last'
+
+    @property
+    @abc.abstractmethod
+    def start_id(self) -> ObjectId:
+        pass
+
+    @start_id.setter
+    @abc.abstractmethod
+    def start_id(self, obj_id: ObjectId) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def end_id(self) -> ObjectId:
+        pass
+
+    @end_id.setter
+    @abc.abstractmethod
+    def end_id(self, obj_id: ObjectId) -> None:
         pass
 
     @property
@@ -131,6 +205,27 @@ class IBoardObjectPen(IBoardObjectWithPosition):
     @abc.abstractmethod
     def width(self, width: float) -> None:
         pass
+
+    @property
+    @abc.abstractmethod
+    def connector_type(self) -> str:
+        pass
+
+    @connector_type.setter
+    @abc.abstractmethod
+    def connector_type(self, connector_type: str) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def stroke_style(self) -> str:
+        pass
+
+    @stroke_style.setter
+    @abc.abstractmethod
+    def stroke_style(self, stroke_style: str) -> None:
+        pass
+
 
 class IBoardObjectTable(IBoardObjectWithPosition):
     @property
@@ -158,19 +253,9 @@ class IBoardObjectTable(IBoardObjectWithPosition):
     def columns(self) -> int:
         pass
 
-    @columns.setter
-    @abc.abstractmethod
-    def columns(self, val: int) -> None:
-        pass
-
     @property
     @abc.abstractmethod
     def rows(self) -> int:
-        pass
-
-    @rows.setter
-    @abc.abstractmethod
-    def rows(self, val: int) -> None:
         pass
 
     @property

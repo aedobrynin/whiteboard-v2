@@ -1,17 +1,18 @@
 import typing
 
-from ..types import BoardObjectType
 from .card import BoardObjectCard
-from .text import BoardObjectText
+from .connector import BoardObjectConnector
+from .group import BoardObjectGroup
 from .pen import BoardObjectPen
-from .table import BoardObjectTable
+from .text import BoardObjectText
+from ..types import BoardObjectType
 
 TYPE_IMPLS: dict[BoardObjectType, typing.Type] = {
     BoardObjectType.CARD: BoardObjectCard,
     BoardObjectType.TEXT: BoardObjectText,
     BoardObjectType.PEN: BoardObjectPen,
-    BoardObjectType.TABLE: BoardObjectTable
+    BoardObjectType.GROUP: BoardObjectGroup,
+    BoardObjectType.CONNECTOR: BoardObjectConnector
 }
-
 
 assert len(TYPE_IMPLS) == len(BoardObjectType)

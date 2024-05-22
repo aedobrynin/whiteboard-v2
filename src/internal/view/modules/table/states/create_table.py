@@ -4,12 +4,10 @@ import tkinter
 
 import internal.objects
 import internal.models.position
-from internal.view.state_machine.impl import State
 import internal.view.state_machine.interfaces
 import internal.view.dependencies
-
-TABLE_MENU_ENTRY_NAME = 'table'
-CREATE_TABLE_STATE_NAME = 'CREATE_TABLE'
+from internal.view.state_machine.impl import State
+from ..consts import TABLE_MENU_ENTRY_NAME, CREATE_TABLE_STATE_NAME
 
 
 def _predicate_from_root_to_create_table(
@@ -21,9 +19,14 @@ def _predicate_from_root_to_create_table(
         return False
     if event.num != 1:
         return False
-    if global_dependencies.menu.current_state != TABLE_MENU_ENTRY_NAME:
-        return False
+    return global_dependencies.menu.current_state == TABLE_MENU_ENTRY_NAME
 
+
+def _on_enter(
+    global_dependencies: internal.view.dependencies.Dependencies,
+    state_ctx: Dict,
+    event: tkinter.Event
+):
     actual_x = int(global_dependencies.canvas.canvasx(event.x))
     actual_y = int(global_dependencies.canvas.canvasy(event.y))
 
@@ -31,19 +34,18 @@ def _predicate_from_root_to_create_table(
         internal.objects.BoardObjectType.TABLE,
         internal.models.position.Position(actual_x, actual_y, z=1)
     )
-    return True
 
 
 def _on_leave(
     global_dependencies: internal.view.dependencies.Dependencies,
-    _: Dict,
-    __: tkinter.Event
+    state_ctx: Dict,
+    event: tkinter.Event
 ):
     global_dependencies.menu.set_selected_state()
 
 
 def _predicate_from_create_table_to_root(
-    _: internal.view.dependencies.Dependencies,
+    global_dependencies: internal.view.dependencies.Dependencies,
     event: tkinter.Event
 ) -> bool:
     # Release left mouse button
@@ -54,6 +56,7 @@ def create_state(
     state_machine: internal.view.state_machine.interfaces.IStateMachine
 ) -> State:
     state = State(CREATE_TABLE_STATE_NAME)
+    state.set_on_enter(_on_enter)
     state.set_on_leave(_on_leave)
     state_machine.add_transition(
         internal.view.state_machine.interfaces.ROOT_STATE_NAME,
