@@ -301,6 +301,13 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
+    def edit_lexer(
+        self, obj_id: internal.objects.interfaces.ObjectId, lexer: str
+    ):
+        action = EditAction(self, obj_id, [PropertyChange('lexer', lexer)])
+        action.do()
+        self._undo_redo_manager.store_action(action)
+
     def undo_last_action(self):
         logging.debug('controller was asked to undo last action')
         self._undo_redo_manager.undo()

@@ -6,6 +6,7 @@ from .impl.card import BoardObjectCard
 from .impl.group import BoardObjectGroup
 from .impl.text import BoardObjectText
 from .impl.connector import BoardObjectConnector
+from .impl.code import BoardObjectCode
 from .impl.object_id import generate_object_id
 
 
@@ -87,3 +88,26 @@ def test_connector_building():
     connector = internal.objects.build_from_serialized(serialized_connector, broker)
     assert isinstance(connector, BoardObjectConnector)
     assert connector.serialize() == serialized_connector
+
+
+def test_code_building():
+    serialized_card = {
+        'type': 'code',
+        'id': generate_object_id(),
+        'create_dttm': datetime.now().replace(microsecond=0).strftime('%Y-%m-%dT%H-%M-%SZ'),
+        'position': {'x': 1, 'y': 2, 'z': 3},
+        'text': 'print(2 + 2)',
+        'font': {
+            'slant': 'roman',
+            'weight': 'normal',
+            'color': 'black',
+            'family': 'Arial',
+            'size': 14,
+        },
+        'lexer': 'python',
+    }
+    broker = internal.pub_sub.mocks.MockPubSubBroker()
+
+    code = internal.objects.build_from_serialized(serialized_card, broker)
+    assert isinstance(code, BoardObjectCode)
+    assert code.serialize() == serialized_card

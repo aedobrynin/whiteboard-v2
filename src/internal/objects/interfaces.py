@@ -225,3 +225,15 @@ class IBoardObjectConnector(IBoardObject):
     @abc.abstractmethod
     def stroke_style(self, stroke_style: str) -> None:
         pass
+
+
+class IBoardObjectCode(IBoardObjectWithFont, ABC):
+    @property
+    @abc.abstractmethod
+    def lexer(self) -> str:
+        pass
+
+    @lexer.setter
+    @abc.abstractmethod
+    def lexer(self, lexer: str) -> None:
+        pass
