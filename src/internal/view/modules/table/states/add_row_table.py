@@ -20,8 +20,11 @@ def _on_enter(
     obj: internal.objects.interfaces.IBoardObjectTable = (
         global_dependencies.objects_storage.get_current(global_dependencies)
     )
+    obj_repo: internal.objects.interfaces.IBoardObjectTable = (
+        global_dependencies.repo.get(obj.id)
+    )
     global_dependencies.controller.edit_table(
-        obj.id, obj.columns_width, obj.rows_height + [obj.default_height]
+        obj_repo.id, obj_repo.columns_width, obj_repo.rows_height + [obj_repo.default_height]
     )
 
 

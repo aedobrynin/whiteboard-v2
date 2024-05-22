@@ -17,11 +17,12 @@ def _on_enter(
     state_ctx: Dict,
     event: tkinter.Event
 ):
-    obj: internal.objects.interfaces.IBoardObjectTable = (
-        global_dependencies.objects_storage.get_current(global_dependencies)
+    obj = global_dependencies.objects_storage.get_current(global_dependencies)
+    obj_repo: internal.objects.interfaces.IBoardObjectTable = (
+        global_dependencies.repo.get(obj.id)
     )
     global_dependencies.controller.edit_table(
-        obj.id, obj.columns_width + [obj.default_width], obj.rows_height
+        obj_repo.id, obj_repo.columns_width + [obj_repo.default_width], obj_repo.rows_height
     )
 
 

@@ -5,9 +5,9 @@ import tkinter
 import internal.objects.interfaces
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
-from internal.view.modules.table.table_view import resize_column, resize_row
 from internal.view.state_machine.impl import State
 from ..consts import OBJ_ID, OBJ, LIST_ROW, LIST_COL, RESIZE_TABLE_STATE_NAME
+from ..table_view import TableObject
 
 _LAST_DRAG_EVENT_X = 'last_drag_event_x'
 _LAST_DRAG_EVENT_Y = 'last_drag_event_y'
@@ -55,15 +55,15 @@ def _handle_event(
 
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
-    obj: internal.objects.interfaces.IBoardObjectTable = state_ctx[OBJ]
+    obj: TableObject = state_ctx[OBJ]
 
     if state_ctx[_AXIS] == _COLUMN:
         c = state_ctx[_CURRENT_COLUMN]
-        state_ctx[LIST_COL], state_ctx[LIST_ROW] = resize_column(global_dependencies, obj, c, x)
+        state_ctx[LIST_COL], state_ctx[LIST_ROW] = obj.resize_column(global_dependencies, obj, c, x)
 
     if state_ctx[_AXIS] == _ROW:
         r = state_ctx[_CURRENT_ROW]
-        state_ctx[LIST_COL], state_ctx[LIST_ROW] = resize_row(global_dependencies, obj, r, y)
+        state_ctx[LIST_COL], state_ctx[LIST_ROW] = obj.resize_row(global_dependencies, obj, r, y)
 
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y

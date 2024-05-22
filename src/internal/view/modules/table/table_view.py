@@ -30,6 +30,7 @@ class TableObject(ViewObject):
     ):
         ViewObject.__init__(self, obj)
         self.draw_table(dependencies)
+        self._subscribe_to_repo_object_events(dependencies)
 
     @property
     def add_column_id(self):
@@ -58,10 +59,10 @@ class TableObject(ViewObject):
             return
         self._cells = [[
             dependencies.canvas.create_rectangle(
-                __x0=obj.position.x + sum(obj.columns_width[:i]),
-                __y0=obj.position.y + sum(obj.rows_height[:j]),
-                __x1=obj.position.x + sum(obj.columns_width[:i + 1]),
-                __y1=obj.position.y + sum(obj.rows_height[:j + 1]),
+                obj.position.x + sum(obj.columns_width[:i]),
+                obj.position.y + sum(obj.rows_height[:j]),
+                obj.position.x + sum(obj.columns_width[:i + 1]),
+                obj.position.y + sum(obj.rows_height[:j + 1]),
                 fill='white',
                 tags=[obj.id, f'{i},{j}/' + obj.id, 'table', 'table' + obj.id]
             )
@@ -117,7 +118,7 @@ class TableObject(ViewObject):
 
         dependencies.pub_sub_broker.subscribe(
             self.id, self.id,
-            internal.objects.events.EventObjectChangedColumnSize,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_COLUMN_SIZE,
             lambda publisher, event, repo: (
                 self._get_update_columns_and_rows_from_repo(dependencies)
             )
@@ -125,7 +126,7 @@ class TableObject(ViewObject):
 
         dependencies.pub_sub_broker.subscribe(
             self.id, self.id,
-            internal.objects.events.EventObjectChangedRowSize,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_ROW_SIZE,
             lambda publisher, event, repo: (
                 self._get_update_columns_and_rows_from_repo(dependencies)
             )
@@ -154,6 +155,7 @@ class TableObject(ViewObject):
         obj: internal.objects.interfaces.IBoardObjectTable = dependencies.repo.get(self.id)
         if event.object_id not in obj.linked_objects:
             return
+        dependencies.pub_sub_broker.unsubscribe(self.id, event.object_id)
         linked_obj: dict[str, list] = dict()
         for child_id, coord in obj.linked_objects.items():
             if child_id != event.object_id:

@@ -32,7 +32,7 @@ def _on_enter(
 
     global_dependencies.controller.create_object(
         internal.objects.BoardObjectType.TABLE,
-        internal.models.position.Position(actual_x, actual_y, z=1)
+        position=internal.models.position.Position(actual_x, actual_y, z=1)
     )
 
 

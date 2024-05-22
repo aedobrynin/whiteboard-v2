@@ -307,9 +307,7 @@ class Controller(interfaces.IController):
         action = EditAction(
             self, obj_id, changes=[
                 PropertyChange('columns_width', list_col),
-                PropertyChange('rows_height', list_row),
-                PropertyChange('columns', len(list_col)),
-                PropertyChange('rows', len(list_row)),
+                PropertyChange('rows_height', list_row)
             ],
         )
         action.do()

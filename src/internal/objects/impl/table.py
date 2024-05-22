@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from datetime import datetime
 from internal.objects import interfaces
 import internal.models
 import internal.pub_sub.interfaces
@@ -21,6 +21,7 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
     def __init__(
         self,
         id: interfaces.ObjectId,
+        create_dttm: datetime,
         position: internal.models.Position,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         columns: int = 2,
@@ -31,7 +32,7 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
         row_heights: list[float] = None,
         linked_objects: dict[str, list] = dict()  # noqa
     ):
-        super().__init__(id, types.BoardObjectType.TABLE, position, pub_sub_broker)
+        super().__init__(id, types.BoardObjectType.TABLE, create_dttm, position, pub_sub_broker)
         self.default_width = width
         self.default_height = height
         if col_widths is None:
@@ -69,6 +70,7 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectTable(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
+            datetime.strptime(data[field_names.CREATE_DTTM_FIELD], '%Y-%m-%dT%H-%M-%SZ'),
             internal.models.Position.from_serialized(data[field_names.POSITION_FIELD]),
             pub_sub_broker,
             int(data[_TABLE_COLUMNS_FIELD]),
