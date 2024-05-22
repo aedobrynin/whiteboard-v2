@@ -24,6 +24,7 @@ def _on_enter(
     global_dependencies.canvas.icursor(obj.text_id, f'@{bbox[2]},{bbox[3]}')
     global_dependencies.canvas.focus(obj.text_id)
 
+
 def _handle_event(
     global_dependencies: internal.view.dependencies.Dependencies,
     state_ctx: Dict,
@@ -56,6 +57,7 @@ def _handle_event(
                 text[:index - 1] + text[index:]
             )
             global_dependencies.canvas.icursor(obj.text_id, index - 1)
+        return
 
     if event.char == '':
         return
