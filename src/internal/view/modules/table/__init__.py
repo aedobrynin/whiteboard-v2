@@ -4,7 +4,7 @@ import internal.objects.types
 import internal.view.dependencies
 from .consts import TABLE_MODULE_NAME, TABLE_MENU_ENTRY_NAME
 from .states import create_table, resize_table, add_column_table, add_row_table
-from .table_view import create_table_object as create_table_object
+from .table_view import TableObject
 
 
 def create_states(dependencies: internal.view.dependencies):
