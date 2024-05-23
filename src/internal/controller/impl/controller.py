@@ -105,6 +105,46 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
+    def _build_create_object_from_serialize_action(self, serialized: dict) -> internal.models.IAction:
+        class CreateObjectFromSerializeAction(internal.models.IAction):
+            _controller: Controller
+            _broker: internal.pub_sub.interfaces.IPubSubBroker
+            _serialized: dict
+            _obj_id: str
+
+            def __init__(
+                self, controller: Controller, broker: internal.pub_sub.interfaces.IPubSubBroker, serialized_obj: dict
+            ):
+                self._controller = controller
+                self._broker = broker
+                self._serialized_obj = serialized_obj
+
+            def do(self):
+                # TODO: remember representation of created object
+                # `create(1) -> undo -> redo(2)`
+                # objects which were created on (1) and (2) should have the same id and representation
+                logging.debug('creating from serialized=%s', self._serialized_obj)
+                created_object = internal.objects.build_from_serialized(self._serialized_obj, self._broker)
+                self._obj_id = created_object.id
+                self._controller._repo.add(created_object)
+                self._controller._on_feature_finish()
+
+            def undo(self):
+                if not self._obj_id:
+                    logging.warning('Trying to undo CreateObjectAction with obj_id=None')
+                    return
+                action = self._controller._build_delete_object_action(self._obj_id)
+                action.do()
+                self._controller._on_feature_finish()
+
+        return CreateObjectFromSerializeAction(self, self._pub_sub_broker, serialized)
+
+    def create_object_from_serialize(self, serialized_obj: dict):
+        action = self._build_create_object_from_serialize_action(serialized_obj)
+        action.do()
+        self._undo_redo_manager.store_action(action)
+        self._on_feature_finish()
+
     def _build_delete_object_action(
         self, obj_id: internal.objects.interfaces.ObjectId
     ) -> internal.models.IAction:
