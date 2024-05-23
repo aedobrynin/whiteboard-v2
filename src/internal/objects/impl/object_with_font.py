@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from internal.objects import interfaces
-from internal.models import Position, Font
+from datetime import datetime
+
 import internal.pub_sub.interfaces
+from internal.models import Position, Font
+from internal.objects import interfaces
 from .common import field_names
 from .object_with_position import BoardObjectWithPosition
-from .. import types
 from .. import events
+from .. import types
 
 _TEXT_FIELD = 'text'
 _FONT_FIELD = 'font'
@@ -17,12 +19,13 @@ class BoardObjectWithFont(interfaces.IBoardObjectWithFont, BoardObjectWithPositi
         self,
         id: interfaces.ObjectId,
         type: types.BoardObjectType,  # noqa
+        create_dttm: datetime,
         position: Position,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
         text: str = 'text',
         font: internal.models.Font = internal.models.Font()
     ):
-        BoardObjectWithPosition.__init__(self, id, type, position, pub_sub_broker)
+        BoardObjectWithPosition.__init__(self, id, type, create_dttm, position, pub_sub_broker)
         self.text = text
         self.font = font
 
@@ -60,6 +63,7 @@ class BoardObjectWithFont(interfaces.IBoardObjectWithFont, BoardObjectWithPositi
         return BoardObjectWithFont(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
             types.BoardObjectType(data[field_names.TYPE_FIELD]),
+            datetime.strptime(data[field_names.CREATE_DTTM_FIELD], '%Y-%m-%dT%H-%M-%SZ'),
             Position.from_serialized(data[field_names.POSITION_FIELD]),
             pub_sub_broker,
             data[_TEXT_FIELD],

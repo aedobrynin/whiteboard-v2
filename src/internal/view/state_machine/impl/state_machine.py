@@ -82,6 +82,7 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
         self._transitions[before].append(tr_description)
 
     def handle_event(self, event: tkinter.Event):
+        logging.debug('StateMachine: trying to match event to transition predicates')
         for tr_description in self._transitions.get(self._cur_state.name, []):
             if tr_description.predicate(self._global_dependencies, event):
                 logging.debug('trying to change state after predicate')
@@ -98,4 +99,7 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
                 self._cur_state.on_enter(self._global_dependencies, self._cur_state_context, event)
                 return
 
+        logging.debug(
+            "StateMachine: couldn't match event to any transition predicate, pass it to current state"
+        )
         self._cur_state.handle_event(self._global_dependencies, self._cur_state_context, event)

@@ -20,10 +20,10 @@ class UndoRedoManager(interfaces.IUndoRedoManager):
     def store_action(self, action: internal.models.IAction):
         logging.debug('storing action in undo-redo manager')   # TODO: log action name
         if self._cur_pos != len(self._history) - 1:
-            del self._history[self._cur_pos + 1]
+            del self._history[self._cur_pos + 1 :]
         self._history.append(action)
 
-        self._history = self._history[: self._max_history_size]
+        self._history = self._history[-self._max_history_size :]
         self._cur_pos = len(self._history) - 1
 
     def undo(self):
@@ -41,5 +41,5 @@ class UndoRedoManager(interfaces.IUndoRedoManager):
             logging.debug('nothing to redo')
             return
         self._history[self._cur_pos + 1].do()
-        logging.debug('successfuly redid action')
+        logging.debug('successfully redid action')
         self._cur_pos += 1

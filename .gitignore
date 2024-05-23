@@ -6,3 +6,5 @@ junit/
 *.boardobj
 .idea
 server/mongo_data
+.vscode
+venv
