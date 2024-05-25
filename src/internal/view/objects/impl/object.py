@@ -86,6 +86,7 @@ class ViewObject(IViewObject):
     def aligning(self, dependencies: internal.view.dependencies.Dependencies):
         obj_frame = list(dependencies.canvas.bbox(self.id))
         _PADDING = 5 * max(obj_frame[3] - obj_frame[1], obj_frame[2] - obj_frame[0])
+        # flag = False
 
         top = dependencies.canvas.find_overlapping(
             obj_frame[0] - _PADDING,
@@ -107,19 +108,19 @@ class ViewObject(IViewObject):
             if obj_frame[0] == obj_x1:
                 points = [obj_x1, obj_y1, obj_frame[0], obj_frame[3]]
                 self._update_aligning_line(points, dependencies)
-                break
+                return
             if obj_frame[0] == obj_x2:
                 points = [obj_x2, obj_y1, obj_frame[0], obj_frame[3]]
                 self._update_aligning_line(points, dependencies)
-                break
-            if obj_frame[1] == obj_x1:
-                points = [obj_x1, obj_y1, obj_frame[1], obj_frame[3]]
+                return
+            if obj_frame[2] == obj_x1:
+                points = [obj_x1, obj_y1, obj_frame[2], obj_frame[3]]
                 self._update_aligning_line(points, dependencies)
-                break
-            if obj_frame[1] == obj_x2:
-                points = [obj_x2, obj_y1, obj_frame[1], obj_frame[3]]
+                return
+            if obj_frame[2] == obj_x2:
+                points = [obj_x2, obj_y1, obj_frame[2], obj_frame[3]]
                 self._update_aligning_line(points, dependencies)
-                break
+                return
             self.remove_aligning(dependencies)
         else:
             bottom = dependencies.canvas.find_overlapping(
@@ -141,86 +142,88 @@ class ViewObject(IViewObject):
                 if obj_frame[0] == obj_x1:
                     points = [obj_frame[0], obj_frame[3], obj_x1, obj_y1]
                     self._update_aligning_line(points, dependencies)
-                    break
+                    return
                 if obj_frame[0] == obj_x2:
                     points = [obj_frame[0], obj_frame[3], obj_x2, obj_y1]
                     self._update_aligning_line(points, dependencies)
-                    break
+                    return
                 if obj_frame[2] == obj_x1:
                     points = [obj_frame[2], obj_frame[3], obj_x1, obj_y1]
                     self._update_aligning_line(points, dependencies)
-                    break
+                    return
                 if obj_frame[2] == obj_x2:
                     points = [obj_frame[2], obj_frame[3], obj_x2, obj_y1]
                     self._update_aligning_line(points, dependencies)
-                    break
-            left = dependencies.canvas.find_overlapping(
-                obj_frame[0] - _PADDING,
+                    return
+                self.remove_aligning(dependencies)
+        left = dependencies.canvas.find_overlapping(
+            obj_frame[0] - _PADDING,
+            obj_frame[1] - _PADDING,
+            obj_frame[0],
+            obj_frame[3] + _PADDING
+        )
+        for item in left:
+            tags = dependencies.canvas.gettags(item)
+            if tags[0] == self.id:
+                continue
+            obj_x1, obj_y1, obj_x2, obj_y2 = dependencies.canvas.bbox(tags[0])
+            if not (
+                obj_y1 in [obj_frame[1], obj_frame[3]] or obj_y2 in [obj_frame[1], obj_frame[3]]
+            ):
+                continue
+
+            if obj_frame[1] == obj_y1:
+                points = [obj_x1, obj_y1, obj_frame[2], obj_frame[1]]
+                self._update_aligning_line(points, dependencies)
+                return
+            if obj_frame[1] == obj_y2:
+                points = [obj_x1, obj_y2, obj_frame[2], obj_frame[1]]
+                self._update_aligning_line(points, dependencies)
+                return
+            if obj_frame[3] == obj_y1:
+                points = [obj_x1, obj_y1, obj_frame[2], obj_frame[3]]
+                self._update_aligning_line(points, dependencies)
+                return
+            if obj_frame[3] == obj_y2:
+                points = [obj_x1, obj_y2, obj_frame[2], obj_frame[3]]
+                self._update_aligning_line(points, dependencies)
+                return
+            self.remove_aligning(dependencies)
+        else:
+            right = dependencies.canvas.find_overlapping(
+                obj_frame[2],
                 obj_frame[1] - _PADDING,
-                obj_frame[0],
+                obj_frame[2] + _PADDING,
                 obj_frame[3] + _PADDING
             )
-            for item in left:
+            for item in right:
                 tags = dependencies.canvas.gettags(item)
                 if tags[0] == self.id:
                     continue
                 obj_x1, obj_y1, obj_x2, obj_y2 = dependencies.canvas.bbox(tags[0])
                 if not (
-                    obj_y1 in [obj_frame[1], obj_frame[3]] or obj_y2 in [obj_frame[1], obj_frame[3]]
+                    obj_y1 in [obj_frame[1], obj_frame[3]] or
+                    obj_y2 in [obj_frame[1], obj_frame[3]]
                 ):
                     continue
 
                 if obj_frame[1] == obj_y1:
-                    points = [obj_x1, obj_y1, obj_frame[2], obj_frame[1]]
+                    points = [obj_frame[2], obj_frame[1], obj_x1, obj_y1]
                     self._update_aligning_line(points, dependencies)
-                    break
+                    return
                 if obj_frame[1] == obj_y2:
-                    points = [obj_x1, obj_y2, obj_frame[2], obj_frame[1]]
+                    points = [obj_frame[2], obj_frame[1], obj_x1, obj_y2]
                     self._update_aligning_line(points, dependencies)
-                    break
+                    return
                 if obj_frame[3] == obj_y1:
-                    points = [obj_x1, obj_y1, obj_frame[2], obj_frame[3]]
+                    points = [obj_frame[2], obj_frame[3], obj_x1, obj_y1]
                     self._update_aligning_line(points, dependencies)
-                    break
+                    return
                 if obj_frame[3] == obj_y2:
-                    points = [obj_x1, obj_y2, obj_frame[2], obj_frame[3]]
+                    points = [obj_frame[2], obj_frame[3], obj_x1, obj_y2]
                     self._update_aligning_line(points, dependencies)
-                    break
-            else:
-                right = dependencies.canvas.find_overlapping(
-                    obj_frame[2],
-                    obj_frame[1] - _PADDING,
-                    obj_frame[2] + _PADDING,
-                    obj_frame[3] + _PADDING
-                )
-                for item in right:
-                    tags = dependencies.canvas.gettags(item)
-                    if tags[0] == self.id:
-                        continue
-                    obj_x1, obj_y1, obj_x2, obj_y2 = dependencies.canvas.bbox(tags[0])
-                    if not (
-                        obj_y1 in [obj_frame[1], obj_frame[3]] or
-                        obj_y2 in [obj_frame[1], obj_frame[3]]
-                    ):
-                        continue
-
-                    if obj_frame[1] == obj_y1:
-                        points = [obj_frame[2], obj_frame[1], obj_x1, obj_y1]
-                        self._update_aligning_line(points, dependencies)
-                        break
-                    if obj_frame[1] == obj_y2:
-                        points = [obj_frame[2], obj_frame[1], obj_x1, obj_y2]
-                        self._update_aligning_line(points, dependencies)
-                        break
-                    if obj_frame[3] == obj_y1:
-                        points = [obj_frame[2], obj_frame[3], obj_x1, obj_y1]
-                        self._update_aligning_line(points, dependencies)
-                        break
-                    if obj_frame[3] == obj_y2:
-                        points = [obj_frame[2], obj_frame[3], obj_x1, obj_y2]
-                        self._update_aligning_line(points, dependencies)
-                        break
-                self.remove_aligning(dependencies)
+                    return
+            self.remove_aligning(dependencies)
 
     def remove_aligning(self, dependencies: internal.view.dependencies.Dependencies):
         obj_id = f'{_ALIGNING_PREFIX}{self.id}'
