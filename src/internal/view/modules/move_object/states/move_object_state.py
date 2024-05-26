@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import tkinter
 from typing import Dict, Optional
-
+import internal.objects.interfaces
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
 import internal.view.modules.connector
@@ -10,6 +10,7 @@ import internal.view.modules.group
 from internal.models import Position
 from internal.view.objects.interfaces import IViewObject
 from internal.view.state_machine.impl import State
+from internal.view.modules.table import TableObject
 
 _MOVE_OBJECT_STATE_NAME = 'MOVE_OBJECT'
 _LAST_DRAG_EVENT_X = 'last_drag_event_x'
@@ -63,6 +64,22 @@ def _on_leave(
         state_ctx[_OBJ_ID], diff
     )
     global_dependencies.canvas.configure(background='white')
+    # table object
+    position = internal.models.Position(
+        state_ctx[_LAST_DRAG_EVENT_X], state_ctx[_LAST_DRAG_EVENT_Y], 0
+    )
+    parent_obj_id, coord = TableObject.add_object(global_dependencies, position)
+    if parent_obj_id and parent_obj_id != state_ctx[_OBJ_ID]:
+        linked_objects = dict()
+        table_obj: internal.objects.interfaces.IBoardObjectTable = (
+            global_dependencies.repo.get(parent_obj_id)
+        )
+        if not table_obj:
+            return
+        for obj_id in table_obj.linked_objects:
+            linked_objects[obj_id] = table_obj.linked_objects[obj_id]
+        linked_objects[state_ctx[_OBJ_ID]] = coord
+        global_dependencies.controller.edit_linked_objects(table_obj.id, linked_objects)
 
 
 def _handle_event(
@@ -85,6 +102,14 @@ def _handle_event(
         x - state_ctx[_LAST_DRAG_EVENT_X],
         y - state_ctx[_LAST_DRAG_EVENT_Y]
     )
+    obj = global_dependencies.repo.get(state_ctx[_OBJ_ID])
+    if obj and isinstance(obj, internal.objects.interfaces.IBoardObjectTable):
+        for child_id in obj.linked_objects:
+            global_dependencies.canvas.move(
+                child_id,
+                x - state_ctx[_LAST_DRAG_EVENT_X],
+                y - state_ctx[_LAST_DRAG_EVENT_Y]
+            )
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y
     # TODO: Issue #20

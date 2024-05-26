@@ -59,11 +59,11 @@ def _handle_event(
 
     if state_ctx[_AXIS] == _COLUMN:
         c = state_ctx[_CURRENT_COLUMN]
-        state_ctx[LIST_COL], state_ctx[LIST_ROW] = obj.resize_column(global_dependencies, obj, c, x)
+        state_ctx[LIST_COL], state_ctx[LIST_ROW] = obj.resize_column(global_dependencies, c, x)
 
     if state_ctx[_AXIS] == _ROW:
         r = state_ctx[_CURRENT_ROW]
-        state_ctx[LIST_COL], state_ctx[LIST_ROW] = obj.resize_row(global_dependencies, obj, r, y)
+        state_ctx[LIST_COL], state_ctx[LIST_ROW] = obj.resize_row(global_dependencies, r, y)
 
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y
@@ -74,6 +74,7 @@ def _on_leave(
     state_ctx: Dict,
     event: tkinter.Event
 ):
+    # We change in controller after resize
     global_dependencies.controller.edit_table(
         state_ctx[OBJ_ID], state_ctx[LIST_COL], state_ctx[LIST_ROW]
     )
@@ -82,10 +83,8 @@ def _on_leave(
 def _predicate_from_focus_to_resize_table(
     global_dependencies: internal.view.dependencies.Dependencies, event: tkinter.Event
 ) -> bool:
-    # Motion with Left mouse button pressed
-    if event.type != tkinter.EventType.Motion or event.state & (1 << 8) == 0:
+    if event.type != tkinter.EventType.ButtonPress or event.num != 1:
         return False
-
     cur_obj = global_dependencies.objects_storage.get_current_opt(global_dependencies)
     if cur_obj is None:
         return False
@@ -93,7 +92,7 @@ def _predicate_from_focus_to_resize_table(
         return False
     if 'line' not in global_dependencies.canvas.gettags('current'):
         return False
-    return isinstance(cur_obj, internal.objects.interfaces.IBoardObjectTable)
+    return isinstance(cur_obj, TableObject)
 
 
 def _predicate_from_resize_table_to_root(

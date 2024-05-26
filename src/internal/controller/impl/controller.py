@@ -191,6 +191,11 @@ class Controller(interfaces.IController):
             ):
                 if isinstance(obj, internal.objects.interfaces.IBoardObjectWithPosition):
                     obj.position = obj.position + delta
+                    if isinstance(obj, internal.objects.interfaces.IBoardObjectTable):
+                        for child_id in obj.linked_objects:
+                            child_obj = self._controller._repo.get(child_id)
+                            if child_obj:
+                                self._move_by_object(delta, child_obj)
                 elif isinstance(obj, internal.objects.interfaces.IBoardObjectPen):
                     # TODO: myb make Pen object with position?
                     points = []

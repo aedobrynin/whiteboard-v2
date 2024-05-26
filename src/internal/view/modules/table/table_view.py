@@ -31,6 +31,7 @@ class TableObject(ViewObject):
         ViewObject.__init__(self, obj)
         self.draw_table(dependencies)
         self._subscribe_to_repo_object_events(dependencies)
+        dependencies.canvas.tag_lower(self.id)
 
     @property
     def add_column_id(self):
@@ -52,6 +53,7 @@ class TableObject(ViewObject):
     def cells(self):
         return self._cells
 
+    # TODO: очень много легаси, нужно поправить
     def draw_table(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectTable = dependencies.repo.get(self.id)
         if not obj:
@@ -99,8 +101,36 @@ class TableObject(ViewObject):
                       obj.id + 'row_l' + f'/{i - 1}']
             ) for i in range(1, obj.rows + 1)
         ]
+        dependencies.canvas.tag_lower(self.id)
 
     def _subscribe_to_repo_object_events(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
+        dependencies.pub_sub_broker.subscribe(
+            self.id, self.id,
+            internal.objects.events.EVENT_TYPE_OBJECT_MOVED,
+            lambda publisher, event, repo: (
+                self._get_move_update_from_repo(dependencies)
+            )
+        )
+
+        dependencies.pub_sub_broker.subscribe(
+            self.id, self.id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
+            lambda publisher, event, repo: (
+                self._get_update_columns_and_rows_from_repo(dependencies)
+            )
+        )
+        dependencies.pub_sub_broker.subscribe(
+            self.id, self.id,
+            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_LINKED_OBJECTS,
+            lambda publisher, event, repo: (
+                self._get_linked_objects_update_from_repo(dependencies)
+            )
+        )
+        self._get_linked_objects_update_from_repo(dependencies)
+
+    def _get_linked_objects_update_from_repo(
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         obj: internal.objects.interfaces.IBoardObjectTable = dependencies.repo.get(self.id)
@@ -116,21 +146,11 @@ class TableObject(ViewObject):
                 lambda publisher, event, repo: self._get_child_remove_update(dependencies, event)
             )
 
-        dependencies.pub_sub_broker.subscribe(
-            self.id, self.id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_COLUMN_SIZE,
-            lambda publisher, event, repo: (
-                self._get_update_columns_and_rows_from_repo(dependencies)
-            )
-        )
-
-        dependencies.pub_sub_broker.subscribe(
-            self.id, self.id,
-            internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_ROW_SIZE,
-            lambda publisher, event, repo: (
-                self._get_update_columns_and_rows_from_repo(dependencies)
-            )
-        )
+    def _get_move_update_from_repo(
+        self, dependencies: internal.view.dependencies.Dependencies
+    ):
+        obj: internal.objects.interfaces.IBoardObjectTable = dependencies.repo.get(self.id)
+        dependencies.canvas.moveto(obj.id, obj.position.x, obj.position.y)
 
     def _get_child_move_update(
         self, dependencies: internal.view.dependencies.Dependencies,
@@ -139,9 +159,11 @@ class TableObject(ViewObject):
         obj: internal.objects.interfaces.IBoardObjectTable = dependencies.repo.get(self.id)
         if event.object_id not in obj.linked_objects:
             return
-        coord = obj.linked_objects[obj.id]
+        coord = obj.linked_objects[event.object_id]
         x1, y1, x2, y2 = dependencies.canvas.coords(f"{int(coord[0])},{int(coord[1])}/" + self.id)
-        if obj.position.x > x2 or obj.position.x < x1 or obj.position.y > y2 or obj.position.y < y1:
+        # we check current position on canvas
+        x_obj_1, y_obj_1, x_obj_2, y_obj_2 = dependencies.canvas.bbox(event.object_id)
+        if x_obj_2 > x2 or x_obj_1 < x1 or y_obj_2 > y2 or y_obj_1 < y1:
             linked_obj: dict[str, list] = dict()
             for child_id, coord in obj.linked_objects.items():
                 if child_id != event.object_id:
@@ -194,6 +216,8 @@ class TableObject(ViewObject):
             for col in range(column + 1, obj.columns):
                 dependencies.canvas.move(f"{col},{i}/" + obj.id, delta, 0)
 
+        dependencies.canvas.move(self.add_column_id, delta, 0)
+
         temp = copy.deepcopy(obj.columns_width)
         temp[column] = x2 - x1
         return temp, obj.rows_height
@@ -219,6 +243,7 @@ class TableObject(ViewObject):
             for col in range(obj.columns):
                 dependencies.canvas.move(f"{col},{j}/" + self.id, 0, diff)
 
+        dependencies.canvas.move(self.add_row_id, 0, diff)
         temp = copy.deepcopy(obj.rows_height)
         temp[row_n] = y2 - y1
         return obj.columns_width, temp
