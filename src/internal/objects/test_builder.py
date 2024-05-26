@@ -6,6 +6,7 @@ from .impl.card import BoardObjectCard
 from .impl.group import BoardObjectGroup
 from .impl.text import BoardObjectText
 from .impl.connector import BoardObjectConnector
+from impl.table import BoardObjectTable
 from .impl.object_id import generate_object_id
 
 
@@ -87,3 +88,22 @@ def test_connector_building():
     connector = internal.objects.build_from_serialized(serialized_connector, broker)
     assert isinstance(connector, BoardObjectConnector)
     assert connector.serialize() == serialized_connector
+
+def test_table_building():
+    serialized_table = {
+        'id': generate_object_id(),
+        'type': 'connector',
+        'create_dttm': datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ'),
+        'start_id': generate_object_id(),
+        'end_id': generate_object_id(),
+        'color': 'black',
+        'width': 2,
+        'connector_type': 'curved',
+        'stroke_style': 'left'
+    }
+    broker = internal.pub_sub.mocks.MockPubSubBroker()
+
+    table = internal.objects.build_from_serialized(serialized_table, broker)
+    assert isinstance(table, BoardObjectTable)
+    assert table.serialize() == serialized_table
+

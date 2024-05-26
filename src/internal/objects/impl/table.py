@@ -53,8 +53,7 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
         serialized[_DEFAULT_HEIGHT] = self.default_height
         serialized[_COLUMNS_WIDTH] = self.columns_width
         serialized[_ROWS_HEIGHT] = self.rows_height
-        serialized[_LINKED_OBJECTS] = list(map(lambda x: [x[0], x[1]], self.linked_objects.items()))
-
+        serialized[_LINKED_OBJECTS] = self.linked_objects
         return serialized
 
     @staticmethod
@@ -63,7 +62,6 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
     ) -> BoardObjectTable:
         temp = dict()
         if len(data[_LINKED_OBJECTS]) > 0:
-
             for key, value in data[_LINKED_OBJECTS]:
                 temp[key] = value
 
