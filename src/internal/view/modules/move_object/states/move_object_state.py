@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import tkinter
 from typing import Dict, Optional
 import internal.objects.interfaces
@@ -7,6 +8,7 @@ import internal.view.dependencies
 import internal.view.state_machine.interfaces
 import internal.view.modules.connector
 import internal.view.modules.group
+import internal.view.utils
 from internal.models import Position
 from internal.view.objects.interfaces import IViewObject
 from internal.view.state_machine.impl import State
@@ -63,6 +65,11 @@ def _on_leave(
     global_dependencies.controller.move_object(
         state_ctx[_OBJ_ID], diff
     )
+    obj = global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID])
+    if not obj:
+        logging.warning('move object not found')
+        return
+    obj.remove_aligning(dependencies=global_dependencies)
     global_dependencies.canvas.configure(background='white')
     # table object
     position = internal.models.Position(
@@ -95,6 +102,11 @@ def _handle_event(
         internal.view.modules.connector.ConnectorObject
     ):
         return
+    obj = global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID])
+    if not obj:
+        logging.warning('move object not found')
+        return
+    obj.aligning(dependencies=global_dependencies)
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
     global_dependencies.canvas.move(
