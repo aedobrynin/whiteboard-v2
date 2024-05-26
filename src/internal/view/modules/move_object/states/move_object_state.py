@@ -1,15 +1,18 @@
 from __future__ import annotations
 
+import logging
 import tkinter
 from typing import Dict, Optional
-
+import internal.objects.interfaces
 import internal.view.dependencies
 import internal.view.state_machine.interfaces
 import internal.view.modules.connector
 import internal.view.modules.group
+import internal.view.utils
 from internal.models import Position
 from internal.view.objects.interfaces import IViewObject
 from internal.view.state_machine.impl import State
+from internal.view.modules.table import TableObject
 
 _MOVE_OBJECT_STATE_NAME = 'MOVE_OBJECT'
 _LAST_DRAG_EVENT_X = 'last_drag_event_x'
@@ -62,7 +65,28 @@ def _on_leave(
     global_dependencies.controller.move_object(
         state_ctx[_OBJ_ID], diff
     )
+    obj = global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID])
+    if not obj:
+        logging.warning('move object not found')
+        return
+    obj.remove_aligning(dependencies=global_dependencies)
     global_dependencies.canvas.configure(background='white')
+    # table object
+    position = internal.models.Position(
+        state_ctx[_LAST_DRAG_EVENT_X], state_ctx[_LAST_DRAG_EVENT_Y], 0
+    )
+    parent_obj_id, coord = TableObject.add_object(global_dependencies, position)
+    if parent_obj_id and parent_obj_id != state_ctx[_OBJ_ID]:
+        linked_objects = dict()
+        table_obj: internal.objects.interfaces.IBoardObjectTable = (
+            global_dependencies.repo.get(parent_obj_id)
+        )
+        if not table_obj:
+            return
+        for obj_id in table_obj.linked_objects:
+            linked_objects[obj_id] = table_obj.linked_objects[obj_id]
+        linked_objects[state_ctx[_OBJ_ID]] = coord
+        global_dependencies.controller.edit_linked_objects(table_obj.id, linked_objects)
 
 
 def _handle_event(
@@ -78,6 +102,11 @@ def _handle_event(
         internal.view.modules.connector.ConnectorObject
     ):
         return
+    obj = global_dependencies.objects_storage.get_opt_by_id(state_ctx[_OBJ_ID])
+    if not obj:
+        logging.warning('move object not found')
+        return
+    obj.aligning(dependencies=global_dependencies)
     x = int(global_dependencies.canvas.canvasx(event.x))
     y = int(global_dependencies.canvas.canvasy(event.y))
     global_dependencies.canvas.move(
@@ -85,6 +114,14 @@ def _handle_event(
         x - state_ctx[_LAST_DRAG_EVENT_X],
         y - state_ctx[_LAST_DRAG_EVENT_Y]
     )
+    obj = global_dependencies.repo.get(state_ctx[_OBJ_ID])
+    if obj and isinstance(obj, internal.objects.interfaces.IBoardObjectTable):
+        for child_id in obj.linked_objects:
+            global_dependencies.canvas.move(
+                child_id,
+                x - state_ctx[_LAST_DRAG_EVENT_X],
+                y - state_ctx[_LAST_DRAG_EVENT_Y]
+            )
     state_ctx[_LAST_DRAG_EVENT_X] = x
     state_ctx[_LAST_DRAG_EVENT_Y] = y
     # TODO: Issue #20

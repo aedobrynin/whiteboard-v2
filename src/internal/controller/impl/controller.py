@@ -231,6 +231,11 @@ class Controller(interfaces.IController):
             ):
                 if isinstance(obj, internal.objects.interfaces.IBoardObjectWithPosition):
                     obj.position = obj.position + delta
+                    if isinstance(obj, internal.objects.interfaces.IBoardObjectTable):
+                        for child_id in obj.linked_objects:
+                            child_obj = self._controller._repo.get(child_id)
+                            if child_obj:
+                                self._move_by_object(delta, child_obj)
                 elif isinstance(obj, internal.objects.interfaces.IBoardObjectPen):
                     # TODO: myb make Pen object with position?
                     points = []
@@ -338,6 +343,27 @@ class Controller(interfaces.IController):
                 PropertyChange('height', height),
             ],
         )
+        action.do()
+        self._undo_redo_manager.store_action(action)
+
+    def edit_table(
+        self, obj_id: internal.objects.interfaces.ObjectId, list_col, list_row
+    ):
+        action = EditAction(
+            self, obj_id, changes=[
+                PropertyChange('columns_width', list_col),
+                PropertyChange('rows_height', list_row)
+            ],
+        )
+        action.do()
+        self._undo_redo_manager.store_action(action)
+
+    def edit_linked_objects(
+        self,
+        obj_id: internal.objects.interfaces.ObjectId,
+        linked_obj: typing.Dict[str, list[int]]
+    ):
+        action = EditAction(self, obj_id, [PropertyChange('linked_objects', linked_obj)])
         action.do()
         self._undo_redo_manager.store_action(action)
 

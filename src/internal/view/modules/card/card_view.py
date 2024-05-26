@@ -178,6 +178,13 @@ class CardObject(ViewObject):
             ),
             lambda dependencies: self._base_widget(
                 dependencies,
+                internal.view.utils.get_font_sizes(),
+                _FONT_SIZE_DESC,
+                self._get_font_size,
+                self._set_font_size,
+            ),
+            lambda dependencies: self._base_widget(
+                dependencies,
                 internal.view.utils.get_font_colors(),
                 _CARD_COLOR_DESC,
                 self._get_card_color,
@@ -283,6 +290,14 @@ class CardObject(ViewObject):
     def _set_font_color(self, dependencies: internal.view.dependencies.Dependencies, color: str):
         font = self._get_font(dependencies)
         font.color = color
+        dependencies.controller.edit_font(self.id, font=font)
+
+    def _get_font_size(self, dependencies: internal.view.dependencies.Dependencies):
+        return self._get_font(dependencies).size
+
+    def _set_font_size(self, dependencies: internal.view.dependencies.Dependencies, size: str):
+        font = self._get_font(dependencies)
+        font.size = int(size)
         dependencies.controller.edit_font(self.id, font=font)
 
     def _get_card_color(self, dependencies: internal.view.dependencies.Dependencies):
