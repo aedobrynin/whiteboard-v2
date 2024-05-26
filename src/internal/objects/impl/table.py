@@ -60,11 +60,6 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
     def from_serialized(
         data: dict, pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ) -> BoardObjectTable:
-        temp = dict()
-        if len(data[_LINKED_OBJECTS]) > 0:
-            for key, value in data[_LINKED_OBJECTS]:
-                temp[key] = value
-
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectTable(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
@@ -77,7 +72,7 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
             data[_DEFAULT_HEIGHT],
             data[_COLUMNS_WIDTH],
             data[_ROWS_HEIGHT],
-            temp
+            data[_LINKED_OBJECTS],
         )
 
     @property
