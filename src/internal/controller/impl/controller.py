@@ -9,6 +9,7 @@ import internal.repositories.interfaces
 import internal.storages
 import internal.storages.interfaces
 import internal.undo_redo.interfaces
+
 from .. import interfaces
 from .edit_action import EditAction, PropertyChange
 

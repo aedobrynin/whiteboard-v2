@@ -25,7 +25,11 @@ jobs:
           pip install -r requirements.txt
       - name: Test with pytest
         run: |
+<<<<<<< HEAD
           pip install pytest pytest-asyncio
+=======
+          pip install pytest pytest pytest-asyncio
+>>>>>>> e16cf66d39a8cdd044eaa243db053c00fa721584
           pytest ./src
       - name: Lint with Ruff
         run: |

@@ -41,19 +41,85 @@ async def get_updates(
                     controller.create_object_from_serialize(obj_repr)
                 elif action_type == 'update':
                     obj_repr = update['obj_repr']
-                    data_object_type = internal.objects.BoardObjectType(update['obj_repr']['type'])
-                    if data_object_type == internal.objects.BoardObjectType.TEXT:
-                        obj: internal.objects.interfaces.IBoardObjectText = repo.get(obj_id)
-                        if 'position' in obj_repr:
-                            position = internal.models.Position.from_serialized(obj_repr['position'])
-                            if position != obj.position:
-                                controller.move_object(obj.id, position - obj.position)
-                        if 'font' in obj_repr:
-                            font = internal.models.Font.from_serialized(obj_repr['font'])
-                            if font != obj.font:
-                                controller.edit_font(obj.id, font)
-                        if 'text' in obj_repr and obj.text != obj_repr['text']:
-                            controller.edit_text(obj.id, obj_repr['text'])
+                    obj: internal.objects.interfaces.IBoardObject = repo.get(obj_id)
+                    if 'position' in obj_repr and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectWithPosition
+                    ):
+                        position = internal.models.Position.from_serialized(obj_repr['position'])
+                        if position != obj.position:
+                            controller.move_object(obj.id, position - obj.position)
+                    if 'font' in obj_repr and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectWithFont
+                    ):
+                        font = internal.models.Font.from_serialized(obj_repr['font'])
+                        if font != obj.font:
+                            controller.edit_font(obj.id, font)
+                    if 'text' in obj_repr and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectWithFont
+                    ) and obj.text != obj_repr['text']:
+                        controller.edit_text(obj.id, obj_repr['text'])
+                    if 'color' in obj_repr and isinstance(
+                        obj, (
+                            internal.objects.interfaces.IBoardObjectPen,
+                            internal.objects.interfaces.IBoardObjectCard,
+                            internal.objects.interfaces.IBoardObjectConnector
+                        )
+                    ) and obj.color != obj_repr['color']:
+                        controller.edit_color(obj.id, obj_repr['color'])
+                    if 'points' in obj_repr and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectPen
+                    ) and obj.points != obj_repr['points']:
+                        controller.edit_points(obj.id, obj_repr['points'])
+                    if 'children_ids' in obj_repr and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectGroup
+                    ) and obj.children_ids != obj_repr['children_ids']:
+                        controller.edit_children_ids(obj.id, obj_repr['children_ids'])
+                    if 'connector_type' in obj_repr and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectConnector
+                    ) and obj.connector_type != obj_repr['connector_type']:
+                        controller.edit_connector_type(obj.id, obj_repr['connector_type'])
+                    if 'stroke_style' in obj_repr and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectConnector
+                    ) and obj.stroke_style != obj_repr['stroke_style']:
+                        controller.edit_stroke_style(obj.id, obj_repr['stroke_style'])
+                    if 'width' in obj_repr and isinstance(
+                        obj, (
+                            internal.objects.interfaces.IBoardObjectPen,
+                            internal.objects.interfaces.IBoardObjectCard,
+                            internal.objects.interfaces.IBoardObjectConnector,
+                        )
+                    ) and obj.width != obj_repr['width']:
+                        controller.edit_width(obj.id, obj_repr['width'])
+                    if 'height' in obj_repr and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectCard
+                    ) and obj.height != obj_repr['height']:
+                        controller.edit_height(obj.id, obj_repr['height'])
+                    if ('columns_width' in obj_repr or 'rows_height' in obj_repr) and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectTable
+                    ):
+                        if 'columns_width' in obj_repr and 'rows_height' in obj_repr and (
+                            obj.columns_width != obj_repr['columns_width'] or
+                            obj.rows_height != obj_repr['rows_height']
+                        ):
+                            controller.edit_table(
+                                obj.id, obj_repr['columns_width'], obj_repr['rows_height']
+                            )
+                        if 'columns_width' in obj_repr and obj.columns_width != obj_repr[
+                            'columns_width'
+                        ]:
+                            controller.edit_table(
+                                obj.id, obj_repr['columns_width'], obj.rows_height
+                            )
+                        if 'rows_height' in obj_repr and obj.rows_height != obj_repr[
+                            'rows_height'
+                        ]:
+                            controller.edit_table(
+                                obj.id, obj.columns_width, obj_repr['rows_height']
+                            )
+                    if 'linked_objects' in obj_repr and isinstance(
+                        obj, internal.objects.interfaces.IBoardObjectCard
+                    ) and obj.linked_objects != obj_repr['linked_objects']:
+                        controller.edit_linked_objects(obj.id, obj_repr['linked_objects'])
                 elif action_type == 'delete':
                     if repo.get(obj_id) is None:
                         continue
