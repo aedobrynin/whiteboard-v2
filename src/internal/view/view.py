@@ -12,18 +12,17 @@ import internal.pub_sub.interfaces
 import internal.repositories.events
 import internal.repositories.interfaces
 import internal.view.dependencies
+import internal.view.modules.card
 import internal.view.modules.connector
 import internal.view.modules.drag_board
+import internal.view.modules.group
 import internal.view.modules.modules
 import internal.view.modules.move_object
-import internal.view.modules.text
 import internal.view.modules.pen
-import internal.view.modules.card
 import internal.view.modules.submenu
-import internal.view.modules.group
 import internal.view.modules.table
+import internal.view.modules.text
 import internal.view.modules.undo_redo
-import internal.view.state_machine.impl.state_machine
 import internal.view.objects.impl.object_storage
 import internal.view.state_machine.impl.state_machine
 from internal.view.menu.impl.menu import Menu

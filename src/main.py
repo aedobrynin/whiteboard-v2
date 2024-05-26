@@ -12,6 +12,7 @@ import internal.pub_sub.impl
 import internal.repositories.impl
 import internal.storages.impl
 import internal.undo_redo.impl
+import internal.view.choose_board
 import internal.view.view
 
 _logging_choice_to_loglevel = {
@@ -160,6 +161,9 @@ async def create_tasks(tasks):
 async def main():
     parser = argparse.ArgumentParser()
 
+    # board_name, board_key = get_board_name_key()
+    board_name, board_key = "Whiteboard", "board"
+
     parser.add_argument(
         'board-name',
         type=str,
@@ -182,12 +186,11 @@ async def main():
         level=_logging_choice_to_loglevel[args['logging-level']],
         format='%(asctime)s - %(levelname)s - %(message)s',
     )
-    board_name = args['board-name']
 
     logging.debug('initializing pubsub broker')
     broker = internal.pub_sub.impl.PubSubBroker()
     logging.debug('initializing storage')
-    storage = internal.storages.impl.SharedYDocStorage(board_name)
+    storage = internal.storages.impl.SharedYDocStorage(board_name, board_key)
     serialized_objects = storage.get_serialized_objects()
     objects = []
     for serialized_obj in serialized_objects.values():
