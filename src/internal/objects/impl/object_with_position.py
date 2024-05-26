@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from internal.objects import interfaces
-from internal.models import Position
+from datetime import datetime
+
 import internal.pub_sub.interfaces
+from internal.models import Position
+from internal.objects import interfaces
 from .common import field_names
 from .object import BoardObject
-from .. import types
 from .. import events
+from .. import types
 
 
 class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
@@ -14,10 +16,11 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
         self,
         id: interfaces.ObjectId,
         type: types.BoardObjectType,  # noqa
+        create_dttm: datetime,
         position: Position,
-        pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
+        pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker
     ):
-        BoardObject.__init__(self, id, type, pub_sub_broker)
+        BoardObject.__init__(self, id, type, create_dttm, pub_sub_broker)
         self.position = position
 
     @property
@@ -42,6 +45,7 @@ class BoardObjectWithPosition(interfaces.IBoardObjectWithPosition, BoardObject):
         return BoardObjectWithPosition(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
             types.BoardObjectType(data[field_names.TYPE_FIELD]),
+            datetime.strptime(data[field_names.CREATE_DTTM_FIELD], '%Y-%m-%dT%H-%M-%SZ'),
             Position.from_serialized(data[field_names.POSITION_FIELD]),
             pub_sub_broker,
         )

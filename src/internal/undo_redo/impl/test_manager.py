@@ -11,6 +11,7 @@ class AppendAction(internal.models.IAction):
         self._lst.append(self._val)
 
     def undo(self):
+        assert self._lst[-1] == self._val
         self._lst.pop()
 
 
@@ -125,3 +126,8 @@ def test_undo_redo_manager_tail_is_removed_on_store():
     assert lst == [0, 3]
     manager.redo()  # should be no-op
     assert lst == [0, 3]
+    manager.undo()
+    assert lst == [0]
+    manager.undo()
+    assert lst == []
+

@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 import abc
-from typing import List
+import typing
 
 import internal.models
 import internal.objects
@@ -29,12 +30,27 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: float):
+    def edit_width(self, obj_id: internal.objects.interfaces.ObjectId, width: int):
+        pass
+
+    @abc.abstractmethod
+    def edit_height(self, obj_id: internal.objects.interfaces.ObjectId, height: int):
+        pass
+
+    @abc.abstractmethod
+    def edit_size(self, obj_id: internal.objects.interfaces.ObjectId, width: int, height: int):
         pass
 
     @abc.abstractmethod
     def edit_points(
-        self, obj_id: internal.objects.interfaces.ObjectId, points: List[internal.models.Position]
+        self, obj_id: internal.objects.interfaces.ObjectId,
+        points: typing.List[internal.models.Position],
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_children_ids(
+        self, obj_id: internal.objects.interfaces.ObjectId, children_ids: typing.List[str],
     ):
         pass
 
@@ -45,6 +61,29 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def edit_connector_type(
+        self, obj_id: internal.objects.interfaces.ObjectId, connector_type: str
+    ):
+        pass
+
+    @abc.abstractmethod
+    def edit_stroke_style(
+        self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str
+    ):
+        pass
+
+    def edit_table(
+        self, obj_id: internal.objects.interfaces.ObjectId, list_col, list_row
+    ):
+        pass
+
+    def edit_linked_objects(
+        self,
+        obj_id: internal.objects.interfaces.ObjectId,
+        linked_obj: typing.Dict[str, list[int]]
+    ):
+        pass
+
     def undo_last_action(self):
         pass
 

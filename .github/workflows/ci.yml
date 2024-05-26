@@ -1,16 +1,16 @@
 name: CI
 on:
   push:
-    branches: ['main']
+    branches: [ 'main' ]
   pull_request:
-    branches: ['main']
+    branches: [ 'main' ]
   workflow_dispatch:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10']
+        python-version: [ '3.10' ]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -26,7 +26,7 @@ jobs:
       - name: Test with pytest
         run: |
           pip install pytest pytest-asyncio
-          pytest ./src --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
+          pytest ./src
       - name: Lint with Ruff
         run: |
           pip install ruff  

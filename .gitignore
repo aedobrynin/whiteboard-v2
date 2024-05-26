@@ -7,3 +7,6 @@ junit/
 boards.txt
 .idea
 server/mongo_data
+=======
+.vscode
+venv

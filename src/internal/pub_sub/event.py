@@ -1,8 +1,10 @@
 import dataclasses
 
 
+EventType = str
+
+
 @dataclasses.dataclass
 class Event:
     # TODO: publisher?
-    # TODO: type as objtype
-    type: str
+    type: EventType
