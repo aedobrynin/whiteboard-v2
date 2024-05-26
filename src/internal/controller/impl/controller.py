@@ -327,6 +327,22 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
+    def add_attribute(
+        self,
+        attr_name: str
+        # attr: internal.models.Attribute
+    ):
+        for obj in self._repo.get_all():
+            if not isinstance(obj, internal.objects.interfaces.IBoardObjectCard):
+                continue
+
+            card: internal.objects.interfaces.IBoardObjectCard = obj
+            card.attributes[attr_name] = None
+        logging.debug(
+            'adding new attribute with name=%s',
+            attr_name
+        )
+
     def undo_last_action(self):
         logging.debug('controller was asked to undo last action')
         self._undo_redo_manager.undo()

@@ -112,6 +112,16 @@ class IBoardObjectCard(IBoardObjectWithFont):
     def height(self, height: int) -> None:
         pass
 
+    @property
+    @abc.abstractmethod
+    def attribute(self) -> dict[str, str]:
+        pass
+
+    @attribute.setter
+    @abc.abstractmethod
+    def attribute(self, attribute: dict[str, str]) -> None:
+        pass
+
 
 class IBoardObjectPen(IBoardObject):
     DEFAULT_WIDTH = 2
