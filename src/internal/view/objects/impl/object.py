@@ -96,7 +96,8 @@ class ViewObject(IViewObject):
         )
         for item in top:
             tags = dependencies.canvas.gettags(item)
-            if tags[0] == self.id:
+            # TODO: connector and group exclusion
+            if tags[0] == self.id or tags[0] in dependencies.canvas.gettags(self.id):
                 continue
 
             obj_x1, obj_y1, obj_x2, obj_y2 = dependencies.canvas.bbox(tags[0])
@@ -131,7 +132,8 @@ class ViewObject(IViewObject):
             )
             for item in bottom:
                 tags = dependencies.canvas.gettags(item)
-                if tags[0] == self.id:
+                # TODO: connector and group exclusion
+                if tags[0] == self.id or tags[0] in dependencies.canvas.gettags(self.id):
                     continue
                 obj_x1, obj_y1, obj_x2, obj_y2 = dependencies.canvas.bbox(tags[0])
                 if not (
@@ -164,7 +166,8 @@ class ViewObject(IViewObject):
         )
         for item in left:
             tags = dependencies.canvas.gettags(item)
-            if tags[0] == self.id:
+            # TODO: connector and group exclusion
+            if tags[0] == self.id or tags[0] in dependencies.canvas.gettags(self.id):
                 continue
             obj_x1, obj_y1, obj_x2, obj_y2 = dependencies.canvas.bbox(tags[0])
             if not (
@@ -198,7 +201,8 @@ class ViewObject(IViewObject):
             )
             for item in right:
                 tags = dependencies.canvas.gettags(item)
-                if tags[0] == self.id:
+                # TODO: connector and group exclusion
+                if tags[0] == self.id or tags[0] in dependencies.canvas.gettags(self.id):
                     continue
                 obj_x1, obj_y1, obj_x2, obj_y2 = dependencies.canvas.bbox(tags[0])
                 if not (
