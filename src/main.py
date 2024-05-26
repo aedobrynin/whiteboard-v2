@@ -69,7 +69,8 @@ async def get_updates(
                     if 'points' in obj_repr and isinstance(
                         obj, internal.objects.interfaces.IBoardObjectPen
                     ) and obj.points != obj_repr['points']:
-                        controller.edit_points(obj.id, obj_repr['points'])
+                        points = [internal.models.Position.from_serialized(point) for point in obj_repr['points']]
+                        controller.edit_points(obj.id, points)
                     if 'children_ids' in obj_repr and isinstance(
                         obj, internal.objects.interfaces.IBoardObjectGroup
                     ) and obj.children_ids != obj_repr['children_ids']:
