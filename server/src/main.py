@@ -5,7 +5,7 @@ from internal.server import WhiteBoardServer
 
 if __name__ == '__main__':
     logging.basicConfig(
-        level='DEBUG',
+        level='INFO',
         format='%(asctime)s - %(levelname)s - %(message)s',
     )
     server = WhiteBoardServer()

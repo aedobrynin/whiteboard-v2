@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 
 from pymongo.database import Database, Mapping, Any
 from ypy_websocket import WebsocketServer, YRoom
@@ -22,20 +23,24 @@ class WebsocketServerWithDB(WebsocketServer):
         logging.debug('successfully loaded collection')
         doc_ymap = room.ydoc.get_map(_Y_DOC_OBJECTS_FIELD_NAME)
         updated_count = 0
+        objects: dict[str, dict] = dict()
         for obj in board_collection.find():
             obj_repr = dict(obj)
             obj_id = obj_repr.pop('_id')
+            objects[obj_id] = obj_repr
+        for obj_id in sorted(
+            objects,
+            key=lambda _id: datetime.strptime(objects[_id]['create_dttm'], '%Y-%m-%dT%H-%M-%SZ')
+        ):
             with room.ydoc.begin_transaction() as t:
-                doc_ymap.set(t, obj_id, obj_repr)
+                doc_ymap.set(t, obj_id, objects[obj_id])
                 updated_count += 1
         logging.debug('updated objects=%d', updated_count)
 
-    def update_database_from_ymap(self, room: YRoom):
+    def update_database_from_ymap(self, serialized_objects: dict, board_name: str):
         logging.debug('loading collection')
-        room_name = self.get_room_name(room)[1:]
-        board_collection = self._db['table_' + room_name]
+        board_collection = self._db['table_' + board_name]
         logging.debug('successfully loaded collection')
-        serialized_objects = dict(room.ydoc.get_map(_Y_DOC_OBJECTS_FIELD_NAME))
         # get unique keys
         obj_ids_collection = []
         for obj in board_collection.find():
@@ -58,7 +63,7 @@ class WebsocketServerWithDB(WebsocketServer):
         logging.debug('updated objects=%d', updated_count)
 
     async def get_room(self, name: str) -> YRoom:
-        if name not in self.rooms.keys():
+        if name not in self.rooms:
             self.rooms[name] = YRoom(ready=self.rooms_ready, log=self.log)
             room_name = self.get_room_name(self.rooms[name])[1:]
             logging.debug('room=%s started', room_name)
@@ -74,9 +79,10 @@ class WebsocketServerWithDB(WebsocketServer):
         if name is None:
             assert room is not None
             name = self.get_room_name(room)
+        logging.debug('room=%s deleting', name)
         try:
-            logging.debug('room=%s deleting', name)
-            self.update_database_from_ymap(self.rooms[name])
+            serialized_objects = dict(self.rooms[name].ydoc.get_map(_Y_DOC_OBJECTS_FIELD_NAME))
+            self.update_database_from_ymap(serialized_objects, name[1:])
             logging.debug('database updated')
         except Exception as ex:
             logging.error('exception=%s from delete room came', ex)

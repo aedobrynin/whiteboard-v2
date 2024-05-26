@@ -12,7 +12,7 @@ from .ydoc_storage import YDocStorage, _Y_DOC_OBJECTS_FIELD_NAME
 from .. import interfaces
 
 # TODO: .env file
-SERVER_HOST = os.environ.get('SERVER_HOST', '127.0.0.1')
+SERVER_HOST = os.environ.get('SERVER_HOST', '51.250.90.146')
 SERVER_PORT = os.environ.get('SERVER_PORT', 5000)
 URI_WEBSOCKET_SERVER = f'ws://{SERVER_HOST}:{SERVER_PORT}'
 
