@@ -67,7 +67,7 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         self._publish(events.EventObjectChangedSize(self.id))
 
     @property
-    def attribute(self) -> int:
+    def attribute(self) -> dict[str, str]:
         return self._attribute
 
     @attribute.setter
@@ -79,7 +79,9 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         serialized[_COLOR_FIELD] = self.color
         serialized[_WIDTH_FIELD] = self.width
         serialized[_HEIGHT_FIELD] = self.height
-        serialized[_ATTRIBUTED_FIELD] = self.attribute
+        # serialized[_ATTRIBUTED_FIELD] = self.attribute
+        serialized[_ATTRIBUTED_FIELD] = list(map(lambda x: [x[0], x[1]], self.attribute.items()))
+
         return serialized
 
     @staticmethod
@@ -87,6 +89,9 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         data: dict,
         pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ) -> BoardObjectCard:
+        temp = dict()
+        for key, value in data[_ATTRIBUTED_FIELD]:
+            temp[key] = value
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectCard(
             interfaces.ObjectId(data[field_names.ID_FIELD]),
@@ -98,5 +103,5 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
             data[_COLOR_FIELD],
             data[_WIDTH_FIELD],
             data[_HEIGHT_FIELD],
-            data[_ATTRIBUTED_FIELD],
+            temp,
         )
