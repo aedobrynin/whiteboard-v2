@@ -19,8 +19,9 @@ URI_WEBSOCKET_SERVER = f'ws://{SERVER_HOST}:{SERVER_PORT}'
 
 class SharedYDocStorage(YDocStorage, interfaces.ISharedStorage):
 
-    def __init__(self, board_key: interfaces.ISharedStorage.BoardKey):
+    def __init__(self, board_name: str, board_key: str):
         YDocStorage.__init__(self)
+        self._board_name = board_name
         self._board_key = board_key
         self._cur_changes = queue.Queue()
         doc_ymap = self._y_doc.get_map(_Y_DOC_OBJECTS_FIELD_NAME)

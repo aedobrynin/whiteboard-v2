@@ -9,7 +9,6 @@ from websockets import serve
 
 from .websocket_server import WebsocketServerWithDB
 
-# TODO: add .env file
 _MONGO_HOST = os.environ.get('MONGO_HOST', 'localhost')
 _MONGO_PORT = os.environ.get('MONGO_PORT', 27017)
 
