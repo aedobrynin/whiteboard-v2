@@ -332,7 +332,7 @@ class Controller(interfaces.IController):
             if not isinstance(obj, internal.objects.interfaces.IBoardObjectCard):
                 continue
             card: internal.objects.interfaces.IBoardObjectCard = obj
-            card.attribute[attr_name] = None
+            card.attribute[attr_name] = ''
         logging.debug('adding new attribute with name=%s', attr_name)
 
     def undo_last_action(self):
