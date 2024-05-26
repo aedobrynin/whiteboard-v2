@@ -367,9 +367,7 @@ class CardObject(ViewObject):
             attr_name: str
     ):
         card: internal.objects.interfaces.IBoardObjectCard = dependencies.repo.get(obj_id)
-        # print(card.attributes[attr_name])
         return card.attribute[attr_name]
-        # return dependencies.canvas.itemcget(CARD_NOTE_PREFIX + obj_id, 'fill')
 
     def _set_attribute(self,
             dependencies: internal.view.dependencies.Dependencies,
