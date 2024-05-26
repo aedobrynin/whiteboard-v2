@@ -1,6 +1,10 @@
+import asyncio
+import logging
 import tkinter
 import tkinter.font
 import tkinter.ttk
+
+import _tkinter
 
 import internal.controller.interfaces
 import internal.objects.interfaces
@@ -22,6 +26,21 @@ import internal.view.state_machine.impl.state_machine
 import internal.view.objects.impl.object_storage
 import internal.view.state_machine.impl.state_machine
 from internal.view.menu.impl.menu import Menu
+
+
+async def root_update(
+    view: tkinter.Tk, stop: asyncio.Event
+):
+    while not stop.is_set():
+        # Process all pending events
+        while view.dooneevent(_tkinter.DONT_WAIT) > 0:
+            pass
+        try:
+            view.winfo_exists()  # Will throw TclError if the main window is destroyed
+        except tkinter.TclError:
+            logging.debug('tkinter window closed')
+            stop.set()
+        await asyncio.sleep(0.01)
 
 
 def _create_dependencies(
@@ -53,15 +72,16 @@ def _create_dependencies(
     return dependencies
 
 
-def main(
+def create_view(
     controller: internal.controller.interfaces.IController,
     repo: internal.repositories.interfaces.IRepository,
     pub_sub: internal.pub_sub.interfaces.IPubSubBroker,
+    board_name: str = 'Whiteboard'
 ):
-    root_window = tkinter.Tk(className='Whiteboard')
+    root_window = tkinter.Tk(className=board_name)
     root_window.geometry('870x600')
     dependencies = _create_dependencies(root_window, controller, repo, pub_sub)
     dependencies.canvas.focus_set()
     internal.view.modules.modules.init_modules(dependencies)
     dependencies.objects_storage.create_view_objects(dependencies)
-    root_window.mainloop()
+    return root_window

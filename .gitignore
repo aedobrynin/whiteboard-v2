@@ -8,3 +8,4 @@ junit/
 server/mongo_data
 .vscode
 venv
+.coverage

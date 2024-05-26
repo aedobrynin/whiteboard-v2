@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import logging
+import typing
 
 from websockets import connect, ConnectionClosed
 
@@ -42,17 +43,49 @@ async def get_updates(
                     obj_repr = update['obj_repr']
                     data_object_type = internal.objects.BoardObjectType(update['obj_repr']['type'])
                     if data_object_type == internal.objects.BoardObjectType.TEXT:
-                        obj: internal.objects.interfaces.IBoardObjectText = repo.get(obj_id)
-                        if 'position' in obj_repr:
-                            position = internal.models.Position.from_serialized(obj_repr['position'])
+                        obj: internal.objects.interfaces.IBoardObject = repo.get(obj_id)
+                        if 'position' in obj_repr and isinstance(
+                            obj, internal.objects.interfaces.IBoardObjectWithPosition
+                        ):
+                            position = internal.models.Position.from_serialized(
+                                obj_repr['position']
+                            )
                             if position != obj.position:
                                 controller.move_object(obj.id, position - obj.position)
-                        if 'font' in obj_repr:
+                        if 'font' in obj_repr and isinstance(
+                            obj, internal.objects.interfaces.IBoardObjectWithFont
+                        ):
                             font = internal.models.Font.from_serialized(obj_repr['font'])
                             if font != obj.font:
                                 controller.edit_font(obj.id, font)
-                        if 'text' in obj_repr and obj.text != obj_repr['text']:
+                        if 'text' in obj_repr and isinstance(
+                            obj, internal.objects.interfaces.IBoardObjectWithFont
+                        ) and obj.text != obj_repr['text']:
                             controller.edit_text(obj.id, obj_repr['text'])
+                        if 'color' in obj_repr and isinstance(
+                            obj, (
+                                internal.objects.interfaces.IBoardObjectPen,
+                                internal.objects.interfaces.IBoardObjectCard,
+                                internal.objects.interfaces.IBoardObjectConnector
+                            )
+                        ) and obj.color != obj_repr['color']:
+                            controller.edit_color(obj.id, obj_repr['color'])
+                        if 'points' in obj_repr and isinstance(
+                            obj, internal.objects.interfaces.IBoardObjectPen
+                        ) and obj.points != obj_repr['points']:
+                            controller.edit_points(obj.id, obj_repr['points'])
+                        if 'children_ids' in obj_repr and isinstance(
+                            obj, internal.objects.interfaces.IBoardObjectGroup
+                        ) and obj.children_ids != obj_repr['children_ids']:
+                            controller.edit_children_ids(obj.id, obj_repr['children_ids'])
+                        if 'connector_type' in obj_repr and isinstance(
+                            obj, internal.objects.interfaces.IBoardObjectConnector
+                        ) and obj.connector_type != obj_repr['connector_type']:
+                            controller.edit_connector_type(obj.id, obj_repr['connector_type'])
+                        if 'stroke_style' in obj_repr and isinstance(
+                            obj, internal.objects.interfaces.IBoardObjectConnector
+                        ) and obj.stroke_style != obj_repr['stroke_style']:
+                            controller.edit_stroke_style(obj.id, obj_repr['stroke_style'])
                 elif action_type == 'delete':
                     if repo.get(obj_id) is None:
                         continue
