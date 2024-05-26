@@ -225,3 +225,65 @@ class IBoardObjectConnector(IBoardObject):
     @abc.abstractmethod
     def stroke_style(self, stroke_style: str) -> None:
         pass
+
+
+class IBoardObjectTable(IBoardObjectWithPosition):
+    @property
+    @abc.abstractmethod
+    def default_width(self) -> float:
+        pass
+
+    @default_width.setter
+    @abc.abstractmethod
+    def default_width(self, val: float) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def default_height(self) -> float:
+        pass
+
+    @default_height.setter
+    @abc.abstractmethod
+    def default_height(self, val: float) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def columns(self) -> int:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def rows(self) -> int:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def columns_width(self) -> list:
+        pass
+
+    @columns_width.setter
+    @abc.abstractmethod
+    def columns_width(self, val: list) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def rows_height(self) -> list:
+        pass
+
+    @rows_height.setter
+    @abc.abstractmethod
+    def rows_height(self, val: list) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def linked_objects(self) -> dict[str, list]:
+        pass
+
+    @linked_objects.setter
+    @abc.abstractmethod
+    def linked_objects(self, val: dict[str, list]) -> None:
+        pass

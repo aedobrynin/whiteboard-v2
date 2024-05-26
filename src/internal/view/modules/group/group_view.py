@@ -1,5 +1,4 @@
-from __future__ import annotations
-
+import os
 import logging
 
 import internal.objects.interfaces
@@ -14,12 +13,14 @@ from internal.view.objects.impl.object import ViewObject
 _DEFAULT_WIDTH = 2
 _DEFAULT_COLOR = 'gray'
 
+_TRANSPARENT_FILE_PATH = os.path.join(os.path.dirname(__file__), 'xbms/transparent.xbm')
+
 
 class GroupObject(ViewObject):
     def __init__(
         self,
         dependencies: internal.view.dependencies.Dependencies,
-        obj: internal.objects.interfaces.IBoardObjectGroup
+        obj: internal.objects.interfaces.IBoardObjectGroup,
     ):
         ViewObject.__init__(self, obj)
         self._children_ids = obj.children_ids
@@ -28,7 +29,7 @@ class GroupObject(ViewObject):
             *invisible_rect.as_tkinter_rect(),
             outline='green',  # for tests
             fill=_DEFAULT_COLOR,  # do not remove
-            stipple='@internal/view/modules/group/xbms/transparent.xbm',
+            stipple=f'@{_TRANSPARENT_FILE_PATH}',
             width=_DEFAULT_WIDTH,
             tags=[obj.id],
         )
@@ -72,34 +73,39 @@ class GroupObject(ViewObject):
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         dependencies.pub_sub_broker.subscribe(
-            self.id, internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID,
+            self.id,
+            internal.repositories.interfaces.REPOSITORY_PUB_SUB_ID,
             internal.repositories.events.EVENT_TYPE_OBJECT_DELETED,
             lambda publisher, event, repo: (
                 self._get_removal_children_ids_from_repo(dependencies, event)
-            )
+            ),
         )
         dependencies.pub_sub_broker.subscribe(
-            self.id, self.id,
+            self.id,
+            self.id,
             internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_CHILDREN_IDS,
             lambda publisher, event, repo: (
                 self._get_update_children_ids_from_repo(dependencies, event)
-            )
+            ),
         )
         for child_id in self._children_ids:
             dependencies.pub_sub_broker.subscribe(
-                self.id, child_id,
+                self.id,
+                child_id,
                 internal.objects.events.EVENT_TYPE_OBJECT_CHANGED_SIZE,
                 lambda publisher, event, repo: self._get_update_children_from_repo(dependencies),
             )
             dependencies.pub_sub_broker.subscribe(
-                self.id, child_id,
+                self.id,
+                child_id,
                 internal.objects.events.EVENT_TYPE_OBJECT_MOVED,
                 lambda publisher, event, repo: self._get_update_children_from_repo(dependencies),
             )
 
     def _get_removal_children_ids_from_repo(
-        self, dependencies: internal.view.dependencies.Dependencies,
-        event: internal.repositories.events.EventObjectDeleted
+        self,
+        dependencies: internal.view.dependencies.Dependencies,
+        event: internal.repositories.events.EventObjectDeleted,
     ):
         if event.object_id not in self._children_ids or not dependencies.repo.get(self.id):
             return
@@ -111,8 +117,9 @@ class GroupObject(ViewObject):
         dependencies.controller.edit_children_ids(self.id, children_ids)
 
     def _get_update_children_ids_from_repo(
-        self, dependencies: internal.view.dependencies.Dependencies,
-        event: internal.repositories.events.EventObjectDeleted
+        self,
+        dependencies: internal.view.dependencies.Dependencies,
+        event: internal.repositories.events.EventObjectDeleted,
     ):
         obj: internal.objects.interfaces.IBoardObjectGroup = dependencies.repo.get(event.object_id)
         if not obj:
@@ -124,8 +131,6 @@ class GroupObject(ViewObject):
             dependencies.canvas.addtag_withtag(obj.id, child_id)
         self._get_update_children_from_repo(dependencies)
 
-    def _get_update_children_from_repo(
-        self, dependencies: internal.view.dependencies.Dependencies
-    ):
+    def _get_update_children_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         invisible_rect = self._get_invisible_rect(dependencies)
         dependencies.canvas.coords(self.rectangle_id, *invisible_rect.as_tkinter_rect())
