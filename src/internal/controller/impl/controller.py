@@ -335,6 +335,26 @@ class Controller(interfaces.IController):
             card.attribute[attr_name] = ''
         logging.debug('adding new attribute with name=%s', attr_name)
 
+    def edit_attribute(
+            self,
+            obj_id: internal.objects.interfaces.ObjectId,
+            attr_name: str,
+            value: str
+    ):
+        obj: typing.Optional[
+            internal.objects.interfaces.IBoardObjectCard
+        ] = self._repo.get(obj_id)
+        if obj:
+            logging.debug(
+                'editing attribute of an object old value=%s with new value=%s',
+                obj.attribute[attr_name],
+                value
+            )
+            obj.attribute[attr_name] = value
+            self._on_feature_finish()
+            return
+        logging.debug('no object id=%s found to edit with attribute=%s', obj_id, attr_name)
+
     def undo_last_action(self):
         logging.debug('controller was asked to undo last action')
         self._undo_redo_manager.undo()

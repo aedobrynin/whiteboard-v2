@@ -144,6 +144,19 @@ class CardObject(ViewObject):
             label, combobox = func(dependencies)
             _widgets.append(label)
             _widgets.append(combobox)
+        card: internal.objects.interfaces.IBoardObjectCard = dependencies.repo.get(self.id)
+
+        for attr, value in card.attribute.items():
+            label, entry = self._attribute_widget(
+                dependencies,
+                self.id,
+                attr,
+                self._get_attribute,
+                self._set_attribute
+            )
+            _widgets.append(label)
+            _widgets.append(entry)
+
         return _widgets
 
     def _widgets_func(self) -> List[Callable]:
@@ -220,6 +233,30 @@ class CardObject(ViewObject):
         combobox.current(restrictions.index(getter(dependencies)))
         string_var.trace('w', lambda *_: setter(dependencies, string_var.get()))
         return label, combobox
+
+    def _attribute_widget(self,
+            dependencies: internal.view.dependencies.Dependencies,
+            obj_id: internal.objects.interfaces.ObjectId,
+            description: str,
+            getter: Callable,
+            setter: Callable
+    ) -> List[tkinter.ttk.Widget]:
+        string_var = tkinter.StringVar(value=getter(dependencies, obj_id, description))
+        label = tkinter.ttk.Label(
+            dependencies.property_bar,
+            text=description,
+            justify='left',
+            anchor='w'
+        )
+        entry = tkinter.ttk.Entry(
+            dependencies.property_bar,
+            textvariable=string_var,
+        )
+        string_var.trace('w', lambda *_: setter(
+            dependencies, obj_id, description, string_var.get()
+        ))
+
+        return label, entry
 
     def move_to(self, dependencies: internal.view.dependencies.Dependencies, x: int, y: int):
         self._update_coord_from_repo(dependencies)
@@ -323,6 +360,24 @@ class CardObject(ViewObject):
             dependencies.controller.edit_size(self.id, _DEFAULT_MEDIUM_SIZE, _DEFAULT_MEDIUM_SIZE)
         else:
             dependencies.controller.edit_size(self.id, _DEFAULT_LARGE_SIZE, _DEFAULT_LARGE_SIZE)
+
+    def _get_attribute(self,
+            dependencies: internal.view.dependencies.Dependencies,
+            obj_id: internal.objects.interfaces.ObjectId,
+            attr_name: str
+    ):
+        card: internal.objects.interfaces.IBoardObjectCard = dependencies.repo.get(obj_id)
+        # print(card.attributes[attr_name])
+        return card.attribute[attr_name]
+        # return dependencies.canvas.itemcget(CARD_NOTE_PREFIX + obj_id, 'fill')
+
+    def _set_attribute(self,
+            dependencies: internal.view.dependencies.Dependencies,
+            obj_id: internal.objects.interfaces.ObjectId,
+            attr_name: str,
+            value: str
+    ):
+        dependencies.controller.edit_attribute(obj_id, attr_name, value)
 
     def destroy(self, dependencies: internal.view.dependencies.Dependencies):
         self._unsubscribe_from_repo_object_events(dependencies)

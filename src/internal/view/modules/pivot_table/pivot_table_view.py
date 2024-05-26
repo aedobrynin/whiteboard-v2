@@ -94,7 +94,7 @@ def get_options(
         if not isinstance(obj, internal.objects.interfaces.IBoardObjectCard):
             continue
         card: internal.objects.interfaces.IBoardObjectCard = obj
-        options.add(card.attribute.get(name, None))
+        options.add(card.attribute.get(name, ''))
     return list(options)
 
 
