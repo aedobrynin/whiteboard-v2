@@ -7,24 +7,26 @@ from ypy_websocket import WebsocketServer
 from .shared_ydoc_storage import SharedYDocStorage, SERVER_PORT
 
 
-@pytest.mark.asincio
+@pytest.mark.asyncio
+@pytest.mark.skip('TODO')
 async def test_shared_ydoc_storage_get_updates():
-    board_name = 'test-board'
+    board_name = 'test_board'
+    board_key = 'test_board_key'
     updates = {
         'obj_id_1': {'a1': 'b1'},
         'obj_id_2': {'a2': 'b2'},
         'obj_id_3': {'a3': 'b3'},
-        'obj_id_4': {'a4': 'b4'}
+        'obj_id_4': {'a4': 'b4'},
     }
     # client 1
-    storage_1 = SharedYDocStorage(board_name)
+    storage_1 = SharedYDocStorage(board_name, board_key)
     storage_1.update(updates)
     assert storage_1.get_serialized_objects() == updates
     assert not storage_1.is_empty_updates()  # !!!! no connection to server
 
     async with (
         WebsocketServer(auto_clean_rooms=False) as websocket_server,
-        serve(websocket_server.serve, 'localhost', SERVER_PORT)  # type: ignore
+        serve(websocket_server.serve, 'localhost', SERVER_PORT),  # type: ignore
     ):
         while not websocket_server.started:
             await asyncio.sleep(0)

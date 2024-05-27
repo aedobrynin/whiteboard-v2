@@ -1,8 +1,11 @@
-from __future__ import annotations
 import pathlib
 import abc
 import uuid
 from typing import Optional
+import asyncio
+
+import internal.controller.interfaces
+import internal.repositories.interfaces
 
 
 class IStorage(abc.ABC):
@@ -31,9 +34,6 @@ class ILocalStorage(IStorage):
         pass
 
 
-# TODO: implement when needed
-# Should have method `get_updates()`
-# which will be applied to objects
 class ISharedStorage(IStorage):
     BoardKey = uuid.uuid4
 
@@ -46,5 +46,10 @@ class ISharedStorage(IStorage):
         pass
 
     @abc.abstractmethod
-    def get_updates(self):
+    async def run(
+        self,
+        controller: internal.controller.interfaces.IController,
+        repo: internal.repositories.interfaces.IRepository,
+        stop: asyncio.Event,
+    ):
         pass
