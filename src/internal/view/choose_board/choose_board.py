@@ -1,17 +1,20 @@
 import pathlib
 import tkinter
 import uuid
+import dataclasses
+import os
 from tkinter import ttk
 
 import pyperclip
 
 
-def _load_from_file(path_to_file: pathlib.Path):
-    with open(path_to_file, 'r') as file:
-        res = [list(line.split('#')) for line in file]
-        board_names_keys = {str(line[0]): str(line[1]) for line in res}
-
-    return board_names_keys
+def _load_available_boards_from_file(path_to_file: pathlib.Path):
+    boards = {}
+    if os.path.exists(path_to_file):
+        with open(path_to_file, 'r') as file:
+            res = [list(line.split('#')) for line in file]
+            boards = {str(line[0]): str(line[1]) for line in res}
+    return boards
 
 
 def _is_valid_uuid(uuid_to_test, version=4):
@@ -64,13 +67,19 @@ def _copy_key(available_boards: dict, boards_listbox: tkinter.Listbox):
     pyperclip.paste()
 
 
-def get_board_name_key():
+@dataclasses.dataclass
+class BoardInfo:
+    name: str
+    access_key: str
+
+
+def get_board_info() -> BoardInfo:
     window = tkinter.Tk(className='Choose board')
     window.geometry('600x300')
 
     path_to_file = 'boards.txt'
 
-    available_boards = _load_from_file(path_to_file)
+    available_boards = _load_available_boards_from_file(path_to_file)
     boards_listbox = tkinter.Listbox()
     boards_listbox.grid(row=2, column=0, columnspan=3, sticky=tkinter.EW, padx=5, pady=5)
     for board_name in available_boards.keys():
@@ -121,8 +130,9 @@ def get_board_name_key():
     )
 
     window.mainloop()
+    # TODO: отлавливать исключение
     selected_board = boards_listbox.curselection()
     selected_board_name = boards_listbox.get(selected_board)
     selected_board_key = available_boards[selected_board_name]
     window.destroy()
-    return selected_board_name, selected_board_key
+    return BoardInfo(selected_board_name, selected_board_key)
