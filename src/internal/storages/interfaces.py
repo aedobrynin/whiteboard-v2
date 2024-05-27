@@ -31,9 +31,6 @@ class ILocalStorage(IStorage):
         pass
 
 
-# TODO: implement when needed
-# Should have method `get_updates()`
-# which will be applied to objects
 class ISharedStorage(IStorage):
     BoardKey = uuid.uuid4
 
@@ -46,5 +43,10 @@ class ISharedStorage(IStorage):
         pass
 
     @abc.abstractmethod
-    def get_updates(self):
+    async def run(
+        self,
+        controller: internal.controller.impl.Controller,
+        repo: internal.repositories.impl.Repository,
+        stop: asyncio.Event,
+    ):
         pass
