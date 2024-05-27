@@ -22,8 +22,13 @@ def _is_valid_uuid(uuid_to_test, version=4):
     return str(uuid_obj) == uuid_to_test
 
 
-def _create_new_board(board_name_entry: ttk.Entry, board_key_entry: ttk.Entry, listbox: tkinter.Listbox,
-                      path_to_file: str, available_boards: dict):
+def _create_new_board(
+    board_name_entry: ttk.Entry,
+    board_key_entry: ttk.Entry,
+    listbox: tkinter.Listbox,
+    path_to_file: str,
+    available_boards: dict,
+):
     board_name = board_name_entry.get()
     board_name_entry.delete(0, tkinter.END)
 
@@ -40,7 +45,7 @@ def _create_new_board(board_name_entry: ttk.Entry, board_key_entry: ttk.Entry, l
     with open(path_to_file, 'a') as file:
         if available_boards:
             file.write('\n')
-        file.write(board_name + "#" + board_key)
+        file.write(board_name + '#' + board_key)
     available_boards[board_name] = board_key
 
     listbox.insert(tkinter.END, board_name)
@@ -63,7 +68,7 @@ def get_board_name_key():
     window = tkinter.Tk(className='Choose board')
     window.geometry('600x300')
 
-    path_to_file = "boards.txt"
+    path_to_file = 'boards.txt'
 
     available_boards = _load_from_file(path_to_file)
     boards_listbox = tkinter.Listbox()
@@ -73,45 +78,47 @@ def get_board_name_key():
 
     new_board_name_entry = ttk.Entry()
     new_board_name_entry.grid(column=1, row=0, padx=6, pady=6, sticky=tkinter.EW)
-    board_name_label = ttk.Label(text="Название доски")
+    board_name_label = ttk.Label(text='Название доски')
     board_name_label.grid(column=0, row=0, padx=6, pady=6, sticky=tkinter.EW)
 
     new_board_key_entry = ttk.Entry()
     new_board_key_entry.grid(column=1, row=1, padx=6, pady=6, sticky=tkinter.EW)
-    board_key_label = ttk.Label(text="Ключ доступа, если есть")
+    board_key_label = ttk.Label(text='Ключ доступа, если есть')
     board_key_label.grid(column=0, row=1, padx=6, pady=6, sticky=tkinter.EW)
 
     create_button = ttk.Button(
         text='Создать новую доску',
-        command=lambda board_name_entry_arg=new_board_name_entry,
-                       board_key_entry_arg=new_board_key_entry,
-                       boards_listbox_arg=boards_listbox,
-                       path_to_file_arg=path_to_file,
-                       available_boards_arg=available_boards: _create_new_board(
+        command=lambda board_name_entry_arg=new_board_name_entry, board_key_entry_arg=new_board_key_entry, boards_listbox_arg=boards_listbox, path_to_file_arg=path_to_file, available_boards_arg=available_boards: _create_new_board(
             board_name_entry_arg,
             board_key_entry_arg,
             boards_listbox_arg,
             path_to_file_arg,
-            available_boards_arg
-        )
+            available_boards_arg,
+        ),
     )
     create_button.grid(column=2, row=1, padx=6, pady=6)
 
     open_button = ttk.Button(
-        text='Открыть выбранную доску', command=lambda window_arg=window: window_arg.quit())
+        text='Открыть выбранную доску', command=lambda window_arg=window: window_arg.quit()
+    )
     open_button.grid(row=3, column=2, padx=5, pady=5)
     open_button['state'] = 'disabled'
 
     copy_key_button = ttk.Button(
         text='Скопировать ключ доски',
-        command=lambda available_boards_arg=available_boards, boards_listbox_arg=boards_listbox:
-        _copy_key(available_boards_arg, boards_listbox_arg))
+        command=lambda available_boards_arg=available_boards, boards_listbox_arg=boards_listbox: _copy_key(
+            available_boards_arg, boards_listbox_arg
+        ),
+    )
     copy_key_button.grid(row=3, column=0, padx=5, pady=5)
     copy_key_button['state'] = 'disabled'
 
-    boards_listbox.bind('<<ListboxSelect>>',
-                        lambda _, open_button_arg=open_button, copy_key_button_arg=copy_key_button:
-                        _set_buttons_state_to_normal(open_button_arg, copy_key_button_arg), )
+    boards_listbox.bind(
+        '<<ListboxSelect>>',
+        lambda _, open_button_arg=open_button, copy_key_button_arg=copy_key_button: _set_buttons_state_to_normal(
+            open_button_arg, copy_key_button_arg
+        ),
+    )
 
     window.mainloop()
     selected_board = boards_listbox.curselection()

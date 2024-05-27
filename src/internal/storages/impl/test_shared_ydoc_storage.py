@@ -39,7 +39,7 @@ async def test_shared_ydoc_storage_get_updates():
             assert obj['obj_repr'] == updates[obj['obj_id']]
 
         # client 2
-        storage_2 = SharedYDocStorage(board_name)
+        storage_2 = SharedYDocStorage(board_name, board_key)
         assert storage_2.is_empty_updates()
         async with connect(storage_2.get_uri_connection()) as websocket:
             async with storage_2.get_websocket_provider(websocket):  # type: ignore

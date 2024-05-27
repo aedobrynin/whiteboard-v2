@@ -30,7 +30,7 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
         height: float = 30,
         col_widths: list[float] = None,
         row_heights: list[float] = None,
-        linked_objects: dict[str, list] = dict()  # noqa
+        linked_objects: dict[str, list] = None,
     ):
         super().__init__(id, types.BoardObjectType.TABLE, create_dttm, position, pub_sub_broker)
         self.default_width = width
@@ -43,7 +43,10 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
             self.rows_height = [self.default_height] * rows
         else:
             self.rows_height = row_heights
-        self.linked_objects = linked_objects
+        if linked_objects:
+            self.linked_objects = linked_objects
+        else:
+            self.linked_objects = {}
 
     def serialize(self) -> dict:
         serialized = super().serialize()
@@ -58,7 +61,8 @@ class BoardObjectTable(interfaces.IBoardObjectTable, BoardObjectWithPosition):
 
     @staticmethod
     def from_serialized(
-        data: dict, pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
+        data: dict,
+        pub_sub_broker: internal.pub_sub.interfaces.IPubSubBroker,
     ) -> BoardObjectTable:
         # TODO: child class should not know how to build parent from serialized data
         return BoardObjectTable(

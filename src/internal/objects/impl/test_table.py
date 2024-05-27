@@ -18,13 +18,21 @@ def test_board_object_table_serialization():
     height = 30
     col_widths = [width] * columns
     row_heights = [height] * rows
-    linked_objects = dict()
+    linked_objects = {}
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
     table_object = BoardObjectTable(
-        id, create_dttm, position, broker,
-        columns, rows, width, height, col_widths,
-        row_heights, linked_objects
+        id,
+        create_dttm,
+        position,
+        broker,
+        columns,
+        rows,
+        width,
+        height,
+        col_widths,
+        row_heights,
+        linked_objects,
     )
     assert table_object.serialize() == {
         'id': id,
@@ -52,7 +60,7 @@ def test_board_object_table_deserialization():
     height = 30
     col_widths = [width] * columns
     row_heights = [height] * rows
-    linked_objects = dict()
+    linked_objects = {}
 
     serialized = {
         'id': id,
