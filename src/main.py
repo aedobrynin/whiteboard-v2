@@ -14,6 +14,7 @@ import internal.storages.impl
 import internal.undo_redo.impl
 import internal.view.choose_board
 import internal.view.view
+from internal.view.choose_board.choose_board import get_board_name_key
 
 _logging_choice_to_loglevel = {
     'DEBUG': logging.DEBUG,
@@ -162,8 +163,7 @@ async def create_tasks(tasks):
 async def main():
     parser = argparse.ArgumentParser()
 
-    # board_name, board_key = get_board_name_key()
-    board_name, board_key = "Whiteboard", "board"
+    board_name, board_key = get_board_name_key()
 
     parser.add_argument(
         'board-name',
