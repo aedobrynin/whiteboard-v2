@@ -14,6 +14,10 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def create_object_from_repr(self, obj_repr: dict):
+        pass
+
+    @abc.abstractmethod
     def delete_object(self, obj_id: internal.objects.interfaces.ObjectId):
         pass
 
@@ -43,14 +47,17 @@ class IController(abc.ABC):
 
     @abc.abstractmethod
     def edit_points(
-        self, obj_id: internal.objects.interfaces.ObjectId,
+        self,
+        obj_id: internal.objects.interfaces.ObjectId,
         points: typing.List[internal.models.Position],
     ):
         pass
 
     @abc.abstractmethod
     def edit_children_ids(
-        self, obj_id: internal.objects.interfaces.ObjectId, children_ids: typing.List[str],
+        self,
+        obj_id: internal.objects.interfaces.ObjectId,
+        children_ids: typing.List[str],
     ):
         pass
 
@@ -67,20 +74,14 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def edit_stroke_style(
-        self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str
-    ):
+    def edit_stroke_style(self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str):
         pass
 
-    def edit_table(
-        self, obj_id: internal.objects.interfaces.ObjectId, list_col, list_row
-    ):
+    def edit_table(self, obj_id: internal.objects.interfaces.ObjectId, list_col, list_row):
         pass
 
     def edit_linked_objects(
-        self,
-        obj_id: internal.objects.interfaces.ObjectId,
-        linked_obj: typing.Dict[str, list[int]]
+        self, obj_id: internal.objects.interfaces.ObjectId, linked_obj: typing.Dict[str, list[int]]
     ):
         pass
 

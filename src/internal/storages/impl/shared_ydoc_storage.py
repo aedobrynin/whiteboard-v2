@@ -60,16 +60,16 @@ class SharedYDocStorage(YDocStorage, interfaces.ISharedStorage):
         while not stop.is_set():
             try:
                 for update in self._get_updates():
-                    assert self._obj_updates_subscription_id is not None
-                    self._doc_ymap.unobserve(self._obj_updates_subscription_id)
-                    self._obj_updates_subscription_id = None
+                    if self._obj_updates_subscription_id is not None:
+                        self._doc_ymap.unobserve(self._obj_updates_subscription_id)
+                        self._obj_updates_subscription_id = None
 
                     # TODO: переделать на унифицированный механизм
                     obj_id = update['obj_id']
                     action_type = update['obj_action']
                     if action_type in ('add', 'update') and repo.get(obj_id) is None:
                         obj_repr = update['obj_repr']
-                        controller.create_object_from_serialize(obj_repr)
+                        controller.create_object_from_repr(obj_repr)
                     elif action_type == 'update':
                         obj_repr = update['obj_repr']
                         obj: internal.objects.interfaces.IBoardObject = repo.get(obj_id)
@@ -194,9 +194,10 @@ class SharedYDocStorage(YDocStorage, interfaces.ISharedStorage):
                     else:
                         logging.warning('new action type %s', action_type)
 
-                self._obj_updates_subscription_id = self._doc_ymap.observe(
-                    self._transaction_callback_obj
-                )
+                if self._obj_updates_subscription_id is None:
+                    self._obj_updates_subscription_id = self._doc_ymap.observe(
+                        self._transaction_callback_obj
+                    )
                 await asyncio.sleep(0.01)
             except Exception as ex:
                 logging.error('some exception in get_updates: error=%s', ex)
