@@ -1,1 +1,2 @@
 from .local_ydoc_storage import LocalYDocStorage as LocalYDocStorage
+from .shared_ydoc_storage import SharedYDocStorage as SharedYDocStorage

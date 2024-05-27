@@ -4,6 +4,9 @@ __pycache__/
 .ruff_cache/
 junit/
 *.boardobj
+boards.txt
 .idea
+server/mongo_data
 .vscode
 venv
+.coverage

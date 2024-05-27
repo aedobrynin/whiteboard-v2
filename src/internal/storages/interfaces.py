@@ -1,6 +1,7 @@
 from __future__ import annotations
 import pathlib
 import abc
+import uuid
 from typing import Optional
 
 
@@ -34,4 +35,16 @@ class ILocalStorage(IStorage):
 # Should have method `get_updates()`
 # which will be applied to objects
 class ISharedStorage(IStorage):
-    pass
+    BoardKey = uuid.uuid4
+
+    @abc.abstractmethod
+    def __init__(self, board_key: BoardKey):
+        pass
+
+    @abc.abstractmethod
+    def is_empty_updates(self):
+        pass
+
+    @abc.abstractmethod
+    def get_updates(self):
+        pass
