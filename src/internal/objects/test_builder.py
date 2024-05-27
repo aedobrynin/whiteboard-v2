@@ -62,7 +62,7 @@ def test_group_building():
         'type': 'group',
         'create_dttm': datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ'),
         'id': generate_object_id(),
-        'children_ids': [generate_object_id, generate_object_id]
+        'children_ids': [generate_object_id, generate_object_id],
     }
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
@@ -81,7 +81,7 @@ def test_connector_building():
         'color': 'black',
         'width': 2,
         'connector_type': 'curved',
-        'stroke_style': 'left'
+        'stroke_style': 'left',
     }
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
@@ -89,12 +89,13 @@ def test_connector_building():
     assert isinstance(connector, BoardObjectConnector)
     assert connector.serialize() == serialized_connector
 
+
 def test_table_building():
     serialized_table = {
         'id': generate_object_id(),
         'create_dttm': datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ'),
         'type': 'table',
-        'position':  {'x': 1, 'y': 2, 'z': 3},
+        'position': {'x': 1, 'y': 2, 'z': 3},
         'table-columns': 2,
         'table-rows': 2,
         'columns-width': [50, 50],
@@ -108,4 +109,3 @@ def test_table_building():
     table = internal.objects.build_from_serialized(serialized_table, broker)
     assert isinstance(table, BoardObjectTable)
     assert table.serialize() == serialized_table
-
