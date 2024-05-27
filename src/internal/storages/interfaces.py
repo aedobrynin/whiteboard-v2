@@ -1,8 +1,11 @@
-from __future__ import annotations
 import pathlib
 import abc
 import uuid
 from typing import Optional
+import asyncio
+
+import internal.controller.interfaces
+import internal.repository.interfaces
 
 
 class IStorage(abc.ABC):
@@ -45,8 +48,8 @@ class ISharedStorage(IStorage):
     @abc.abstractmethod
     async def run(
         self,
-        controller: internal.controller.impl.Controller,
-        repo: internal.repositories.impl.Repository,
+        controller: internal.controller.interfaces.IController,
+        repo: internal.repositories.interfaces.IRepository,
         stop: asyncio.Event,
     ):
         pass

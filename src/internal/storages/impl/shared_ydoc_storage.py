@@ -1,7 +1,6 @@
 import os
 import queue
 import logging
-from typing import Optional
 
 import asyncio
 from y_py import YMapEvent
