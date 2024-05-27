@@ -5,7 +5,7 @@ from typing import Optional
 import asyncio
 
 import internal.controller.interfaces
-import internal.repository.interfaces
+import internal.repositories.interfaces
 
 
 class IStorage(abc.ABC):
