@@ -189,22 +189,15 @@ def draw_table(
         obj_coords_x[card.id] = 0
         reps_x = 1
         for x in x_list:
-            val = obj.attribute.get(x, 'default')
-            if val != 'default':
-                # todo indexing the options
-                obj_coords_x[card.id] += x_options[x].index(val) * reps_x
-            else:
-                obj_coords_x[card.id] += len(x_options[x]) * reps_x
+            val = obj.attribute.get(x, '')
+            obj_coords_x[card.id] += x_options[x].index(val) * reps_x
             reps_x *= len(x_options[x]) + 1
 
         obj_coords_y[card.id] = 0
         reps_y = 1
         for y in y_list:
-            val = obj.attribute.get(y, 'default')
-            if val != 'default':
-                obj_coords_y[card.id] += y_options[y].index(val) * reps_y
-            else:
-                obj_coords_y[card.id] += len(y_options[y]) * reps_y
+            val = obj.attribute.get(y, '')
+            obj_coords_y[card.id] += y_options[y].index(val) * reps_y
             reps_y *= len(y_options[y]) + 1
 
         create_card_object(
@@ -233,7 +226,6 @@ def get_attr_from_position(
     col = (position.x - start_x) / width - len(y_list)
     for attr in reversed(x_list):
         opt = col % len(x_options[attr])
-        print(opt)
         attributes[attr] = x_options[attr][int(opt)]
 
         col /= len(x_options[attr])
