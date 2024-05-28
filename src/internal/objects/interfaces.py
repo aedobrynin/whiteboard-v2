@@ -287,3 +287,16 @@ class IBoardObjectTable(IBoardObjectWithPosition):
     @abc.abstractmethod
     def linked_objects(self, val: dict[str, list]) -> None:
         pass
+
+
+class IBoardObjectCode(IBoardObjectWithFont):
+
+    @property
+    @abc.abstractmethod
+    def lexer(self) -> str:
+        pass
+
+    @lexer.setter
+    @abc.abstractmethod
+    def lexer(self, lexer: str) -> None:
+        pass

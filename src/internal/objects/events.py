@@ -14,6 +14,7 @@ EVENT_TYPE_OBJECT_CHANGED_CHILDREN_IDS = 'object_changed_children_ids'
 EVENT_TYPE_OBJECT_CHANGED_ROW_SIZE = 'object_changed_row_size'
 EVENT_TYPE_OBJECT_CHANGED_COLUMN_SIZE = 'object_changed_column_size'
 EVENT_TYPE_OBJECT_CHANGED_LINKED_OBJECTS = 'object_changed_linked_objects'
+EVENT_TYPE_OBJECT_CHANGED_LEXER = 'object_changed_lexer'
 
 
 class EventObjectMoved(internal.pub_sub.event.Event):
@@ -139,6 +140,16 @@ class EventObjectChangedColumnSize(internal.pub_sub.event.Event):
 class EventObjectChangedLinkedObjects(internal.pub_sub.event.Event):
     def __init__(self, object_id: ObjectId):
         super().__init__(EVENT_TYPE_OBJECT_CHANGED_LINKED_OBJECTS)
+        self._object_id = object_id
+
+    @property
+    def object_id(self) -> ObjectId:
+        return self._object_id
+
+
+class EventObjectChangedLexer(internal.pub_sub.event.Event):
+    def __init__(self, object_id: ObjectId):
+        super().__init__(EVENT_TYPE_OBJECT_CHANGED_LEXER)
         self._object_id = object_id
 
     @property
