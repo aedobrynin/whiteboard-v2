@@ -282,7 +282,7 @@ class ConnectorObject(ViewObject):
 
     def _get_width_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
-        dependencies.canvas.itemconfigure(self.line_id, width=int(obj.width * dependencies.scaler))
+        dependencies.canvas.itemconfigure(self.line_id, width=obj.width)
 
     def _get_con_type_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(self.id)
@@ -376,7 +376,7 @@ class ConnectorObject(ViewObject):
         return obj.width
 
     def set_width(self, dependencies: internal.view.dependencies.Dependencies, width: int):
-        dependencies.controller.edit_width(self.id, width=int(width * dependencies.scaler))
+        dependencies.controller.edit_width(self.id, width=width)
 
     def get_connector_type(self, dependencies: internal.view.dependencies.Dependencies):
         return self._connector_type
@@ -393,9 +393,6 @@ class ConnectorObject(ViewObject):
         self, dependencies: internal.view.dependencies.Dependencies, stroke_style: str
     ):
         dependencies.controller.edit_stroke_style(self.id, stroke_style=stroke_style)
-
-    def scale(self, dependencies: internal.view.dependencies.Dependencies):
-        self._get_width_update_from_repo(dependencies)
 
     @staticmethod
     def _bezier(t, *points):

@@ -331,7 +331,6 @@ class CardObject(ViewObject):
 
     def scale(self, dependencies: internal.view.dependencies.Dependencies):
         self._get_font_update_from_repo(dependencies)
-        self._update_coord_from_repo(dependencies)
 
     def destroy(self, dependencies: internal.view.dependencies.Dependencies):
         self._unsubscribe_from_repo_object_events(dependencies)
