@@ -8,3 +8,4 @@ class BoardObjectType(enum.Enum):
     GROUP = 'group'
     CONNECTOR = 'connector'
     TABLE = 'table'
+    CODE = 'code'

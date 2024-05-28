@@ -85,6 +85,12 @@ class IController(abc.ABC):
     ):
         pass
 
+    @abc.abstractmethod
+    def edit_lexer(
+        self, obj_id: internal.objects.interfaces.ObjectId, lexer: str
+    ):
+        pass
+
     def undo_last_action(self):
         pass
 
