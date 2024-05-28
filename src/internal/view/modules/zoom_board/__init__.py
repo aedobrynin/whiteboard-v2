@@ -6,10 +6,7 @@ import internal.view.dependencies
 def zoom_on_wheel(
     dependencies: internal.view.dependencies.Dependencies, event: tkinter.Event
 ):
-    x = dependencies.canvas.canvasx(event.x)
-    y = dependencies.canvas.canvasy(event.y)
     scale = dependencies.scaler
-
     # Respond to Linux (event.num) or Windows (event.delta) wheel event
     if event.num == 5 or event.delta == -120:  # scroll down
         scale *= 0.9

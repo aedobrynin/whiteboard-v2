@@ -13,11 +13,12 @@ from ..consts import PEN_MENU_ENTRY_NAME, PEN_CREATE_STATE_NAME
 _CURRENT_LINE_ID = 'line_id'
 
 
-def _from_canvas_coord_to_object_points(points: list[int]):
+def _from_canvas_coord_to_object_points(points: list[int], scaler: float):
     positions = []
     # TODO: Z-coordinate
     for i in range(1, len(points), 2):
-        positions.append(internal.models.Position(points[i - 1], points[i], 1))
+        positions.append(
+            internal.models.Position(points[i - 1] / scaler, points[i] / scaler, 1))
     return positions
 
 
@@ -49,8 +50,8 @@ def _handle_event(
         return
     if _CURRENT_LINE_ID not in state_ctx:
         return
-    actual_x = int(global_dependencies.canvas.canvasx(event.x))
-    actual_y = int(global_dependencies.canvas.canvasy(event.y))
+    actual_x = global_dependencies.canvas.canvasx(event.x)
+    actual_y = global_dependencies.canvas.canvasy(event.y)
     coord = global_dependencies.canvas.coords(state_ctx[_CURRENT_LINE_ID])
     coord.append(actual_x)
     coord.append(actual_y)
@@ -65,7 +66,7 @@ def _on_leave(
     if _CURRENT_LINE_ID not in state_ctx:
         return
     points = global_dependencies.canvas.coords(state_ctx[_CURRENT_LINE_ID])
-    positions = _from_canvas_coord_to_object_points(points)
+    positions = _from_canvas_coord_to_object_points(points, global_dependencies.scaler)
     global_dependencies.controller.create_object(
         internal.objects.BoardObjectType.PEN, points=positions
     )
