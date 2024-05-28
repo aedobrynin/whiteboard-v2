@@ -22,8 +22,8 @@ def _predicate_from_root_to_create_text(
     if global_dependencies.menu.current_state != CARD_MENU_ENTRY_NAME:
         return False
 
-    actual_x = int(global_dependencies.canvas.canvasx(event.x))
-    actual_y = int(global_dependencies.canvas.canvasy(event.y))
+    actual_x = global_dependencies.canvas.canvasx(event.x)
+    actual_y = global_dependencies.canvas.canvasy(event.y)
 
     global_dependencies.controller.create_object(
         internal.objects.BoardObjectType.CARD,

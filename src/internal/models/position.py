@@ -9,9 +9,9 @@ _Z_FIELD = 'z'
 
 @dataclasses.dataclass
 class Position:
-    x: int
-    y: int
-    z: int
+    x: float
+    y: float
+    z: float
 
     def __add__(self, other: Position):
         return Position(self.x + other.x, self.y + other.y, self.z + other.z)

@@ -27,8 +27,8 @@ def _on_enter(
     state_ctx: Dict,
     event: tkinter.Event
 ):
-    x = int(global_dependencies.canvas.canvasx(event.x))
-    y = int(global_dependencies.canvas.canvasy(event.y))
+    x = global_dependencies.canvas.canvasx(event.x)
+    y = global_dependencies.canvas.canvasy(event.y)
 
     obj: Optional[IViewObject] = global_dependencies.objects_storage.get_current_opt(
         global_dependencies
@@ -57,8 +57,8 @@ def _on_leave(
 ):
     # TODO: Z-Coordinate
     diff: Position = Position(
-        int(state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X]),
-        int(state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y]),
+        state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X],
+        state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y],
         0
     )
     # TODO: we send difference, if 2 people uses it collapse
@@ -73,7 +73,7 @@ def _on_leave(
     global_dependencies.canvas.configure(background='white')
     # table object
     position = internal.models.Position(
-        int(state_ctx[_LAST_DRAG_EVENT_X]), int(state_ctx[_LAST_DRAG_EVENT_Y]), 0
+        state_ctx[_LAST_DRAG_EVENT_X], state_ctx[_LAST_DRAG_EVENT_Y], 0
     )
     parent_obj_id, coord = TableObject.add_object(global_dependencies, position)
     if parent_obj_id and parent_obj_id != state_ctx[_OBJ_ID]:
@@ -107,8 +107,8 @@ def _handle_event(
         logging.warning('move object not found')
         return
     obj.aligning(dependencies=global_dependencies)
-    x = int(global_dependencies.canvas.canvasx(event.x))
-    y = int(global_dependencies.canvas.canvasy(event.y))
+    x = global_dependencies.canvas.canvasx(event.x)
+    y = global_dependencies.canvas.canvasy(event.y)
     global_dependencies.canvas.move(
         state_ctx[_OBJ_ID],
         x - state_ctx[_LAST_DRAG_EVENT_X],

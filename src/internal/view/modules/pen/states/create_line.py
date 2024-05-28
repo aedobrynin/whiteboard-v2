@@ -26,8 +26,8 @@ def _on_enter(
     state_ctx: Dict,
     event: tkinter.Event,
 ):
-    x = int(global_dependencies.canvas.canvasx(event.x))
-    y = int(global_dependencies.canvas.canvasy(event.y))
+    x = global_dependencies.canvas.canvasx(event.x)
+    y = global_dependencies.canvas.canvasy(event.y)
     # TODO: the project should have default configs like WIDTH of line
     # We create pseudo-line, then on leave we delete this line and create line from repo
     state_ctx[_CURRENT_LINE_ID] = global_dependencies.canvas.create_line(
