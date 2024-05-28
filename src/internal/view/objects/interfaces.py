@@ -53,6 +53,14 @@ class IViewObject(abc.ABC):
     def remove_object_border(self, dependencies: internal.view.dependencies.Dependencies) -> None:
         pass
 
+    @abc.abstractmethod
+    def aligning(self, dependencies: internal.view.dependencies.Dependencies) -> None:
+        pass
+
+    @abc.abstractmethod
+    def remove_aligning(self, dependencies: internal.view.dependencies.Dependencies) -> None:
+        pass
+
 
 class IViewObjectStorage(abc.ABC):
     @abc.abstractmethod

@@ -6,7 +6,7 @@ from .impl.card import BoardObjectCard
 from .impl.group import BoardObjectGroup
 from .impl.text import BoardObjectText
 from .impl.connector import BoardObjectConnector
-from .impl.code import BoardObjectCode
+from .impl.table import BoardObjectTable
 from .impl.object_id import generate_object_id
 
 
@@ -62,7 +62,7 @@ def test_group_building():
         'type': 'group',
         'create_dttm': datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ'),
         'id': generate_object_id(),
-        'children_ids': [generate_object_id, generate_object_id]
+        'children_ids': [generate_object_id, generate_object_id],
     }
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
@@ -81,7 +81,7 @@ def test_connector_building():
         'color': 'black',
         'width': 2,
         'connector_type': 'curved',
-        'stroke_style': 'left'
+        'stroke_style': 'left',
     }
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
@@ -90,24 +90,22 @@ def test_connector_building():
     assert connector.serialize() == serialized_connector
 
 
-def test_code_building():
-    serialized_card = {
-        'type': 'code',
+def test_table_building():
+    serialized_table = {
         'id': generate_object_id(),
-        'create_dttm': datetime.now().replace(microsecond=0).strftime('%Y-%m-%dT%H-%M-%SZ'),
+        'create_dttm': datetime.now().strftime('%Y-%m-%dT%H-%M-%SZ'),
+        'type': 'table',
         'position': {'x': 1, 'y': 2, 'z': 3},
-        'text': 'print(2 + 2)',
-        'font': {
-            'slant': 'roman',
-            'weight': 'normal',
-            'color': 'black',
-            'family': 'Arial',
-            'size': 14,
-        },
-        'lexer': 'python',
+        'table-columns': 2,
+        'table-rows': 2,
+        'columns-width': [50, 50],
+        'rows-height': [50, 50],
+        'default-width': 50,
+        'default-height': 50,
+        'linked-objects': {},
     }
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
-    code = internal.objects.build_from_serialized(serialized_card, broker)
-    assert isinstance(code, BoardObjectCode)
-    assert code.serialize() == serialized_card
+    table = internal.objects.build_from_serialized(serialized_table, broker)
+    assert isinstance(table, BoardObjectTable)
+    assert table.serialize() == serialized_table

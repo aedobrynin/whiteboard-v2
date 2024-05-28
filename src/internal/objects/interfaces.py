@@ -227,13 +227,63 @@ class IBoardObjectConnector(IBoardObject):
         pass
 
 
-class IBoardObjectCode(IBoardObjectWithFont, ABC):
+class IBoardObjectTable(IBoardObjectWithPosition):
     @property
     @abc.abstractmethod
-    def lexer(self) -> str:
+    def default_width(self) -> float:
         pass
 
-    @lexer.setter
+    @default_width.setter
     @abc.abstractmethod
-    def lexer(self, lexer: str) -> None:
+    def default_width(self, val: float) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def default_height(self) -> float:
+        pass
+
+    @default_height.setter
+    @abc.abstractmethod
+    def default_height(self, val: float) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def columns(self) -> int:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def rows(self) -> int:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def columns_width(self) -> list:
+        pass
+
+    @columns_width.setter
+    @abc.abstractmethod
+    def columns_width(self, val: list) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def rows_height(self) -> list:
+        pass
+
+    @rows_height.setter
+    @abc.abstractmethod
+    def rows_height(self, val: list) -> None:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def linked_objects(self) -> dict[str, list]:
+        pass
+
+    @linked_objects.setter
+    @abc.abstractmethod
+    def linked_objects(self, val: dict[str, list]) -> None:
         pass
