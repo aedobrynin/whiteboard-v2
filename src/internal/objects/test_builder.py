@@ -49,6 +49,7 @@ def test_card_building():
         'color': 'light yellow',
         'width': 100,
         'height': 150,
+        'attribute': {'age': '10'}
     }
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 

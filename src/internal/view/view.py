@@ -21,6 +21,7 @@ import internal.view.modules.move_object
 import internal.view.modules.pen
 import internal.view.modules.submenu
 import internal.view.modules.table
+import internal.view.modules.pivot_table
 import internal.view.modules.text
 import internal.view.modules.undo_redo
 import internal.view.modules.zoom_board

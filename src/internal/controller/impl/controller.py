@@ -371,6 +371,33 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
+    def add_attribute(
+        self, attr_name: str, value: str
+    ):
+        for obj in self._repo.get_all():
+            if isinstance(obj, internal.objects.interfaces.IBoardObjectCard):
+                attribute = obj.attribute
+                attribute[attr_name] = value
+                obj.attribute = attribute.copy()
+        logging.debug('added new attribute=%s to all cards with value=%s', attr_name, value)
+
+    def edit_attribute(
+        self, obj_id: internal.objects.interfaces.ObjectId, attr_name: str, value: str
+    ):
+        obj: typing.Optional[internal.objects.interfaces.IBoardObjectCard] = self._repo.get(obj_id)
+        if obj:
+
+            attributes = obj.attribute
+            attributes[attr_name] = value
+            obj.attribute = attributes.copy()
+            logging.debug(
+                'editing attribute of an object old value=%s with new value=%s',
+                obj.attribute[attr_name], value
+            )
+            self._on_feature_finish()
+            return
+        logging.debug('no object id=%s found to edit with attribute=%s', obj_id, attr_name)
+
     def undo_last_action(self):
         logging.debug('controller was asked to undo last action')
         self._undo_redo_manager.undo()
