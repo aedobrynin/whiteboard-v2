@@ -7,3 +7,4 @@ junit/
 .idea
 .vscode
 venv
+boards.txt
