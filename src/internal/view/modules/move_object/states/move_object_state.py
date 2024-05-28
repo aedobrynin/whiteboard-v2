@@ -56,9 +56,10 @@ def _on_leave(
     event: tkinter.Event
 ):
     # TODO: Z-Coordinate
+    scaler = global_dependencies.scaler
     diff: Position = Position(
-        state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X],
-        state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y],
+        (state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X]) / scaler,
+        (state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y]) / scaler,
         0
     )
     # TODO: we send difference, if 2 people uses it collapse
