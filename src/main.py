@@ -56,7 +56,7 @@ async def main():
     parser = argparse.ArgumentParser()
 
     # board_name, board_key = get_board_name_key()
-    board_name, board_key = 'Whiteboard', 'board'
+    board_name, board_key = 'Whiteboard', 'board_sardor'
 
     parser.add_argument(
         'board-name',

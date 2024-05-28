@@ -23,6 +23,7 @@ import internal.view.modules.submenu
 import internal.view.modules.table
 import internal.view.modules.text
 import internal.view.modules.undo_redo
+import internal.view.modules.zoom_board
 import internal.view.objects.impl.object_storage
 import internal.view.state_machine.impl.state_machine
 from internal.view.menu.impl.menu import Menu
@@ -62,6 +63,7 @@ def _create_dependencies(
     dependencies.repo = repo
     dependencies.pub_sub_broker = pub_sub
     dependencies.menu = menu
+    dependencies.scaler = 1.0  # 100%
     dependencies.objects_storage = internal.view.objects.impl.object_storage.ViewObjectStorage(
         dependencies
     )

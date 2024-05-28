@@ -292,14 +292,6 @@ class CardObject(ViewObject):
         font.color = color
         dependencies.controller.edit_font(self.id, font=font)
 
-    def _get_font_size(self, dependencies: internal.view.dependencies.Dependencies):
-        return self._get_font(dependencies).size
-
-    def _set_font_size(self, dependencies: internal.view.dependencies.Dependencies, size: str):
-        font = self._get_font(dependencies)
-        font.size = int(size)
-        dependencies.controller.edit_font(self.id, font=font)
-
     def _get_card_color(self, dependencies: internal.view.dependencies.Dependencies):
         return dependencies.canvas.itemcget(self.note_id, 'fill')
 
@@ -323,6 +315,14 @@ class CardObject(ViewObject):
             dependencies.controller.edit_size(self.id, _DEFAULT_MEDIUM_SIZE, _DEFAULT_MEDIUM_SIZE)
         else:
             dependencies.controller.edit_size(self.id, _DEFAULT_LARGE_SIZE, _DEFAULT_LARGE_SIZE)
+
+    def scale(self, dependencies: internal.view.dependencies.Dependencies):
+        obj: internal.objects.interfaces.IBoardObjectText = dependencies.repo.get(self.id)
+        font = obj.font
+        font.size *= dependencies.scaler
+        font.size = int(font.size)
+        tk_font = internal.view.utils.as_tkinter_object_font(font)
+        dependencies.canvas.itemconfigure(self.text_id, font=tk_font)
 
     def destroy(self, dependencies: internal.view.dependencies.Dependencies):
         self._unsubscribe_from_repo_object_events(dependencies)

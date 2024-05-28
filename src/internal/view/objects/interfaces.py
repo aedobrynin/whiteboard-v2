@@ -58,6 +58,10 @@ class IViewObject(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def scale(self, dependencies: internal.view.dependencies.Dependencies) -> None:
+        pass
+
+    @abc.abstractmethod
     def remove_aligning(self, dependencies: internal.view.dependencies.Dependencies) -> None:
         pass
 

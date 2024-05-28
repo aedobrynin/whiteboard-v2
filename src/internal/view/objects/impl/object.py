@@ -229,6 +229,9 @@ class ViewObject(IViewObject):
                     return
             self.remove_aligning(dependencies)
 
+    def scale(self, dependencies: internal.view.dependencies.Dependencies):
+        pass
+
     def remove_aligning(self, dependencies: internal.view.dependencies.Dependencies):
         obj_id = f'{_ALIGNING_PREFIX}{self.id}'
         dependencies.canvas.delete(obj_id)

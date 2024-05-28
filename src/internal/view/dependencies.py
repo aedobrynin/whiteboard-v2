@@ -17,6 +17,7 @@ class Dependencies:
     canvas: tkinter.Canvas
     property_bar: tkinter.ttk.Frame
     menu: internal.view.menu.impl.menu.Menu
+    scaler: float
     objects_storage: internal.view.objects.interfaces.IViewObjectStorage
     state_machine: internal.view.state_machine.interfaces.IStateMachine
     controller: internal.controller.interfaces.IController
