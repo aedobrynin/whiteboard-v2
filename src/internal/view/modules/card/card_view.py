@@ -92,8 +92,8 @@ class CardObject(ViewObject):
 
     def _update_coord_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectCard = dependencies.repo.get(self.id)
-        x = obj.position.x
-        y = obj.position.y
+        x = obj.position.x * dependencies.scaler
+        y = obj.position.y * dependencies.scaler
         width = int(obj.width * dependencies.scaler)
         height = int(obj.height * dependencies.scaler)
         dependencies.canvas.coords(self.note_id, x, y, x + width, y + height)

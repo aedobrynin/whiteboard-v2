@@ -19,9 +19,10 @@ def zoom_on_wheel(
         scale = min(scale, 4.0)  # 400%
     diff_scale = scale / dependencies.scaler
     dependencies.scaler = scale
-    dependencies.canvas.scale(tkinter.ALL, x, y, diff_scale, diff_scale)
+    dependencies.canvas.scale(tkinter.ALL, x, y, diff_scale, diff_scale, )
     for obj in dependencies.objects_storage.get_objects().values():
         obj.scale(dependencies)
+        obj_repo = dependencies.repo.get(obj.id)
 
 
 def bind_on_events(dependencies: internal.view.dependencies.Dependencies):

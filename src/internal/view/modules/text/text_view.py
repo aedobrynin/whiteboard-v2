@@ -156,7 +156,9 @@ class TextObject(ViewObject):
 
     def _get_move_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectText = dependencies.repo.get(self.id)
-        self.move_to(dependencies, obj.position.x, obj.position.y)
+        self.move_to(
+            dependencies, obj.position.x * dependencies.scaler, obj.position.y * dependencies.scaler
+        )
 
     def _get_font(
         self, dependencies: internal.view.dependencies.Dependencies, scaled=False

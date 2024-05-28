@@ -45,8 +45,8 @@ class PenObject(ViewObject):
         obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
         points = []
         for position in obj.points:
-            points.append(position.x)
-            points.append(position.y)
+            points.append(position.x * dependencies.scaler)
+            points.append(position.y * dependencies.scaler)
         return points
 
     def _subscribe_to_repo_object_events(

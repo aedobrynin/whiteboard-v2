@@ -57,8 +57,8 @@ def _on_leave(
 ):
     # TODO: Z-Coordinate
     diff: Position = Position(
-        state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X],
-        state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y],
+        int(state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X]),
+        int(state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y]),
         0
     )
     # TODO: we send difference, if 2 people uses it collapse
@@ -73,7 +73,7 @@ def _on_leave(
     global_dependencies.canvas.configure(background='white')
     # table object
     position = internal.models.Position(
-        state_ctx[_LAST_DRAG_EVENT_X], state_ctx[_LAST_DRAG_EVENT_Y], 0
+        int(state_ctx[_LAST_DRAG_EVENT_X]), int(state_ctx[_LAST_DRAG_EVENT_Y]), 0
     )
     parent_obj_id, coord = TableObject.add_object(global_dependencies, position)
     if parent_obj_id and parent_obj_id != state_ctx[_OBJ_ID]:
