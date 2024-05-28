@@ -4,6 +4,7 @@ import tkinter.font
 import tkinter.ttk
 from typing import List, Callable
 
+import internal.models
 import internal.objects.interfaces
 import internal.objects.events
 import internal.repositories.interfaces
@@ -93,9 +94,11 @@ class CardObject(ViewObject):
         obj: internal.objects.interfaces.IBoardObjectCard = dependencies.repo.get(self.id)
         x = obj.position.x
         y = obj.position.y
-        dependencies.canvas.coords(self.note_id, x, y, x + obj.width, y + obj.height)
-        dependencies.canvas.coords(self.text_id, x + obj.width / 2, y + obj.height / 2)
-        dependencies.canvas.itemconfigure(self.text_id, width=obj.width)
+        width = int(obj.width * dependencies.scaler)
+        height = int(obj.height * dependencies.scaler)
+        dependencies.canvas.coords(self.note_id, x, y, x + width, y + height)
+        dependencies.canvas.coords(self.text_id, x + width / 2, y + height / 2)
+        dependencies.canvas.itemconfigure(self.text_id, width=width)
 
     def _subscribe_to_repo_object_events(
         self, dependencies: internal.view.dependencies.Dependencies
@@ -225,8 +228,11 @@ class CardObject(ViewObject):
         self._update_coord_from_repo(dependencies)
 
     def _get_font_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
-        obj: internal.objects.interfaces.IBoardObjectCard = dependencies.repo.get(self.id)
-        font = obj.font
+        obj: internal.objects.interfaces.IBoardObjectText = dependencies.repo.get(self.id)
+        font = internal.models.Font(
+            obj.font.slant, obj.font.weight, obj.font.color, obj.font.family,
+            obj.font.size * dependencies.scaler
+        )
         tk_font = internal.view.utils.as_tkinter_object_font(font)
         dependencies.canvas.itemconfigure(self.text_id, font=tk_font)
         dependencies.canvas.itemconfigure(self.text_id, fill=font.color)
@@ -247,10 +253,17 @@ class CardObject(ViewObject):
     def _get_size_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         self._update_coord_from_repo(dependencies)
 
-    def _get_font(self, dependencies: internal.view.dependencies.Dependencies):
-        font = dependencies.canvas.itemcget(self.text_id, 'font')
-        color = dependencies.canvas.itemcget(self.text_id, 'fill')
-        return internal.view.utils.as_object_font(font, color)
+    def _get_font(
+        self, dependencies: internal.view.dependencies.Dependencies, scaled=False
+    ):
+        obj: internal.objects.interfaces.IBoardObjectText = dependencies.repo.get(self.id)
+        font = internal.models.Font(
+            obj.font.slant, obj.font.weight, obj.font.color, obj.font.family,
+            obj.font.size * dependencies.scaler
+        )
+        if not scaled:
+            font.size /= dependencies.scaler
+        return font
 
     def _get_font_slant(self, dependencies: internal.view.dependencies.Dependencies):
         return self._get_font(dependencies).slant
@@ -299,11 +312,11 @@ class CardObject(ViewObject):
         dependencies.controller.edit_color(self.id, color=color)
 
     def _get_card_size(self, dependencies: internal.view.dependencies.Dependencies):
-        x1, y1, x2, y2 = dependencies.canvas.coords(self.note_id)
+        obj: internal.objects.interfaces.IBoardObjectCard = dependencies.repo.get(self.id)
         # TODO: move size names to consts
-        if abs(y2 - y1) <= _DEFAULT_SMALL_SIZE:
+        if abs(obj.width) <= _DEFAULT_SMALL_SIZE:
             return 'Small'
-        elif abs(y2 - y1) <= _DEFAULT_MEDIUM_SIZE:
+        elif abs(obj.width) <= _DEFAULT_MEDIUM_SIZE:
             return 'Medium'
         else:
             return 'Large'
@@ -317,12 +330,8 @@ class CardObject(ViewObject):
             dependencies.controller.edit_size(self.id, _DEFAULT_LARGE_SIZE, _DEFAULT_LARGE_SIZE)
 
     def scale(self, dependencies: internal.view.dependencies.Dependencies):
-        obj: internal.objects.interfaces.IBoardObjectText = dependencies.repo.get(self.id)
-        font = obj.font
-        font.size *= dependencies.scaler
-        font.size = int(font.size)
-        tk_font = internal.view.utils.as_tkinter_object_font(font)
-        dependencies.canvas.itemconfigure(self.text_id, font=tk_font)
+        self._get_font_update_from_repo(dependencies)
+        self._update_coord_from_repo(dependencies)
 
     def destroy(self, dependencies: internal.view.dependencies.Dependencies):
         self._unsubscribe_from_repo_object_events(dependencies)

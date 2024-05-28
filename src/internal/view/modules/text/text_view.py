@@ -211,13 +211,7 @@ class TextObject(ViewObject):
         dependencies.controller.edit_font(self.id, font=font)
 
     def scale(self, dependencies: internal.view.dependencies.Dependencies):
-        obj: internal.objects.interfaces.IBoardObjectText = dependencies.repo.get(self.id)
-        font = internal.models.Font(
-            obj.font.slant, obj.font.weight, obj.font.color, obj.font.family,
-            obj.font.size * dependencies.scaler
-        )
-        tk_font = internal.view.utils.as_tkinter_object_font(font)
-        dependencies.canvas.itemconfigure(self.text_id, font=tk_font)
+        self._get_font_update_from_repo(dependencies)
 
     def destroy(self, dependencies: internal.view.dependencies.Dependencies):
         self._unsubscribe_from_repo_object_events(dependencies)

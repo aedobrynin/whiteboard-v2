@@ -6,7 +6,6 @@ import internal.view.dependencies
 def zoom_on_wheel(
     dependencies: internal.view.dependencies.Dependencies, event: tkinter.Event
 ):
-    print(event, event.num, event.delta)
     x = dependencies.canvas.canvasx(event.x)
     y = dependencies.canvas.canvasy(event.y)
     scale = dependencies.scaler
@@ -14,14 +13,11 @@ def zoom_on_wheel(
     # Respond to Linux (event.num) or Windows (event.delta) wheel event
     if event.num == 5 or event.delta == -120:  # scroll down
         scale *= 0.9
-        scale = max(scale, 0.2)  #
-        print(scale)
+        scale = max(scale, 0.2)  # 20%
     if event.num == 4 or event.delta == 120:  # scroll up
         scale *= 1.1
         scale = min(scale, 4.0)  # 400%
-        print(scale)
     diff_scale = scale / dependencies.scaler
-    print(diff_scale)
     dependencies.scaler = scale
     dependencies.canvas.scale(tkinter.ALL, x, y, diff_scale, diff_scale)
     for obj in dependencies.objects_storage.get_objects().values():
