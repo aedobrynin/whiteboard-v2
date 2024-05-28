@@ -105,6 +105,51 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
+    def _build_create_object_from_repr_action(self, serialized: dict) -> internal.models.IAction:
+        class CreateObjectFromReprAction(internal.models.IAction):
+            _controller: Controller
+            _broker: internal.pub_sub.interfaces.IPubSubBroker
+            _serialized: dict
+            _obj_id: str
+
+            def __init__(
+                self,
+                controller: Controller,
+                broker: internal.pub_sub.interfaces.IPubSubBroker,
+                serialized_obj: dict,
+            ):
+                self._controller = controller
+                self._broker = broker
+                self._serialized_obj = serialized_obj
+
+            def do(self):
+                # TODO: remember representation of created object
+                # `create(1) -> undo -> redo(2)`
+                # objects which were created on (1) and (2) should have the same id and representation
+                logging.debug('creating from serialized=%s', self._serialized_obj)
+                created_object = internal.objects.build_from_serialized(
+                    self._serialized_obj, self._broker
+                )
+                self._obj_id = created_object.id
+                self._controller._repo.add(created_object)
+                self._controller._on_feature_finish()
+
+            def undo(self):
+                if not self._obj_id:
+                    logging.warning('Trying to undo CreateObjectAction with obj_id=None')
+                    return
+                action = self._controller._build_delete_object_action(self._obj_id)
+                action.do()
+                self._controller._on_feature_finish()
+
+        return CreateObjectFromReprAction(self, self._pub_sub_broker, serialized)
+
+    def create_object_from_repr(self, obj_repr: dict):
+        action = self._build_create_object_from_repr_action(obj_repr)
+        action.do()
+        self._undo_redo_manager.store_action(action)
+        self._on_feature_finish()
+
     def _build_delete_object_action(
         self, obj_id: internal.objects.interfaces.ObjectId
     ) -> internal.models.IAction:
@@ -244,7 +289,8 @@ class Controller(interfaces.IController):
         self._undo_redo_manager.store_action(action)
 
     def edit_points(
-        self, obj_id: internal.objects.interfaces.ObjectId,
+        self,
+        obj_id: internal.objects.interfaces.ObjectId,
         points: typing.List[internal.models.Position],
     ):
         action = EditAction(
@@ -254,7 +300,9 @@ class Controller(interfaces.IController):
         self._undo_redo_manager.store_action(action)
 
     def edit_children_ids(
-        self, obj_id: internal.objects.interfaces.ObjectId, children_ids: typing.List[str],
+        self,
+        obj_id: internal.objects.interfaces.ObjectId,
+        children_ids: typing.List[str],
     ):
         action = EditAction(
             self, obj_id, [PropertyChange('children_ids', children_ids)]
@@ -271,9 +319,7 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
-    def edit_stroke_style(
-        self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str
-    ):
+    def edit_stroke_style(self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str):
         action = EditAction(
             self, obj_id, [PropertyChange('stroke_style', stroke_style)]
         )  # TODO: property names as consts
@@ -306,22 +352,20 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
-    def edit_table(
-        self, obj_id: internal.objects.interfaces.ObjectId, list_col, list_row
-    ):
+    def edit_table(self, obj_id: internal.objects.interfaces.ObjectId, list_col, list_row):
         action = EditAction(
-            self, obj_id, changes=[
+            self,
+            obj_id,
+            changes=[
                 PropertyChange('columns_width', list_col),
-                PropertyChange('rows_height', list_row)
+                PropertyChange('rows_height', list_row),
             ],
         )
         action.do()
         self._undo_redo_manager.store_action(action)
 
     def edit_linked_objects(
-        self,
-        obj_id: internal.objects.interfaces.ObjectId,
-        linked_obj: typing.Dict[str, list[int]]
+        self, obj_id: internal.objects.interfaces.ObjectId, linked_obj: typing.Dict[str, list[int]]
     ):
         action = EditAction(self, obj_id, [PropertyChange('linked_objects', linked_obj)])
         action.do()

@@ -89,10 +89,7 @@ class ViewObject(IViewObject):
         # flag = False
 
         top = dependencies.canvas.find_overlapping(
-            obj_frame[0] - _PADDING,
-            obj_frame[1] - _PADDING,
-            obj_frame[2] + _PADDING,
-            obj_frame[1]
+            obj_frame[0] - _PADDING, obj_frame[1] - _PADDING, obj_frame[2] + _PADDING, obj_frame[1]
         )
         for item in top:
             tags = dependencies.canvas.gettags(item)
@@ -128,7 +125,7 @@ class ViewObject(IViewObject):
                 obj_frame[0] - _PADDING,
                 obj_frame[3],
                 obj_frame[2] + _PADDING,
-                obj_frame[3] + _PADDING
+                obj_frame[3] + _PADDING,
             )
             for item in bottom:
                 tags = dependencies.canvas.gettags(item)
@@ -159,10 +156,7 @@ class ViewObject(IViewObject):
                     return
                 self.remove_aligning(dependencies)
         left = dependencies.canvas.find_overlapping(
-            obj_frame[0] - _PADDING,
-            obj_frame[1] - _PADDING,
-            obj_frame[0],
-            obj_frame[3] + _PADDING
+            obj_frame[0] - _PADDING, obj_frame[1] - _PADDING, obj_frame[0], obj_frame[3] + _PADDING
         )
         for item in left:
             tags = dependencies.canvas.gettags(item)
@@ -197,7 +191,7 @@ class ViewObject(IViewObject):
                 obj_frame[2],
                 obj_frame[1] - _PADDING,
                 obj_frame[2] + _PADDING,
-                obj_frame[3] + _PADDING
+                obj_frame[3] + _PADDING,
             )
             for item in right:
                 tags = dependencies.canvas.gettags(item)
@@ -206,8 +200,7 @@ class ViewObject(IViewObject):
                     continue
                 obj_x1, obj_y1, obj_x2, obj_y2 = dependencies.canvas.bbox(tags[0])
                 if not (
-                    obj_y1 in [obj_frame[1], obj_frame[3]] or
-                    obj_y2 in [obj_frame[1], obj_frame[3]]
+                    obj_y1 in [obj_frame[1], obj_frame[3]] or obj_y2 in [obj_frame[1], obj_frame[3]]
                 ):
                     continue
 

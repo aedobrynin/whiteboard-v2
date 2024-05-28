@@ -1,0 +1,33 @@
+networks:
+  whiteboard:
+    name: "whiteboard"
+
+services:
+  whiteboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lilianalyakh/whiteboard:latest
+    env_file:
+      - config.env
+    networks:
+      - whiteboard
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    networks:
+      - whiteboard
+    ports:
+      - "27017:27017"
+    env_file:
+      - config.env
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

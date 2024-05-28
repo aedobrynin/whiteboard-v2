@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import y_py
 
 from .. import interfaces
@@ -20,11 +18,11 @@ class YDocStorage(interfaces.IStorage):
     # TODO: better api for updates
     def update(self, updates: interfaces.IStorage.UpdatesType):
         with self._y_doc.begin_transaction() as tx:
-            for obj_id, new_repr in updates.items():
-                if new_repr is None:
+            for obj_id, update in updates.items():
+                if update is None:
                     self._objects.pop(tx, obj_id)
                 else:
                     # TODO: new repr should be YMap
                     # Right now we trigger change event on the whole object,
                     # not on the particular properties
-                    self._objects.set(tx, obj_id, new_repr)
+                    self._objects.set(tx, obj_id, update)
