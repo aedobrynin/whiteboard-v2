@@ -56,15 +56,20 @@ class TableObject(ViewObject):
     # TODO: очень много легаси, нужно поправить
     def draw_table(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectTable = dependencies.repo.get(self.id)
+        position = internal.models.Position(
+            obj.position.x * dependencies.scaler,
+            obj.position.y * dependencies.scaler,
+            obj.position.z
+        )
         if not obj:
             logging.warning('Table object not found')
             return
         self._cells = [[
             dependencies.canvas.create_rectangle(
-                obj.position.x + sum(obj.columns_width[:i]),
-                obj.position.y + sum(obj.rows_height[:j]),
-                obj.position.x + sum(obj.columns_width[:i + 1]),
-                obj.position.y + sum(obj.rows_height[:j + 1]),
+                position.x + sum(obj.columns_width[:i]),
+                position.y + sum(obj.rows_height[:j]),
+                position.x + sum(obj.columns_width[:i + 1]),
+                position.y + sum(obj.rows_height[:j + 1]),
                 fill='white',
                 tags=[obj.id, f'{i},{j}/' + obj.id, 'table', 'table' + obj.id]
             )
@@ -72,31 +77,31 @@ class TableObject(ViewObject):
         ] for j in range(obj.rows)]
 
         self._add_column_id = dependencies.canvas.create_text(
-            obj.position.x + sum(obj.columns_width) + 10, obj.position.y, text='+',
+            position.x + sum(obj.columns_width) + 10, position.y, text='+',
             tags=[obj.id]
         )
 
         self._add_row_id = dependencies.canvas.create_text(
-            obj.position.x + sum(obj.columns_width) / 2, obj.position.y + sum(obj.rows_height) + 10,
+            position.x + sum(obj.columns_width) / 2, position.y + sum(obj.rows_height) + 10,
             text='+', tags=[obj.id]
         )
 
         self._column_lines = [
             dependencies.canvas.create_line(
-                obj.position.x + sum(obj.columns_width[:i]),
-                obj.position.y,
-                obj.position.x + sum(obj.columns_width[:i]),
-                obj.position.y + sum(obj.rows_height),
+                position.x + sum(obj.columns_width[:i]),
+                position.y,
+                position.x + sum(obj.columns_width[:i]),
+                position.y + sum(obj.rows_height),
                 tags=[obj.id, obj.id + 'col_l', 'line', f'{i - 1}', obj.id + 'col_l' + f'/{i - 1}']
             ) for i in range(1, obj.columns + 1)
         ]
 
         self._row_lines = [
             dependencies.canvas.create_line(
-                obj.position.x,
-                obj.position.y + sum(obj.rows_height[:i]),
-                obj.position.x + sum(obj.columns_width),
-                obj.position.y + sum(obj.rows_height[:i]),
+                position.x,
+                position.y + sum(obj.rows_height[:i]),
+                position.x + sum(obj.columns_width),
+                position.y + sum(obj.rows_height[:i]),
                 tags=[obj.id, obj.id + 'row_l', 'line', f'{i - 1}',
                       obj.id + 'row_l' + f'/{i - 1}']
             ) for i in range(1, obj.rows + 1)
@@ -150,7 +155,12 @@ class TableObject(ViewObject):
         self, dependencies: internal.view.dependencies.Dependencies
     ):
         obj: internal.objects.interfaces.IBoardObjectTable = dependencies.repo.get(self.id)
-        dependencies.canvas.moveto(obj.id, obj.position.x, obj.position.y)
+        position = internal.models.Position(
+            obj.position.x * dependencies.scaler,
+            obj.position.y * dependencies.scaler,
+            obj.position.z
+        )
+        dependencies.canvas.moveto(obj.id, position.x, position.y)
 
     def _get_child_move_update(
         self, dependencies: internal.view.dependencies.Dependencies,
