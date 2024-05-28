@@ -61,6 +61,10 @@ class StateMachine(internal.view.state_machine.interfaces.IStateMachine):
         self._global_dependencies.canvas.bind('<ButtonRelease-3>', self.handle_event)
         # combination of control+left-button-mouse
         self._global_dependencies.canvas.bind('<Control-ButtonPress-1>', self.handle_event)
+        # combination of control+left-button-mouse
+        self._global_dependencies.canvas.bind('<Deactivate>', self.handle_event)
+        # combination of control+left-button-mouse
+        self._global_dependencies.canvas.bind('<Property>', self.handle_event)
         # menu bind
         self._global_dependencies.menu.bind(self.handle_event)
 

@@ -33,6 +33,7 @@ def _get_serialized_card():
             'color': 'light yellow',
             'width': 100,
             'height': 150,
+            'attribute': {'age': '10'},
         }
 
     return _impl

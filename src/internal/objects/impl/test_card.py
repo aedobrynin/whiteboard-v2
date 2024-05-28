@@ -17,9 +17,10 @@ def test_board_object_card_serialization():
     color = 'light blue'
     width = 100
     height = 150
+    attribute = {'age': 10}
     broker = internal.pub_sub.mocks.MockPubSubBroker()
 
-    card = BoardObjectCard(id, create_dttm, position, broker, text, font, color, width, height)
+    card = BoardObjectCard(id, create_dttm, position, broker, text, font, color, width, height, attribute)
     assert card.serialize() == {
         'id': id,
         'create_dttm': create_dttm.strftime('%Y-%m-%dT%H-%M-%SZ'),
@@ -30,6 +31,7 @@ def test_board_object_card_serialization():
         'color': color,
         'width': width,
         'height': height,
+        'attribute': attribute,
     }
 
 
@@ -43,6 +45,7 @@ def test_board_object_card_deserialization():
     color = 'light blue'
     width = 100
     height = 150
+    attribute = {'age': '10'}
     serialized = {
         'id': id,
         'create_dttm': create_dttm.strftime('%Y-%m-%dT%H-%M-%SZ'),
@@ -53,6 +56,7 @@ def test_board_object_card_deserialization():
         'color': color,
         'width': width,
         'height': height,
+        'attribute': attribute,
     }
 
     broker = internal.pub_sub.mocks.MockPubSubBroker()
@@ -67,3 +71,4 @@ def test_board_object_card_deserialization():
     assert card.color == color
     assert card.width == width
     assert card.height == height
+    assert card.attribute == attribute

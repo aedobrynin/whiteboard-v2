@@ -15,9 +15,11 @@ _FONT_FIELD = 'font'
 _COLOR_FIELD = 'color'
 _WIDTH_FIELD = 'width'
 _HEIGHT_FIELD = 'height'
+_ATTRIBUTED_FIELD = 'attribute'
 
 
 class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
+
     def __init__(
         self,
         id: interfaces.ObjectId,
@@ -29,11 +31,13 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         color: str = 'light yellow',
         width: int = 150,
         height: int = 150,
+        attribute: dict[str, str] = dict(),  # noqa
     ):
         super().__init__(id, types.BoardObjectType.CARD, create_dttm, position, pub_sub_broker, text, font)
         self.color = color
         self.width = width
         self.height = height
+        self.attribute = attribute
 
     @property
     def color(self) -> str:
@@ -62,11 +66,20 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         self._height = height
         self._publish(events.EventObjectChangedSize(self.id))
 
+    @property
+    def attribute(self) -> dict[str, str]:
+        return self._attribute
+
+    @attribute.setter
+    def attribute(self, attribute: dict[str, str]) -> None:
+        self._attribute = attribute
+
     def serialize(self) -> dict:
         serialized = super().serialize()
         serialized[_COLOR_FIELD] = self.color
         serialized[_WIDTH_FIELD] = self.width
         serialized[_HEIGHT_FIELD] = self.height
+        serialized[_ATTRIBUTED_FIELD] = self.attribute
         return serialized
 
     @staticmethod
@@ -85,4 +98,5 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
             data[_COLOR_FIELD],
             data[_WIDTH_FIELD],
             data[_HEIGHT_FIELD],
+            data[_ATTRIBUTED_FIELD],
         )
