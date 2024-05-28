@@ -77,14 +77,23 @@ class IController(abc.ABC):
     def edit_stroke_style(self, obj_id: internal.objects.interfaces.ObjectId, stroke_style: str):
         pass
 
+    @abc.abstractmethod
     def edit_table(self, obj_id: internal.objects.interfaces.ObjectId, list_col, list_row):
         pass
 
+    @abc.abstractmethod
     def edit_linked_objects(
         self, obj_id: internal.objects.interfaces.ObjectId, linked_obj: typing.Dict[str, list[int]]
     ):
         pass
 
+    @abc.abstractmethod
+    def edit_attribute(
+        self, obj_id: internal.objects.interfaces.ObjectId, attr_name: str, value: str
+    ):
+        pass
+
+    @abc.abstractmethod
     def undo_last_action(self):
         pass
 

@@ -371,19 +371,8 @@ class Controller(interfaces.IController):
         action.do()
         self._undo_redo_manager.store_action(action)
 
-    def add_attribute(self, attr_name: str):
-        for obj in self._repo.get_all():
-            if not isinstance(obj, internal.objects.interfaces.IBoardObjectCard):
-                continue
-            card: internal.objects.interfaces.IBoardObjectCard = obj
-            card.attribute[attr_name] = ''
-        logging.debug('adding new attribute with name=%s', attr_name)
-
     def edit_attribute(
-            self,
-            obj_id: internal.objects.interfaces.ObjectId,
-            attr_name: str,
-            value: str
+        self, obj_id: internal.objects.interfaces.ObjectId, attr_name: str, value: str
     ):
         obj: typing.Optional[
             internal.objects.interfaces.IBoardObjectCard
@@ -394,7 +383,9 @@ class Controller(interfaces.IController):
                 obj.attribute[attr_name],
                 value
             )
-            obj.attribute[attr_name] = value
+            attributes = obj.attribute
+            attributes[attr_name] = value
+            obj.attribute = attributes
             self._on_feature_finish()
             return
         logging.debug('no object id=%s found to edit with attribute=%s', obj_id, attr_name)

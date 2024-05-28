@@ -80,7 +80,6 @@ class BoardObjectCard(interfaces.IBoardObjectCard, BoardObjectWithFont):
         serialized[_WIDTH_FIELD] = self.width
         serialized[_HEIGHT_FIELD] = self.height
         serialized[_ATTRIBUTED_FIELD] = self.attribute
-
         return serialized
 
     @staticmethod
