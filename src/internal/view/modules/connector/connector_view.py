@@ -372,7 +372,8 @@ class ConnectorObject(ViewObject):
         dependencies.controller.edit_color(self.id, color=color)
 
     def get_width(self, dependencies: internal.view.dependencies.Dependencies):
-        return int(float(dependencies.canvas.itemcget(self.line_id, 'width')))
+        obj: internal.objects.interfaces.IBoardObjectConnector = dependencies.repo.get(self.id)
+        return obj.width
 
     def set_width(self, dependencies: internal.view.dependencies.Dependencies, width: int):
         dependencies.controller.edit_width(self.id, width=width)

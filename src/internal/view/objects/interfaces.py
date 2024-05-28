@@ -28,14 +28,8 @@ class IViewObject(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def move(
-        self, dependencies: internal.view.dependencies.Dependencies, delta_x: int, delta_y: int
-    ) -> None:
-        pass
-
-    @abc.abstractmethod
     def move_to(
-        self, dependencies: internal.view.dependencies.Dependencies, x: int, y: int
+        self, dependencies: internal.view.dependencies.Dependencies, x: float, y: float
     ) -> None:
         pass
 
@@ -55,6 +49,10 @@ class IViewObject(abc.ABC):
 
     @abc.abstractmethod
     def aligning(self, dependencies: internal.view.dependencies.Dependencies) -> None:
+        pass
+
+    @abc.abstractmethod
+    def scale(self, dependencies: internal.view.dependencies.Dependencies) -> None:
         pass
 
     @abc.abstractmethod

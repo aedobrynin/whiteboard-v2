@@ -4,7 +4,7 @@ import tkinter
 import tkinter.font
 import tkinter.ttk
 from typing import List, Callable
-
+import internal.models
 import internal.objects.interfaces
 import internal.objects.events
 import internal.repositories.interfaces
@@ -142,7 +142,10 @@ class TextObject(ViewObject):
 
     def _get_font_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectText = dependencies.repo.get(self.id)
-        font = obj.font
+        font = internal.models.Font(
+            obj.font.slant, obj.font.weight, obj.font.color, obj.font.family,
+            obj.font.size * dependencies.scaler
+        )
         tk_font = internal.view.utils.as_tkinter_object_font(font)
         dependencies.canvas.itemconfigure(self.text_id, font=tk_font)
         dependencies.canvas.itemconfigure(self.text_id, fill=font.color)
@@ -153,12 +156,21 @@ class TextObject(ViewObject):
 
     def _get_move_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectText = dependencies.repo.get(self.id)
-        self.move_to(dependencies, obj.position.x, obj.position.y)
+        self.move_to(
+            dependencies, obj.position.x * dependencies.scaler, obj.position.y * dependencies.scaler
+        )
 
-    def _get_font(self, dependencies: internal.view.dependencies.Dependencies):
-        font = dependencies.canvas.itemcget(self.text_id, 'font')
-        color = dependencies.canvas.itemcget(self.text_id, 'fill')
-        return internal.view.utils.as_object_font(font, color)
+    def _get_font(
+        self, dependencies: internal.view.dependencies.Dependencies, scaled=False
+    ):
+        obj: internal.objects.interfaces.IBoardObjectText = dependencies.repo.get(self.id)
+        font = internal.models.Font(
+            obj.font.slant, obj.font.weight, obj.font.color, obj.font.family,
+            obj.font.size * dependencies.scaler
+        )
+        if not scaled:
+            font.size /= dependencies.scaler
+        return font
 
     def _get_font_slant(self, dependencies: internal.view.dependencies.Dependencies):
         return self._get_font(dependencies).slant
@@ -199,6 +211,9 @@ class TextObject(ViewObject):
         font = self._get_font(dependencies)
         font.color = color
         dependencies.controller.edit_font(self.id, font=font)
+
+    def scale(self, dependencies: internal.view.dependencies.Dependencies):
+        self._get_font_update_from_repo(dependencies)
 
     def destroy(self, dependencies: internal.view.dependencies.Dependencies):
         self._unsubscribe_from_repo_object_events(dependencies)

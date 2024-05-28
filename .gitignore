@@ -9,6 +9,4 @@ boards.txt
 server/mongo_data
 .vscode
 venv
-boards.txt
-=======
 .coverage

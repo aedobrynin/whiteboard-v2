@@ -45,8 +45,8 @@ class PenObject(ViewObject):
         obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
         points = []
         for position in obj.points:
-            points.append(position.x)
-            points.append(position.y)
+            points.append(position.x * dependencies.scaler)
+            points.append(position.y * dependencies.scaler)
         return points
 
     def _subscribe_to_repo_object_events(
@@ -92,7 +92,7 @@ class PenObject(ViewObject):
 
     def _get_width_update_from_repo(self, dependencies: internal.view.dependencies.Dependencies):
         obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
-        dependencies.canvas.itemconfigure(self.line_id, width=obj.width)
+        dependencies.canvas.itemconfigure(self.line_id, width=int(obj.width * dependencies.scaler))
 
     def widgets(
         self, dependencies: internal.view.dependencies.Dependencies
@@ -151,10 +151,11 @@ class PenObject(ViewObject):
         dependencies.controller.edit_color(self.id, color=color)
 
     def _get_width(self, dependencies: internal.view.dependencies.Dependencies) -> int:
-        return int(float(dependencies.canvas.itemcget(self.line_id, 'width')))
+        obj: internal.objects.interfaces.IBoardObjectPen = dependencies.repo.get(self.id)
+        return obj.width
 
-    def _set_width(self, dependencies: internal.view.dependencies.Dependencies, width: int):
-        dependencies.controller.edit_width(self.id, width=width)
+    def _set_width(self, dependencies: internal.view.dependencies.Dependencies, width: str):
+        dependencies.controller.edit_width(self.id, width=int(width))
 
     def destroy(self, dependencies: internal.view.dependencies.Dependencies):
         self._unsubscribe_from_repo_object_events(dependencies)

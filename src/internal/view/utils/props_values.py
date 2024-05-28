@@ -1,7 +1,7 @@
 from typing import List
 
 _FONT_MIN_SIZE = 8
-_FONT_MAX_SIZE = 65
+_FONT_MAX_SIZE = 64
 _FONT_STEP = 1
 
 

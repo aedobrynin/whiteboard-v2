@@ -27,8 +27,8 @@ def _on_enter(
         global_dependencies
     )
     state_ctx[_START_ID] = cur_obj.id
-    x = int(global_dependencies.canvas.canvasx(event.x))
-    y = int(global_dependencies.canvas.canvasy(event.y))
+    x = global_dependencies.canvas.canvasx(event.x)
+    y = global_dependencies.canvas.canvasy(event.y)
     # TODO: the project should have default configs like WIDTH of line
     # We create pseudo-line, then on leave we delete this line and create line from repo
     state_ctx[_CURRENT_CONNECTOR_ID] = global_dependencies.canvas.create_line(

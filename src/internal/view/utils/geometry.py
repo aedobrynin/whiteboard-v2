@@ -4,8 +4,8 @@ from typing import Tuple, Optional
 
 @dataclass
 class ScreenPosition:
-    x: int
-    y: int
+    x: float
+    y: float
 
     def __str__(self):
         return f'({self.x}, {self.y})'

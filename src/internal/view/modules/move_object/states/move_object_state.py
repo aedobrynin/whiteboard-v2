@@ -27,8 +27,8 @@ def _on_enter(
     state_ctx: Dict,
     event: tkinter.Event
 ):
-    x = int(global_dependencies.canvas.canvasx(event.x))
-    y = int(global_dependencies.canvas.canvasy(event.y))
+    x = global_dependencies.canvas.canvasx(event.x)
+    y = global_dependencies.canvas.canvasy(event.y)
 
     obj: Optional[IViewObject] = global_dependencies.objects_storage.get_current_opt(
         global_dependencies
@@ -56,9 +56,10 @@ def _on_leave(
     event: tkinter.Event
 ):
     # TODO: Z-Coordinate
+    scaler = global_dependencies.scaler
     diff: Position = Position(
-        state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X],
-        state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y],
+        (state_ctx[_LAST_DRAG_EVENT_X] - state_ctx[_FIRST_DRAG_EVENT_X]) / scaler,
+        (state_ctx[_LAST_DRAG_EVENT_Y] - state_ctx[_FIRST_DRAG_EVENT_Y]) / scaler,
         0
     )
     # TODO: we send difference, if 2 people uses it collapse
@@ -107,8 +108,8 @@ def _handle_event(
         logging.warning('move object not found')
         return
     obj.aligning(dependencies=global_dependencies)
-    x = int(global_dependencies.canvas.canvasx(event.x))
-    y = int(global_dependencies.canvas.canvasy(event.y))
+    x = global_dependencies.canvas.canvasx(event.x)
+    y = global_dependencies.canvas.canvasy(event.y)
     global_dependencies.canvas.move(
         state_ctx[_OBJ_ID],
         x - state_ctx[_LAST_DRAG_EVENT_X],

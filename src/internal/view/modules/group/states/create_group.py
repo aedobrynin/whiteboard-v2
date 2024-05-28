@@ -28,8 +28,8 @@ def _get_cur_pos(
     global_dependencies: internal.view.dependencies.Dependencies,
     event: tkinter.Event
 ) -> internal.view.utils.geometry.ScreenPosition:
-    cur_pos_x = int(global_dependencies.canvas.canvasx(event.x))
-    cur_pos_y = int(global_dependencies.canvas.canvasy(event.y))
+    cur_pos_x = global_dependencies.canvas.canvasx(event.x)
+    cur_pos_y = global_dependencies.canvas.canvasy(event.y)
     return internal.view.utils.geometry.ScreenPosition(cur_pos_x, cur_pos_y)
 
 

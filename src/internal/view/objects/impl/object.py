@@ -30,12 +30,7 @@ class ViewObject(IViewObject):
         # myb, there will be notifications
         return self._is_focused
 
-    def move(
-        self, dependencies: internal.view.dependencies.Dependencies, delta_x: int, delta_y: int
-    ):
-        dependencies.canvas.move(self.id, delta_x, delta_y)
-
-    def move_to(self, dependencies: internal.view.dependencies.Dependencies, x: int, y: int):
+    def move_to(self, dependencies: internal.view.dependencies.Dependencies, x: float, y: float):
         dependencies.canvas.coords(self.id, x, y)
 
     def get_border_rectangle(
@@ -221,6 +216,9 @@ class ViewObject(IViewObject):
                     self._update_aligning_line(points, dependencies)
                     return
             self.remove_aligning(dependencies)
+
+    def scale(self, dependencies: internal.view.dependencies.Dependencies):
+        pass
 
     def remove_aligning(self, dependencies: internal.view.dependencies.Dependencies):
         obj_id = f'{_ALIGNING_PREFIX}{self.id}'
