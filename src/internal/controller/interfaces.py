@@ -88,6 +88,10 @@ class IController(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def add_attribute(self, attr_name: str, value: str):
+        pass
+
+    @abc.abstractmethod
     def edit_attribute(
         self, obj_id: internal.objects.interfaces.ObjectId, attr_name: str, value: str
     ):

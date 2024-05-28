@@ -39,7 +39,7 @@ def _on_leave(
 ):
     name: Window = state_ctx[_WINDOW]
     if name.saved:
-        global_dependencies.controller.edit_attribute(name.get_vals()[NAME], '')
+        global_dependencies.controller.add_attribute(name.get_vals()[NAME], '')
     global_dependencies.menu.set_selected_state()
 
 
