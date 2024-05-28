@@ -55,16 +55,8 @@ async def create_tasks(tasks):
 async def main():
     parser = argparse.ArgumentParser()
 
-    # board_name, board_key = get_board_name_key()
-    board_name, board_key = 'Whiteboard', 'board_sardor'
-
-    parser.add_argument(
-        'board-name',
-        type=str,
-        help='server board name',
-        nargs='?',
-        default='sample_board',
-    )
+    # TODO: утащить куда-то во view
+    board_info = internal.view.choose_board.get_board_info()
 
     parser.add_argument(
         'logging-level',
@@ -84,7 +76,7 @@ async def main():
     logging.debug('initializing pubsub broker')
     broker = internal.pub_sub.impl.PubSubBroker()
     logging.debug('initializing storage')
-    storage = internal.storages.impl.SharedYDocStorage(board_name, board_key)
+    storage = internal.storages.impl.SharedYDocStorage(board_info.name, board_info.access_key)
     serialized_objects = storage.get_serialized_objects()
     objects = []
     for serialized_obj in serialized_objects.values():
@@ -109,7 +101,7 @@ async def main():
 
     logging.debug('initializing tkinter')
     view = internal.view.view.create_view(
-        controller=controller, repo=repo, pub_sub=broker, board_name=board_name
+        controller=controller, repo=repo, pub_sub=broker, board_name=board_info.name
     )
 
     logging.debug('run client connection, get updates from server and tkinter UI update')
